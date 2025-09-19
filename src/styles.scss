@@ -1,0 +1,92 @@
+/* You can add global styles to this file, and also import other style files */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    // font-family: 'PT-Sans', Arial;
+}
+
+input, button, textarea, p-dropdown  {
+    border-radius: 8rem !important;
+}
+
+p-floatlabel {
+    label {
+        font-size: 0.9rem;
+    }
+}
+
+.btn-primary {
+    background: #2d4f5d !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 600;
+    transition: background 0.95s;
+    height: 47px;
+}
+
+.btn-primary:hover {
+    background: #2d4f5d !important;
+    opacity: 0.85 !important;
+    transition: background 0.95s;
+}
+
+.btnCancel, .btn-secondary {
+    background: #fff !important;
+    color: #2d4f5d !important;
+    border: 2px solid #2d4f5d !important;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btnCancel:hover, .btn-secondary:hover {
+    background: rgb(230, 241, 247) !important;
+    color: #2d4f5d !important;
+}
+
+.btn-primary:disabled,
+.btn-primary[disabled],
+.btn-secondary:disabled,
+.btn-secondary[disabled],
+.btnCancel:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    background: #2d4f5d !important;
+    color: #fff !important;
+    border: none !important;
+    transition: none !important;
+}
+
+.btn-primary:disabled:hover,
+.btn-primary[disabled]:hover,
+.btn-secondary:disabled:hover,
+.btn-secondary[disabled]:hover,
+.btnCancel:disabled:hover {
+    background: #2d4f5d !important;
+    color: #fff !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+html, body {
+  font-family: 'PT Sans', Arial, sans-serif;
+}
+
+:root {
+  --primary-color: #1f3b53;
+  --surface-b: #396175;
+  --surface-hover: #e0e0e0;
+}
+
+
+.progress-custom {
+  height: 2px;
+  background-color: #e0e0e0 !important;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-custom .p-progressbar-value {
+  background-color: #B21C8B !important;
+  height: 100%;
+}

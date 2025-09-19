@@ -1,0 +1,718 @@
+<div class="clients-wrapper-container">
+  <!-- Header: Client Count & Add Button -->
+  <div class="client-flex-container">
+    <div class="clients-counter-container">
+      <div class="clients-wrapper">All Clients</div>
+      <div class="Clients-counter">{{ customers.length }}</div>
+    </div>
+    
+    <div (click)="showClientForm = true" class="add-client-button">
+      <img [src]="addIcon" alt="" class="add-Icon">
+      <div>New Client</div> 
+    </div>
+  </div>
+
+  <span class="horizontal-line"></span>
+
+  <!-- Search & Sort -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <div class="search-input-wrapper">
+        <div class="searchIcon-container">
+          <img [src]="searchIcon" alt="" class="searchIcon">
+        </div>
+        <input type="text"
+               pInputText
+               [(ngModel)]="searchText"
+               (ngModelChange)="onSearch()"
+               class="search-input"
+               placeholder="Search By Name or ID">
+      </div>
+
+      <div class="sort-container">
+        <p-button
+          label="Sort"
+          icon="pi"
+          iconPos="right"
+          (click)="toggleDropdown()"
+          [icon]="isDropdownOpen ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+          class="p-button-sm custom-bg"
+          
+        ></p-button>
+
+        <div class="dropdown-menu"  *ngIf="isDropdownOpen">
+          <button pButton type="button" style="width: 100%; margin-bottom: 0.5rem;" label="Asc" class="p-button-text" (click)="sortAsc()"></button>
+          <button pButton type="button" style="width:100%" label="Desc" class="p-button-text" (click)="sortDesc()"></button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="right-icon-container">
+      <img src="assets/Icons/ArrowIcon.png" alt="" class="right-icon">
+    </div>
+  </div>
+
+  <!-- Table (Scrollable) -->
+  <div class="card client-table-wrapper">
+    <p-table
+      [value]="filteredList.length ? filteredList : customers"
+      [(selection)]="selectedCustomer"
+      (selectionChange)="onSelectionChange($event)"
+      selectionMode="multiple"
+      dataKey="id"
+      [paginator]="(filteredList.length ? filteredList.length : customers.length) >= 5"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr  class="table-header-row">
+          <th style="width: 3rem">
+            <!-- <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+          </th>
+          <th>First Name</th>
+          <th>Surname</th>
+          <th>#ID</th>
+          <th>Gender</th>
+          <th>Date Of Birth</th>
+          <th>Marital Status</th>
+          <th>Status</th>
+          <th>Worth / NAV</th>
+          <th style="width: 4rem;">Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-client>
+        <tr>
+          <!-- Checkbox column only -->
+          <td style="width: 3rem;">
+            <p-tableCheckbox style="border-color: #275368;"></p-tableCheckbox>
+          </td>
+
+          <!-- Regular Data Columns -->
+          <td>
+            <a
+              [routerLink]="['/home/clientOverview', client.id]"
+              class="client-link"
+              (click)="$event.stopPropagation()"
+            >
+              {{ client.firstName }}
+            </a>
+          </td>
+
+          <td>{{ client.surname }}</td>
+          <td>{{ client.identityNumber }}</td>
+          <td>{{ getGenderFromId(client.identityNumber) }}</td>
+          <td>{{ getDateOfBirthFromId(client.identityNumber) }}</td>
+          <td>
+            {{ client.maritalStatus?.status}}
+          </td>
+         <td>
+            <span [ngClass]="getStatusClass(client.status)">
+              {{ client.status || 'N/A' }}
+            </span>
+          </td>
+
+
+          <!-- ProgressBar column -->
+          <td>
+            <p-progressBar [value]="(client.netWorth || 0) / 10000" [showValue]="false" styleClass="progress-custom"></p-progressBar>
+          </td>
+
+          <!-- Action column -->
+          <td class="action-cell">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-ellipsis-v"
+              class="transparent-button"
+              (click)="showMenuForClient($event, client, menu)"
+            ></button>
+
+            <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-menu>
+          </td>
+        </tr>
+      </ng-template>
+      
+    </p-table>
+  </div>
+
+  <!-- Footer -->
+  <!-- <div class="footer-container">
+  <div class="clients-counter-containter">
+    Showing {{ startRecord + 1 }} - {{ endRecord }} of {{ filteredList.length || customers.length }}
+  </div>
+
+  <div class="navigation">
+    <div class="lessThan" (click)="changePage(currentPage - 1)">
+      <img [src]="lessThanIcon" alt="" class="lessIcon">
+    </div>
+
+    <div class="pagesContainer">
+      <span
+        class="pageNumber"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="i + 1 === currentPage"
+        (click)="changePage(i + 1)">
+        {{ i + 1 }}
+      </span>
+    </div>
+
+    <div class="greaterThan" (click)="changePage(currentPage + 1)">
+      <img [src]="greateThanIcon" alt="" class="greaterIcon">
+    </div>
+  </div>
+</div> -->
+
+
+  <!-- Add Client Modal -->
+  <app-add-client-form *ngIf="showClientForm" (close)="showClientForm = false"></app-add-client-form>
+</div>
+<!-- <p-dialog
+  header="Upload Client Files"
+  [(visible)]="displayUploadDialog"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '60vw' }"
+  [baseZIndex]="10000"
+>
+  <div class="card">
+    <p-toast></p-toast>
+
+    <p-fileupload
+      name="myfile[]"
+      url="https://www.primefaces.org/cdn/api/upload.php"
+      [multiple]="true"
+      accept="image/*"
+      maxFileSize="1000000"
+      (onUpload)="onTemplatedUpload()"
+      (onSelect)="onSelectedFiles($event)"
+    >
+      <ng-template
+        #header
+        let-files
+        let-chooseCallback="chooseCallback"
+        let-clearCallback="clearCallback"
+        let-uploadCallback="uploadCallback"
+      >
+        <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
+          <div class="flex gap-2">
+            <p-button (onClick)="chooseCallback()" icon="pi pi-images" ... />
+
+            <p-button (onClick)="uploadCallback()" ... />
+
+            <p-button
+              (onClick)="clearCallback()"
+              icon="pi pi-times"
+              [rounded]="true"
+              [outlined]="true"
+              severity="danger"
+              [disabled]="!files || files.length === 0"
+            ></p-button>
+          </div>
+
+          <p-progressbar
+            [value]="totalSizePercent"
+            [showValue]="false"
+            class="w-full md:w-20rem h-1 w-full md:ml-auto"
+          >
+            <span class="whitespace-nowrap">{{ totalSize }}B / 1Mb</span>
+          </p-progressbar>
+        </div>
+      </ng-template>
+
+      <ng-template
+        #content
+        let-files
+        let-uploadedFiles="uploadedFiles"
+        let-removeFileCallback="removeFileCallback"
+        let-removeUploadedFileCallback="removeUploadedFileCallback"
+      >
+        <div class="flex flex-col gap-8 pt-4">
+          <div *ngIf="files?.length > 0">
+            <h5>Pending</h5>
+            <div class="flex flex-wrap gap-4">
+              <div
+                *ngFor="let file of files; let i = index"
+                class="p-8 rounded-border flex flex-col border border-surface items-center gap-4"
+              >
+                <div>
+                  <img
+                    role="presentation"
+                    [alt]="file.name"
+                    [src]="file.objectURL"
+                    width="100"
+                    height="50"
+                  />
+                </div>
+                <span
+                  class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
+                >
+                  {{ file.name }}
+                </span>
+                <div>{{ formatSize(file.size) }}</div>
+                <p-badge value="Pending" severity="warn"></p-badge>
+                <p-button
+                  icon="pi pi-times"
+                  (click)="onRemoveTemplatingFile($event, file, removeFileCallback, i)"
+                  [outlined]="true"
+                  [rounded]="true"
+                  severity="danger"
+                ></p-button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="uploadedFiles?.length > 0">
+            <h5>Completed</h5>
+            <div class="flex flex-wrap gap-4">
+              <div
+                *ngFor="let file of uploadedFiles; let i = index"
+                class="card m-0 px-12 flex flex-col border border-surface items-center gap-4"
+              >
+                <div>
+                  <img
+                    role="presentation"
+                    [alt]="file.name"
+                    [src]="file.objectURL"
+                    width="100"
+                    height="50"
+                  />
+                </div>
+                <span
+                  class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
+                >
+                  {{ file.name }}
+                </span>
+                <div>{{ formatSize(file.size) }}</div>
+                <p-badge value="Completed" class="mt-4" severity="success"></p-badge>
+                <p-button
+                  icon="pi pi-times"
+                  (onClick)="removeUploadedFileCallback(i)"
+                  [outlined]="true"
+                  [rounded]="true"
+                  severity="danger"
+                ></p-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #file></ng-template>
+
+      <ng-template #empty>
+        <div class="flex items-center justify-center flex-col">
+          <i class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"></i>
+          <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
+        </div>
+      </ng-template>
+    </p-fileupload>
+  </div>
+</p-dialog> -->
+
+<p-dialog
+  [(visible)]="displayUploadDialog"
+  header="Upload Bank Statement"
+  [modal]="true"
+  [style]="{ width: '500px', maxWidth: '90vw' }"
+  [dismissableMask]="true"
+  [closable]="true"
+  [draggable]="false"
+  [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+>
+  <div class="upload-dialog-content">
+    <p-fileUpload
+      name="uploadedFiles[]"
+      mode="advanced"
+      [auto]="false"
+      customUpload="true"
+      (uploadHandler)="onTemplatedUpload($event)"
+      (onSelect)="onSelectedFiles($event)"
+      [showUploadButton]="true"
+      [showCancelButton]="true"
+      [multiple]="true"
+      [maxFileSize]="10000000"
+      styleClass="w-full"
+    ></p-fileUpload>
+
+    <p-progressBar
+      [value]="totalSizePercent"
+      [showValue]="false"
+     
+    ></p-progressBar>
+
+    <div *ngIf="totalSize > 0" style="margin-top: 0.5rem; text-align: center;">
+      <p>Total size: {{ formatSize(totalSize) }}</p>
+    </div>
+
+    <div style="display: flex; justify-content: center; width: 100%;">
+      <button
+        pButton
+        type="button"
+        label="Close"
+        class="btn-secondary"
+        (click)="displayUploadDialog = false"
+      ></button>
+    </div>
+
+
+  </div>
+</p-dialog>
+
+
+
+<p-dialog header="Update Status"
+    [(visible)]="statusDialogVisible"
+    [modal]="true"
+    [style]="{ width: '350px' }"
+    [draggable]="false" [closable]="true">
+
+  <div class="p-fluid form-section">
+    <!-- <label for="status">Select Status</label> -->
+    <p-dropdown
+      [options]="statusOptions"
+      [(ngModel)]="selectedStatus"
+      optionLabel="description"
+      optionValue="id"
+      placeholder="Select a status"
+      optionLabel=""
+      [style]="{ width: '100%' }">
+    </p-dropdown>
+  </div>
+
+  <div class="p-dialog-footer" style="display: flex; flex-direction: column; gap: 10px;">
+    <button 
+      pButton 
+      icon="pi pi-check" 
+      (click)="confirmStatusUpdate()"
+      class="btn-primary"
+      style="width: 100%;">
+      Update
+    </button>
+  
+    <button 
+      pButton 
+      icon="pi pi-times" 
+      (click)="statusDialogVisible = false" 
+      class="btn-secondary"
+      style="width: 100%;">
+      Cancel
+    </button>
+  </div>
+
+</p-dialog>
+
+<p-dialog 
+  header="Edit Client" 
+  [(visible)]="editClientDialogVisible" 
+  [modal]="true"
+  [draggable]="false" 
+  [style]="{width: '600px'}"
+  [closable]="true">
+  
+   <form [formGroup]="clientForm" (ngSubmit)="saveClientEdits()" class="registrationContainer">
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="firstName" formControlName="firstName" autocomplete="off" />
+            <label for="firstName">First Name</label>
+          </p-floatlabel>
+          @if (isInvalid('firstName')) {
+            <p-message severity="error" size="small" variant="simple">First name is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="surname" formControlName="surname" autocomplete="off" />
+            <label for="surname">Surname</label>
+          </p-floatlabel>
+          @if (isInvalid('surname')) {
+            <p-message severity="error" size="small" variant="simple">Surname is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="identityNumber" formControlName="identityNumber" autocomplete="off" />
+            <label for="identityNumber">ID Number</label>
+          </p-floatlabel>
+          @if (isInvalid('identityNumber')) {
+            @if (clientForm.get('identityNumber')?.errors?.['required']) {
+              <p-message severity="error" size="small" variant="simple">Identity number is required.</p-message>
+            }
+            @if (clientForm.get('identityNumber')?.errors?.['invalidIdFormat']) {
+              <p-message severity="error" size="small" variant="simple">ID must be 13 digits.</p-message>
+            }
+            @if (clientForm.get('identityNumber')?.errors?.['invalidIdChecksum']) {
+              <p-message severity="error" size="small" variant="simple">ID number is not valid.</p-message>
+            }
+        }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="employer" formControlName="employer" autocomplete="off" />
+            <label for="employer">Employer</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="mobileNumber" formControlName="mobileNumber" autocomplete="off" />
+            <label for="mobileNumber">Mobile Number</label>
+          </p-floatlabel>
+          @if (isInvalid('mobileNumber')) {
+            <p-message severity="error" size="small" variant="simple">Mobile number is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="emailAddress" formControlName="emailAddress" autocomplete="off" />
+            <label for="emailAddress">Email Address</label>
+          </p-floatlabel>
+          @if (isInvalid('emailAddress')) {
+            <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="physicalAddress1" formControlName="physicalAddress1" autocomplete="off" />
+            <label for="physicalAddress1">Address Line 1</label>
+          </p-floatlabel>
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="physicalAddress2" formControlName="physicalAddress2" autocomplete="off" />
+            <label for="physicalAddress2">Address Line 2</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="postalCode" formControlName="postalCode" autocomplete="off" />
+            <label for="postalCode">Postal Code</label>
+          </p-floatlabel>
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="provinceID" [options]="provinces" optionLabel="name" optionValue="id"
+                        formControlName="provinceID"></p-dropdown>
+            <label for="provinceID">Province</label>
+          </p-floatlabel>
+          @if (isInvalid('provinceID')) {
+            <p-message severity="error" size="small" variant="simple">Province is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="status" optionValue="id"
+                        formControlName="maritalStatusID"></p-dropdown>
+            <label for="maritalStatusID">Marital Status</label>
+          </p-floatlabel>
+          @if (isInvalid('maritalStatusID')) {
+            <p-message severity="error" size="small" variant="simple">Marital status is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="preferredLanguageID" [options]="languages" optionLabel="languageName" optionValue="id"
+                        formControlName="preferredLanguageID"></p-dropdown>
+            <label for="preferredLanguageID">Preferred Language</label>
+          </p-floatlabel>
+          @if (isInvalid('preferredLanguageID')) {
+            <p-message severity="error" size="small" variant="simple">Preferred language is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="qualificationID" [options]="qualifications" optionLabel="description" optionValue="id"
+                        formControlName="qualificationID"></p-dropdown>
+            <label for="qualificationID">Qualification</label>
+          </p-floatlabel>
+          @if (isInvalid('qualificationID')) {
+            <p-message severity="error" size="small" variant="simple">Qualification is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="flex-container-column btn-mg-top" style=" min-height: 100px; gap: 10px;">
+        <button 
+          pButton 
+          type="submit" 
+          class="btnRegistor btn-primary" 
+          label="Save" 
+          [disabled]="clientForm.invalid || isSaving" 
+          [loading]="isSaving"
+          style="width: 100%;">
+        </button>
+        <button 
+          pButton 
+          type="button" 
+          label="Cancel" 
+          (click)="editClientDialogVisible = false" 
+          class="btnCancel"
+          style="width: 100%;">
+        </button>
+      </div>
+    </form>
+
+  <!-- <ng-template pTemplate="footer">
+     line to close
+    [disabled]="clientForm.invalid || isSaving"
+    <button pButton  icon="pi pi-check" (click)="saveClientEdits()">Save</button>
+    <button pButton  icon="pi pi-times" class="p-button-text" (click)="editClientDialogVisible = false">Cancel</button>
+  </ng-template> -->
+</p-dialog>
+
+
+
+
+<p-dialog
+  header="Policy Management"
+  [(visible)]="policyDialogVisible"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [closable]="true"
+>
+  <form [formGroup]="policyForm" (ngSubmit)="savePolicy()">
+    <div class="form-grid">
+
+      <!-- Policy Name -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText id="policyName" formControlName="policyName" class="full-width" />
+          <label for="policyName">Policy Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Underwritten By -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText id="underwritten" formControlName="underwritten" class="full-width" />
+          <label for="underwritten">Underwritten</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Policy Type -->
+      <div class="form-group">
+       
+        <p-dropdown
+          [options]="policyTypes"
+          optionLabel="description"
+          optionValue="id"
+          formControlName="policyTypeID"
+          placeholder="Select Policy Type"
+          class="full-width"
+        ></p-dropdown>
+      </div>
+
+      <!-- Customer -->
+      <!-- <div class="form-group">
+        
+        <p-dropdown
+          [options]="customers"
+          optionLabel="fullName"
+          optionValue="id"
+          formControlName="customerID"
+          placeholder="Select Customer"
+          class="full-width"
+        ></p-dropdown>
+      </div> -->
+
+      <!-- Policy Value -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText type="number" id="value" formControlName="value" class="full-width" />
+          <label for="value">Policy Value</label>
+        </p-floatLabel>
+      </div>
+
+      <div class="form-group">
+        <p-floatlabel variant="on">
+          <p-datepicker formControlName="policyInitiationDate" inputId="initDate" showIcon iconDisplay="input" class="full-width" />
+          <label for="initDate">Initiation Date</label>
+        </p-floatlabel>
+      </div>
+
+      <div class="form-group">
+        <p-floatlabel variant="on">
+          <p-datepicker formControlName="policyExpirationDate" inputId="expDate" showIcon iconDisplay="input" class="full-width" />
+          <label for="expDate">Expiration Date</label>
+        </p-floatlabel>
+      </div>
+    </div>
+
+    <div class="dialog-footer" style="display: flex; flex-direction: column; gap: 10px;">
+      <button 
+        pButton 
+        label="Save" 
+        icon="pi pi-check" 
+        [disabled]="policyForm.invalid" 
+        type="submit"
+        class="btn-primary"
+        style="width: 100%;">
+      </button>
+      <button 
+        pButton 
+        label="Cancel" 
+        class="btn-secondary"
+        type="button" 
+        (click)="policyDialogVisible = false"
+        style="width: 100%;">
+      </button>
+    </div>
+  </form>
+
+
+  <h3 class="mt-5">Policies</h3>
+  <p-table [value]="policies" *ngIf="policies.length > 0" [paginator]="true" [rows]="5" [responsive]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Policy Name</th>
+        <th>Underwritten</th>
+        <th>Type</th>
+        <th>Customer</th>
+        <th>Value</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-policy>
+      <tr>
+        <td>{{ policy.policyName }}</td>
+        <td>{{ policy.underwritten }}</td>
+        <td>{{ policy.policyType?.name || policy.policyTypeID }}</td>
+        <td>{{ policy.customer?.fullName || policy.customerID }}</td>
+        <td>{{ policy.value | currency }}</td>
+        <td>{{ policy.policyInitiationDate | date:'shortDate' }}</td>
+        <td>{{ policy.policyExpirationDate | date:'shortDate' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+
+
+
+
+
+
+

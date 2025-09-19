@@ -1,0 +1,169 @@
+<div class="overlay">
+  <div class="popup-form">
+    <div class="title-container">
+      <h3 class="title">Add New Client</h3>
+    </div>
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="registrationContainer">
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="firstName" formControlName="firstName" autocomplete="off" />
+            <label for="firstName">First Name</label>
+          </p-floatlabel>
+          @if (isInvalid('firstName')) {
+            <p-message severity="error" size="small" variant="simple">First name is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="surname" formControlName="surname" autocomplete="off" />
+            <label for="surname">Surname</label>
+          </p-floatlabel>
+          @if (isInvalid('surname')) {
+            <p-message severity="error" size="small" variant="simple">Surname is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="identityNumber" formControlName="identityNumber" autocomplete="off" />
+            <label for="identityNumber">ID Number</label>
+          </p-floatlabel>
+          @if (isInvalid('identityNumber')) {
+            @if (clientForm.get('identityNumber')?.errors?.['required']) {
+              <p-message severity="error" size="small" variant="simple">Identity number is required.</p-message>
+            }
+            @if (clientForm.get('identityNumber')?.errors?.['invalidIdFormat']) {
+              <p-message severity="error" size="small" variant="simple">ID must be 13 digits.</p-message>
+            }
+            @if (clientForm.get('identityNumber')?.errors?.['invalidIdChecksum']) {
+              <p-message severity="error" size="small" variant="simple">ID number is not valid.</p-message>
+            }
+        }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="employer" formControlName="employer" autocomplete="off" />
+            <label for="employer">Employer</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="mobileNumber" formControlName="mobileNumber" autocomplete="off" />
+            <label for="mobileNumber">Mobile Number</label>
+          </p-floatlabel>
+          @if (isInvalid('mobileNumber')) {
+            <p-message severity="error" size="small" variant="simple">Mobile number is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="emailAddress" formControlName="emailAddress" autocomplete="off" />
+            <label for="emailAddress">Email Address</label>
+          </p-floatlabel>
+          @if (isInvalid('emailAddress')) {
+            <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="physicalAddress1" formControlName="physicalAddress1" autocomplete="off" />
+            <label for="physicalAddress1">Address Line 1</label>
+          </p-floatlabel>
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="physicalAddress2" formControlName="physicalAddress2" autocomplete="off" />
+            <label for="physicalAddress2">Address Line 2</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="postalCode" formControlName="postalCode" autocomplete="off" />
+            <label for="postalCode">Postal Code</label>
+          </p-floatlabel>
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="provinceID" [options]="provinces" optionLabel="name" optionValue="id"
+                        formControlName="provinceID"></p-dropdown>
+            <label for="provinceID">Province</label>
+          </p-floatlabel>
+          @if (isInvalid('provinceID')) {
+            <p-message severity="error" size="small" variant="simple">Province is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="status" optionValue="id"
+                        formControlName="maritalStatusID"></p-dropdown>
+            <label for="maritalStatusID">Marital Status</label>
+          </p-floatlabel>
+          @if (isInvalid('maritalStatusID')) {
+            <p-message severity="error" size="small" variant="simple">Marital status is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="preferredLanguageID" [options]="languages" optionLabel="languageName" optionValue="id"
+                        formControlName="preferredLanguageID"></p-dropdown>
+            <label for="preferredLanguageID">Preferred Language</label>
+          </p-floatlabel>
+          @if (isInvalid('preferredLanguageID')) {
+            <p-message severity="error" size="small" variant="simple">Preferred language is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="qualificationID" [options]="qualifications" optionLabel="description" optionValue="id"
+                        formControlName="qualificationID"></p-dropdown>
+            <label for="qualificationID">Qualification</label>
+          </p-floatlabel>
+          @if (isInvalid('qualificationID')) {
+            <p-message severity="error" size="small" variant="simple">Qualification is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="flex-container-column btn-mg-top" style=" min-height: 100px; gap: 10px;">
+        <button 
+          pButton 
+          type="submit" 
+          class="btnRegistor btn-primary" 
+          label="Save" 
+          [disabled]="clientForm.invalid || isSaving" 
+          [loading]="isSaving"
+          style="width: 100%;">
+        </button>
+        <button 
+          pButton 
+          type="button" 
+          label="Cancel" 
+          (click)="close.emit()" 
+          class="btnCancel"
+          style="width: 100%;">
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+

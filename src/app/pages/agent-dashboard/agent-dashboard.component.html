@@ -1,0 +1,211 @@
+<div class="main">
+    <div class="flex-container-user-details">
+        <p class="user-details__greeting">Hi, <strong class="user-details__greeting">{{ userName.toUpperCase() }}</strong></p>
+
+        <div class="user-details__summary-wrapper">
+            <div class="report-container">
+                Here are your current sales summary and activity. 
+            </div>
+            <div class="date-container">
+                
+                <div class="date-display"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-expanded]="showCalendar"
+                    (click)="toggleCalendar()"
+                    (keydown.enter)="toggleCalendar()"
+                >
+                    <span><span>{{ fallbackDateRange }}</span>
+                        </span>
+                    <i class="pi" [ngClass]="showCalendar ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+                </div>
+
+                <div *ngIf="showCalendar" class="calendar-popup">
+                <p-calendar
+                    [(ngModel)]="selectedDate"
+                    selectionMode="range"
+                    dateFormat="dd M yy"
+                    (onSelect)="onDateSelect()"
+                    [inline]="true">
+                </p-calendar>
+                </div>
+            </div>
+        </div>
+        <div class="line-container">
+            <span class="horizontal-line"></span>
+        </div>
+    </div>
+    
+    <div class="grid-wrapper">
+        <div class="left-container">
+            <div class="flex-container-details">
+                <div class="container">
+                    <div class="item">Active Policies</div>
+                    <div class="item font-s">142</div>
+                    <div class="item flex-img-container">
+                        <img [src]="upArrowIcon" alt="">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="item">Short Term Policies</div>
+                    <div class="item font-s">100</div>
+                    <div class="item flex-img-container">
+                        <img [src]="upArrowIcon" alt="">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="item">Long Term Policies</div>
+                    <div class="item font-s">50</div>
+                    <div class="item flex-img-container">
+                        <img [src]="downArrowIcon" alt="">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="item">No.Clients</div>
+                    <div class="item font-s" *ngIf="clientCount$ | async as clientCount; else loading">
+                        {{ clientCount }}
+                    </div>
+
+                    <ng-template #loading>
+                        <div class="item font-s">0</div>
+                    </ng-template>
+                    <div class="item flex-img-container">
+                        <img [src]="upArrowIcon" alt="">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="item">Opportunities</div>
+                    <div class="item font-s">50</div>
+                    <div class="item flex-img-container">
+                        <img [src]="proceedIcon" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="graphContainer">
+                    <div class="flex-header">
+                        <div class="row-header">
+                            <div class="title">Assets Under Management(AUM)</div>
+                            <div class="period-container">
+                                <div class="period" [class.active]="selectedPeriod  === '12'" (click)="changePeriod('12')">12 Months</div>
+                                <div class="period"  [class.active]="selectedPeriod  === '6'" (click)="changePeriod('6')">6 Months</div>
+                                <div class="period" [class.active]="selectedPeriod  === '3'" (click)="changePeriod('3')">3 Months</div>
+                            </div>
+                        </div>
+                        <!-- graph container -->
+                        <div class="graphWrapper">
+                            <app-statement-graph [selectedPeriod]="selectedPeriod"
+                              >
+                            </app-statement-graph>
+                        </div>
+                    </div>
+                </div>
+                <div class="netFlowContainer">
+                    <div class="title align">Net Flows</div>
+                    <div class="graphRender">
+                        <app-statement-graph
+                        [selectedPeriod]="selectedPeriod"
+                        [showAUMChart]="false"
+                        [showOnlyNetFlow]="true"
+                        ></app-statement-graph>
+                    </div> 
+                </div>
+            </div>
+            <div class="client-list">
+                <div class="flex-heading">
+                <div class="title">Top Clients</div>
+                    <div class="flex items-center gap-2">
+                        <p-dropdown
+                        [options]="countOptions"
+                        [(ngModel)]="selectedCount"
+                        [style]="{ width: '150px' }"
+                        placeholder="Show"
+                        [showClear]="false"
+                        optionLabel="label"
+                        class="p-dropdown-container"
+                        ></p-dropdown>
+                    </div>
+                </div>
+                <div><span class="horizontal-line"></span></div>
+                <div class="top-clients-list">
+                    <div
+                        class="client-row"
+                        *ngFor="let client of topClients | slice:0:selectedCount.value; let i = index"
+                        [class.first-row]="i === 0"
+                        >
+                        <div class="cell">{{ client.firstName }}</div>
+                        <div class="cell">{{ client.surname }}</div>
+                        <div class="cell">{{ client.id}}</div>
+                        <!-- add a gender using method -->
+                        <div class="cell">{{ dataCleanerHelper.getGenderFromId(client.identityNumber) }}</div>
+                        <div class="cell">{{ dataCleanerHelper.getDateOfBirthFromId(client.identityNumber)| date: 'dd-MM-yyyy' }}</div>
+                        <div class="cell">{{ client.maritalStatus?.status }}</div>
+                        
+                        <div class="cell icons-cell">
+                            <i class="pi pi-envelope" (click)="openMessage(client)" title="Message"></i>
+                            <i class="pi pi-ellipsis-v" title="More options"></i>
+                        </div>
+                    </div>
+                    <p-dialog header="Message" [(visible)]="showMessagePopup" [modal]="true" [style]="{width: '400px'}">
+                        <p>{{ selectedClientMessage }}</p>
+                    </p-dialog>
+                </div>
+
+            </div>
+        </div>
+        <div class="right-container">
+            <div class="flex-rows wrap-container">
+                <div class="grid-commisionClass">
+                    <div class="flex-col-1">
+                        <div class="title font-size">Commision Paid</div>
+                        <div class="title amount">R56,230.56</div>
+                    </div>
+                    <div class="col-2">
+                            <p-dropdown 
+                                [options]="monthOptions" 
+                                [(ngModel)]="selectedMonth" 
+                                optionLabel="label"
+                                
+                                class="p-button-sm month-dropdown btn-commisions"
+                                dropdownIcon="pi pi-chevron-down"
+                                [dropdownIcon]="isDropdownOpen ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+                                (onShow)="isDropdownOpen = true"
+                                (onHide)="isDropdownOpen = false"
+                                >
+                            </p-dropdown>
+                    </div>
+                </div>
+                <div class="line-wrapper"> <span class="horizontal-line line"></span></div>
+                <div class="grid-commisionClass">
+                    <div class="flex-col-1">
+                        <div class="title font-size font-size-2">Month to Target</div>
+                        <div class="title title-2">01 Jan - 31 Jan</div>
+                    </div>
+                    <div class="col-2">
+                        <div class="amount-container">
+                            <div class="amount">R100,000.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="add-btn" (click)="showAddClientForm = true" style="cursor:pointer;">
+                <img [src]="addClientIcon" alt="" class="addIcon">
+                <div class="btnText">New Client</div>
+            </div>
+
+            
+            
+            <div class="advert-container" *ngIf="showPolicies" @slideIn>
+                <p class="policy-header">New Policies</p>
+                <div class="policy-card" [@slideIn]>
+                    <strong>{{ currentPolicy.title }}</strong>
+                    <p>{{ currentPolicy.desc }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<app-add-client-form *ngIf="showAddClientForm" (close)="showAddClientForm = false">
+</app-add-client-form>

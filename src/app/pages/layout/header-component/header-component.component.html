@@ -1,0 +1,44 @@
+<div class="header-flex-container">
+
+  <div class="user-navigation-container" *ngIf="showClientNavigation">
+    <div class="client-nav-wrapper">
+      <div class="clientFormNavigation-container">
+        <a [routerLink]="['/home/clientOverview', clientId]" class="link-nav" [class.active]="isActive('/home/clientOverview')">Overview</a>
+        <a [routerLink]="['/home/cashflow', clientId]" class="link-nav" [class.active]="isActive('/home/cashflow')">Cash Flow</a>
+        <a [routerLink]="['/home/assets', clientId]" class="link-nav" [class.active]="isActive('/home/assets')">Assets & Liabilities</a>
+        <a [routerLink]="['/home/legacy', clientId]" class="link-nav" [class.active]="isActive('/home/legacy')">Protecting My Legacy</a>
+        <a [routerLink]="['/home/audit', clientId]" class="link-nav" [class.active]="isActive('/home/audit')">Audit Trail</a>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div *ngIf="!showClientNavigation" class="spacer"></div>
+
+  <div class="user-profile-container">
+    <div class="notification position-relative">
+      <div class="notification-counter">1</div>
+      <img [src]="notificationIcon" alt="Notifications" />
+    </div>
+    
+    <div class="user-profile" id="userProfileContainer" #userProfileContainer>
+      <img 
+        [src]="userProfile" 
+        alt="User Profile" 
+        class="user-profile-img" 
+        (click)="menu.toggle($event)" 
+        style="cursor: pointer;"
+      />
+
+      <p-menu #menu [popup]="true" [model]="items" [appendTo]="'#userProfileContainer'"></p-menu>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+

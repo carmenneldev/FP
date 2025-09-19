@@ -1,0 +1,225 @@
+<div class="grid-container">
+  <div class="vector-overlay"></div>
+
+  <div class="left-container">
+    <!-- Logo -->
+    <div class="logo-conatiner">
+      <img [src]="imagePath" alt="flightPlan-logo" class="logo" />
+    </div>
+
+    <div class="form-container">
+      <div class="components-containers">
+        <!-- Auth type selection -->
+        <div class="auth-type-grid">
+          <div class="choice-type-container">
+            <p-radioButton
+              class="custom-radio"
+              name="authMeth"
+              inputId="password"
+              value="Password"
+              [(ngModel)]="authMeth"
+            ></p-radioButton>
+            <label for="password" class="label-text">Password</label>
+          </div>
+          <div class="choice-type-container">
+            <p-radioButton
+              class="custom-radio"
+              name="authMeth"
+              inputId="otp"
+              value="OTP"
+              [(ngModel)]="authMeth"
+            ></p-radioButton>
+            <label for="otp" class="label-text">OTP</label>
+          </div>
+        </div>
+
+        <!-- Form section -->
+        <div class="forms-container">
+          <!-- Shared heading and prompt -->
+          <div class="user-alert-container">
+            <h2 class="user-alert">Log in to your account.</h2>
+            <p class="user-prompt">
+              {{
+                authMeth === 'OTP'
+                  ? 'Enter your phone number to receive an OTP.'
+                  : 'Enter your email address and password to log in.'
+              }}
+            </p>
+          </div>
+
+          <!-- OTP Form -->
+          <form *ngIf="authMeth === 'OTP'" [formGroup]="otpForm" (ngSubmit)="sendOTP()">
+            <div class="input-fields">
+              <div class="flex-container">
+                <div class="phone-icon-container">
+                  <i class="pi pi-mobile"></i>
+                  <select
+                    class="country-code-select"
+                    formControlName="countryCode"
+                    aria-label="Select country code"
+                  >
+                    <option *ngFor="let country of countries" [value]="country.code">
+                      {{ country.code }}
+                    </option>
+                  </select>
+                </div>
+                <div class="phone-input-container">
+                  <input
+                    type="tel"
+                    class="phoneInputBox"
+                    placeholder="Enter mobile number"
+                    formControlName="phone"
+                    [attr.maxlength]="maxLength"
+                    (input)="onPhoneInput($event)"
+                    aria-label="Enter mobile number"
+                  />
+                </div>
+              </div>
+
+              <button type="submit" class="submitButton" [disabled]="otpForm.invalid || isLoadingOTP">
+                <ng-container *ngIf="!isLoadingOTP; else otpLoading">
+                  Send OTP
+                </ng-container>
+                <ng-template #otpLoading>
+                  <span class="spinner"></span> Sending...
+                </ng-template>
+              </button>
+            </div>
+          </form>
+
+          <!-- Password Form -->
+          <form *ngIf="authMeth === 'Password'" [formGroup]="userlogin" class="login-form-wrapper">
+            <div class="input-fields">
+              <!-- Email Input -->
+              <div class="input-field vertical-stack relative-container">
+                <i
+                  class="pi pi-envelope email-icon"
+                  *ngIf="!userlogin.get('emailAddress')?.value"
+                ></i>
+                <input
+                  type="email"
+                  formControlName="emailAddress"
+                  placeholder="Email Address"
+                  [ngClass]="{
+                    'is-invalid': userlogin.get('emailAddress')?.invalid &&
+                    (userlogin.get('emailAddress')?.touched || isSubmitted)
+                  }"
+                />
+                <p-message
+                  *ngIf="userlogin.get('emailAddress')?.errors?.['required'] && isSubmitted"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Email is required.
+                </p-message>
+                <p-message
+                  *ngIf="userlogin.get('emailAddress')?.errors?.['email'] &&
+                  (userlogin.get('emailAddress')?.touched || isSubmitted)"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Please enter a valid email.
+                </p-message>
+              </div>
+
+              <!-- Password Input -->
+              <div class="input-field vertical-stack relative-container">
+                <i
+                  class="pi pi-lock icon-left"
+                  *ngIf="!userlogin.get('password')?.value"
+                ></i>
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="Password"
+                  [ngClass]="{
+                    'is-invalid': userlogin.get('password')?.invalid &&
+                    (userlogin.get('password')?.touched || isSubmitted)
+                  }"
+                />
+                <i
+                  [ngClass]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                  class="icon-right"
+                  (click)="togglePasswordVisibility()"
+                ></i>
+
+                <p-message
+                  *ngIf="userlogin.get('password')?.errors?.['required'] && isSubmitted"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Password is required.
+                </p-message>
+                <p-message
+                  *ngIf="userlogin.get('password')?.errors?.['minlength'] &&
+                  (userlogin.get('password')?.touched || isSubmitted)"
+                  severity="error"
+                  size="small"
+                  variant="simple"
+                >
+                  Password must be at least 6 characters.
+                </p-message>
+              </div>
+
+              <!-- Forgot Password -->
+              <div class="forgot-password-container">
+                <a class="reset-password-link" routerLink="/reset-password">Forgot password?</a>
+              </div>
+
+              <!-- Login Button -->
+              <button
+                type="button"
+                class="submitButton"
+                [disabled]="isLoggingIn"
+                (click)="onLoginClick()"
+              >
+                <ng-container *ngIf="!isLoggingIn; else loginLoading">
+                  Login
+                </ng-container>
+                <ng-template #loginLoading>
+                  <span class="spinner"></span>
+                </ng-template>
+              </button>
+            </div>
+          </form>
+
+          <!-- Shared Footer for both forms -->
+          <div class="or-container">
+            <span>or</span>
+          </div>
+          <div class="social-login-container">
+            <p class="social-login-text">
+              Don’t you have an account?
+              <a
+                class="sign-up-link"
+                routerLink="/Registration"
+                (click)="onShowRegistrationClick(); $event.preventDefault()"
+              >
+                Sign Up
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side -->
+  <div class="right-container">
+    <div class="feature-card bg-container">
+      <div class="overlay"></div>
+      <div class="image-box">
+      </div>
+      <div class="vector-image">
+        <img [src]="backgroundImagePath" alt="" class="vector-image-icon" />
+      </div>
+      <span class="feature-text"> NEW FEATURES</span>
+      <div class="graph-box"></div>
+      <div class="main-text">The easiest way to manage your portfolio.</div>
+      <div class="sub-text">Join the FlightPlan community now!</div>
+    </div>
+  </div>
+</div>
