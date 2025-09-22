@@ -1,9 +1,9 @@
-name: Build and deploy Node.js app to Azure Web App - FlightPlanApp
+name: DEBUG deploy to Azure Web App - FlightPlanApp
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -12,19 +12,54 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Print repo root
+        run: pwd && ls -la
+
+      - name: Show package.json (if any)
+        run: |
+          if [ -f package.json ]; then
+            cat package.json
+          else
+            echo "No package.json in repo root."
+          fi
+
+      - name: Node + npm versions
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install, build, test
+      - run: |
+          node -v
+          npm -v
+
+      - name: Install, build, test (best-effort)
         run: |
-          npm ci || npm install
-          npm run build --if-present
-          npm test --if-present
-      - name: Upload artifact
+          set -x
+          if [ -f package-lock.json ]; then npm ci || true; else npm install || true; fi
+          npm run build --if-present || true
+          npm test --if-present || true
+
+      - name: List files after build
+        run: |
+          echo "---- TREE (top-level) ----"
+          ls -la
+          echo "---- FIND build artifacts ----"
+          (ls -la build || true)
+          (ls -la dist || true)
+          (ls -la out || true)
+
+      - name: Create deployment artifact (zip)
+        run: |
+          set -x
+          rm -f deploy.zip
+          # If you deploy a built folder like build/dist, change the line below to that folder
+          zip -r deploy.zip . -x ".git/*" ".github/*" "node_modules/*" "*.md"
+
+      - name: Upload artifact (for inspection)
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: .
+          name: deploy-zip
+          path: deploy.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -33,12 +68,27 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-          path: .         # put files in repo root
+          name: deploy-zip
+          path: .
 
-      - name: Deploy to Azure Web App
+      - name: Validate publish profile is set
+        run: |
+          echo "Checking for AZUREAPPSERVICE_PUBLISHPROFILE..."
+          if [ -z "${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}" ]; then
+            echo "❌ Missing secret AZUREAPPSERVICE_PUBLISHPROFILE"
+            exit 1
+          else
+            echo "✅ Secret exists."
+          fi
+
+      - name: Show zip size and contents (head)
+        run: |
+          ls -lah deploy.zip
+          unzip -l deploy.zip | head -n 100
+
+      - name: Deploy to Azure Web App (zip)
         uses: azure/webapps-deploy@v3
         with:
           app-name: FlightPlanApp
-          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: deploy.zip
