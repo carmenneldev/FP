@@ -237,6 +237,7 @@ app.post('/api/UserCredential/login', async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+  return;
 });
 
 // ===== FINANCIAL ADVISOR ENDPOINTS =====
@@ -283,6 +284,7 @@ app.post('/api/FinancialAdvisor', async (req, res) => {
     
     res.status(500).json({ error: 'Failed to create advisor' });
   }
+  return;
 });
 
 // Get all Financial Advisors
@@ -311,6 +313,7 @@ app.get('/api/FinancialAdvisor/:id', authenticateToken, async (req, res) => {
     console.error('Error fetching advisor:', error);
     res.status(500).json({ error: 'Failed to fetch advisor' });
   }
+  return;
 });
 
 // ===== USER CREDENTIAL ENDPOINTS =====
@@ -410,6 +413,7 @@ app.put('/api/Customer/:id', authenticateToken, async (req, res) => {
     console.error('Error updating customer:', error);
     res.status(500).json({ error: 'Failed to update customer' });
   }
+  return;
 });
 
 // ===== OTHER DATA MANAGEMENT ENDPOINTS =====
@@ -601,6 +605,7 @@ app.post('/api/Customer/:id/Statement', authenticateToken, upload.single('statem
     }
     res.status(500).json({ error: 'Failed to upload statement' });
   }
+  return;
 });
 
 // Get all statements for a customer
@@ -640,6 +645,7 @@ app.get('/api/Statements/:id/status', authenticateToken, async (req, res) => {
     console.error('Error fetching statement status:', error);
     res.status(500).json({ error: 'Failed to fetch statement status' });
   }
+  return;
 });
 
 // Get transaction summary for customer dashboard
@@ -1349,6 +1355,7 @@ app.get('/api/Profile', authenticateToken, async (req, res) => {
     console.error('Error fetching profile:', error);
     res.status(500).json({ error: 'Failed to fetch profile' });
   }
+  return;
 });
 
 // Update current user's profile data
@@ -1393,6 +1400,7 @@ app.put('/api/Profile', authenticateToken, async (req, res) => {
     
     res.status(500).json({ error: 'Failed to update profile' });
   }
+  return;
 });
 
 // Upload profile picture
@@ -1426,6 +1434,7 @@ app.post('/api/Profile/avatar', authenticateToken, uploadProfileImage.single('av
     console.error('Error uploading profile picture:', error);
     res.status(500).json({ error: 'Failed to upload profile picture' });
   }
+  return;
 });
 
 // Remove profile picture
