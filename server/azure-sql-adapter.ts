@@ -1,4 +1,5 @@
 import * as sql from 'mssql';
+import { getSchemaStatements } from './azure-sql-schema';
 
 // Azure SQL Database Adapter
 // This adapter provides a bridge between our application and Azure SQL Database
@@ -45,6 +46,46 @@ export class AzureSQLAdapter {
       this.pool = new sql.ConnectionPool(this.config);
       await this.pool.connect();
       console.log('✅ Azure SQL Database connection established');
+      
+      // Initialize database schema on first connection
+      await this.initializeSchema();
+    }
+  }
+
+  private async initializeSchema(): Promise<void> {
+    try {
+      console.log('🔄 Initializing Azure SQL Database schema...');
+      
+      const statements = getSchemaStatements();
+      let tablesCreated = 0;
+      
+      for (const statement of statements) {
+        if (statement.trim()) {
+          try {
+            const request = this.pool!.request();
+            await request.query(statement);
+            
+            // Count table creation statements
+            if (statement.includes('CREATE TABLE')) {
+              tablesCreated++;
+            }
+          } catch (error: any) {
+            // Log but don't fail if table already exists or similar non-critical errors
+            if (!error.message.includes('already exists') && !error.message.includes('already an object')) {
+              console.warn('⚠️ Schema statement warning:', error.message);
+            }
+          }
+        }
+      }
+      
+      if (tablesCreated > 0) {
+        console.log(`✅ Azure SQL Database schema initialized successfully (${tablesCreated} tables processed)`);
+      } else {
+        console.log('✅ Azure SQL Database schema already exists');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize Azure SQL Database schema:', error);
+      throw error;
     }
   }
 
