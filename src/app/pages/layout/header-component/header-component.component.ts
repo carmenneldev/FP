@@ -2,9 +2,11 @@ import { NgIf } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { Router, NavigationEnd,ActivatedRoute, RouterLink} from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { ClientStateService } from '../../../services/client-state.service';
 import { MenuItem } from 'primeng/api';
 import { Menu } from "primeng/menu";
+import { environment } from '../../../../environments/environment.dev';
 
 
 
@@ -32,7 +34,11 @@ export class HeaderComponentComponent implements OnInit {
 
 
 
-  constructor(private router: Router,private clientStateService: ClientStateService) {
+  constructor(
+    private router: Router,
+    private clientStateService: ClientStateService,
+    private http: HttpClient
+  ) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -44,11 +50,17 @@ export class HeaderComponentComponent implements OnInit {
 
 
   ngOnInit(): void {
+    // TODO: Load user profile image dynamically
 
     this.items =  [
       {
         label: 'Profile',
         items: [
+          {
+            label: 'Profile',
+            icon: 'pi pi-user',
+            command: () => this.openProfile()
+          },
           {
             label: 'Settings',
             icon: 'pi pi-cog',
@@ -111,6 +123,11 @@ export class HeaderComponentComponent implements OnInit {
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);
+  }
+
+  openProfile() {
+    // Navigate to profile page
+    this.router.navigate(['/home/profile']);
   }
 
   openSettings() {

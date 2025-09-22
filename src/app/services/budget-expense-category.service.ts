@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BudgetExpenseCategory } from '../models/budget-expense-category.model';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment.dev';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 

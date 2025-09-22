@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Customer } from '../models/customer.model';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment.dev';
 
 
 @Injectable({
@@ -61,4 +61,36 @@ export class ClientService {
     this.getAll().subscribe(); // This will trigger count update
   }
 
+  // Statement and transaction related methods
+  getTransactionSummary(customerId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${customerId}/TransactionSummary`);
+  }
+
+  getStatementTransactions(statementId: number): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/Statements/${statementId}/Transactions`);
+  }
+
+  // Get ALL transactions for a customer (across all statements)
+  getCustomerTransactions(customerId: number, options?: {
+    categoryId?: number;
+    direction?: string;
+    search?: string;
+    page?: number;
+    size?: number;
+    sort?: string;
+    from?: string;
+    to?: string;
+  }): Observable<any[]> {
+    let params = '';
+    if (options) {
+      const queryParams = new URLSearchParams();
+      Object.entries(options).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+      params = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/${customerId}/Transactions${params}`);
+  }
 }

@@ -3,7 +3,7 @@
   <div class="client-flex-container">
     <div class="clients-counter-container">
       <div class="clients-wrapper">All Clients</div>
-      <div class="Clients-counter">{{ customers.length }}</div>
+      <div class="Clients-counter">{{ customers.length || 0 }}</div>
     </div>
     
     <div (click)="showClientForm = true" class="add-client-button">
@@ -46,10 +46,6 @@
         </div>
       </div>
 
-    </div>
-
-    <div class="right-icon-container">
-      <img src="assets/Icons/ArrowIcon.png" alt="" class="right-icon">
     </div>
   </div>
 
@@ -106,11 +102,11 @@
           <td>{{ getGenderFromId(client.identityNumber) }}</td>
           <td>{{ getDateOfBirthFromId(client.identityNumber) }}</td>
           <td>
-            {{ client.maritalStatus?.status}}
+            {{ client.maritalStatus?.statusName || 'Not specified' }}
           </td>
          <td>
-            <span [ngClass]="getStatusClass(client.status)">
-              {{ client.status || 'N/A' }}
+            <span [ngClass]="getStatusClass(client.isActive)">
+              {{ client.isActive ? 'Active' : 'Inactive' }}
             </span>
           </td>
 
@@ -121,21 +117,68 @@
           </td>
 
           <!-- Action column -->
-          <td class="action-cell">
+          <td class="action-cell" style="position: relative; overflow: visible;">
             <button
               pButton
               type="button"
               icon="pi pi-ellipsis-v"
               class="transparent-button"
-              (click)="showMenuForClient($event, client, menu)"
+              (click)="toggleClientMenu($event, client)"
             ></button>
-
-            <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body"></p-menu>
           </td>
         </tr>
       </ng-template>
       
     </p-table>
+  </div>
+
+
+  <!-- Client Action Menu - positioned outside table -->
+  <div *ngIf="openMenuClientId !== null" 
+       class="client-action-menu" 
+       [style.left.px]="menuPosition.x" 
+       [style.top.px]="menuPosition.y"
+       style="position: fixed; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 9999; min-width: 150px;">
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onEditClient(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-pencil" style="margin-right: 8px;"></i>
+      Edit
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onPolicyManagement(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-book" style="margin-right: 8px;"></i>
+      Policy Management
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onUploadStatement(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-upload" style="margin-right: 8px;"></i>
+      Upload Statement
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onViewStatements(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-chart-line" style="margin-right: 8px;"></i>
+      Client Dashboard
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer;"
+         (click)="onChangeStatus(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-info" style="margin-right: 8px;"></i>
+      Status
+    </div>
   </div>
 
   <!-- Footer -->
@@ -168,197 +211,151 @@
 
   <!-- Add Client Modal -->
   <app-add-client-form *ngIf="showClientForm" (close)="showClientForm = false"></app-add-client-form>
-</div>
-<!-- <p-dialog
-  header="Upload Client Files"
-  [(visible)]="displayUploadDialog"
+
+  <!-- Bank Statement Upload Dialog -->
+  <p-dialog
+    header="Upload Bank Statement"
+    [(visible)]="displayUploadDialog"
+    [modal]="true"
+    [closable]="true"
+    [style]="{ width: '600px' }"
+    [baseZIndex]="10000"
+    (onHide)="onUploadDialogClose()"
+  >
+    <div class="upload-content" style="padding: 1rem;">
+      <div class="mb-3" *ngIf="selectedClient">
+        <h6 class="mb-2" style="color: #495057;">Client: {{ selectedClient.firstName }} {{ selectedClient.surname }}</h6>
+      </div>
+      
+      <div class="mb-4">
+        <p>Upload a bank statement for automated transaction categorization and analysis.</p>
+        <small class="text-muted">Supported formats: CSV and PDF files up to 10MB</small>
+      </div>
+
+      <!-- File Selection Area -->
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-4">
+        <input 
+          type="file" 
+          #fileInput 
+          accept=".csv,.pdf"
+          (change)="onFileSelected($event)"
+          style="display: none;"
+        >
+        
+        <div *ngIf="!selectedFile && !uploadInProgress">
+          <i class="pi pi-cloud-upload text-4xl text-gray-400 mb-3 block"></i>
+          <p class="mb-2">Drop your CSV or PDF file here or</p>
+          <p-button 
+            label="Browse Files" 
+            icon="pi pi-file"
+            [outlined]="true"
+            (onClick)="fileInput.click()"
+          ></p-button>
+        </div>
+
+        <div *ngIf="selectedFile && !uploadInProgress" class="flex items-center justify-between p-3 bg-gray-50 rounded">
+          <div class="flex items-center gap-3">
+            <i class="pi pi-file-excel text-2xl text-green-600"></i>
+            <div class="text-left">
+              <div class="font-semibold">{{ selectedFile.name }}</div>
+              <div class="text-sm text-gray-600">{{ formatBytes(selectedFile.size) }}</div>
+            </div>
+          </div>
+          <p-button 
+            icon="pi pi-times" 
+            severity="danger"
+            [text]="true"
+            (onClick)="clearSelectedFile()"
+          ></p-button>
+        </div>
+
+        <div *ngIf="uploadInProgress" class="flex items-center justify-center gap-3">
+          <i class="pi pi-spin pi-spinner text-2xl text-blue-600"></i>
+          <span>{{ uploadStatus || 'Processing...' }}</span>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div *ngIf="uploadError" class="p-3 mb-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-center gap-2 text-red-700">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ uploadError }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="uploadResult && !uploadError" class="p-3 mb-4 bg-green-50 border border-green-200 rounded-lg">
+        <div class="flex items-center gap-2 text-green-700">
+          <i class="pi pi-check-circle"></i>
+          <span>Statement uploaded successfully! Processing {{ uploadResult.transactionCount }} transactions.</span>
+        </div>
+      </div>
+
+      <div *ngIf="uploadStatus && !uploadResult && !uploadError" class="text-center mb-4">
+        <span [class]="getStatusClass(uploadStatus)" class="font-semibold">{{ uploadStatus }}</span>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-between">
+        <p-button 
+          label="Cancel" 
+          icon="pi pi-times" 
+          [outlined]="true"
+          (onClick)="displayUploadDialog = false"
+          [disabled]="uploadInProgress"
+        ></p-button>
+        <div class="flex gap-2">
+          <p-button 
+            *ngIf="selectedFile && !uploadInProgress && !uploadResult"
+            label="Upload Statement" 
+            icon="pi pi-upload"
+            (onClick)="uploadSelectedFile()"
+          ></p-button>
+          <p-button 
+            *ngIf="uploadResult"
+            label="View Statements" 
+            icon="pi pi-chart-line"
+            (onClick)="onViewStatements(selectedClient!); displayUploadDialog = false"
+          ></p-button>
+        </div>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+
+<!-- Policy List Table -->
+<p-dialog
+  header="Client Policies"
+  [(visible)]="showPoliciesForClient"
   [modal]="true"
-  [closable]="false"
-  [style]="{ width: '60vw' }"
+  [closable]="true"
+  [style]="{ width: '80vw' }"
   [baseZIndex]="10000"
 >
-  <div class="card">
-    <p-toast></p-toast>
-
-    <p-fileupload
-      name="myfile[]"
-      url="https://www.primefaces.org/cdn/api/upload.php"
-      [multiple]="true"
-      accept="image/*"
-      maxFileSize="1000000"
-      (onUpload)="onTemplatedUpload()"
-      (onSelect)="onSelectedFiles($event)"
-    >
-      <ng-template
-        #header
-        let-files
-        let-chooseCallback="chooseCallback"
-        let-clearCallback="clearCallback"
-        let-uploadCallback="uploadCallback"
-      >
-        <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
-          <div class="flex gap-2">
-            <p-button (onClick)="chooseCallback()" icon="pi pi-images" ... />
-
-            <p-button (onClick)="uploadCallback()" ... />
-
-            <p-button
-              (onClick)="clearCallback()"
-              icon="pi pi-times"
-              [rounded]="true"
-              [outlined]="true"
-              severity="danger"
-              [disabled]="!files || files.length === 0"
-            ></p-button>
-          </div>
-
-          <p-progressbar
-            [value]="totalSizePercent"
-            [showValue]="false"
-            class="w-full md:w-20rem h-1 w-full md:ml-auto"
-          >
-            <span class="whitespace-nowrap">{{ totalSize }}B / 1Mb</span>
-          </p-progressbar>
-        </div>
-      </ng-template>
-
-      <ng-template
-        #content
-        let-files
-        let-uploadedFiles="uploadedFiles"
-        let-removeFileCallback="removeFileCallback"
-        let-removeUploadedFileCallback="removeUploadedFileCallback"
-      >
-        <div class="flex flex-col gap-8 pt-4">
-          <div *ngIf="files?.length > 0">
-            <h5>Pending</h5>
-            <div class="flex flex-wrap gap-4">
-              <div
-                *ngFor="let file of files; let i = index"
-                class="p-8 rounded-border flex flex-col border border-surface items-center gap-4"
-              >
-                <div>
-                  <img
-                    role="presentation"
-                    [alt]="file.name"
-                    [src]="file.objectURL"
-                    width="100"
-                    height="50"
-                  />
-                </div>
-                <span
-                  class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
-                >
-                  {{ file.name }}
-                </span>
-                <div>{{ formatSize(file.size) }}</div>
-                <p-badge value="Pending" severity="warn"></p-badge>
-                <p-button
-                  icon="pi pi-times"
-                  (click)="onRemoveTemplatingFile($event, file, removeFileCallback, i)"
-                  [outlined]="true"
-                  [rounded]="true"
-                  severity="danger"
-                ></p-button>
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="uploadedFiles?.length > 0">
-            <h5>Completed</h5>
-            <div class="flex flex-wrap gap-4">
-              <div
-                *ngFor="let file of uploadedFiles; let i = index"
-                class="card m-0 px-12 flex flex-col border border-surface items-center gap-4"
-              >
-                <div>
-                  <img
-                    role="presentation"
-                    [alt]="file.name"
-                    [src]="file.objectURL"
-                    width="100"
-                    height="50"
-                  />
-                </div>
-                <span
-                  class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
-                >
-                  {{ file.name }}
-                </span>
-                <div>{{ formatSize(file.size) }}</div>
-                <p-badge value="Completed" class="mt-4" severity="success"></p-badge>
-                <p-button
-                  icon="pi pi-times"
-                  (onClick)="removeUploadedFileCallback(i)"
-                  [outlined]="true"
-                  [rounded]="true"
-                  severity="danger"
-                ></p-button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-
-      <ng-template #file></ng-template>
-
-      <ng-template #empty>
-        <div class="flex items-center justify-center flex-col">
-          <i class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"></i>
-          <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
-        </div>
-      </ng-template>
-    </p-fileupload>
-  </div>
-</p-dialog> -->
-
-<p-dialog
-  [(visible)]="displayUploadDialog"
-  header="Upload Bank Statement"
-  [modal]="true"
-  [style]="{ width: '500px', maxWidth: '90vw' }"
-  [dismissableMask]="true"
-  [closable]="true"
-  [draggable]="false"
-  [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
->
-  <div class="upload-dialog-content">
-    <p-fileUpload
-      name="uploadedFiles[]"
-      mode="advanced"
-      [auto]="false"
-      customUpload="true"
-      (uploadHandler)="onTemplatedUpload($event)"
-      (onSelect)="onSelectedFiles($event)"
-      [showUploadButton]="true"
-      [showCancelButton]="true"
-      [multiple]="true"
-      [maxFileSize]="10000000"
-      styleClass="w-full"
-    ></p-fileUpload>
-
-    <p-progressBar
-      [value]="totalSizePercent"
-      [showValue]="false"
-     
-    ></p-progressBar>
-
-    <div *ngIf="totalSize > 0" style="margin-top: 0.5rem; text-align: center;">
-      <p>Total size: {{ formatSize(totalSize) }}</p>
-    </div>
-
-    <div style="display: flex; justify-content: center; width: 100%;">
-      <button
-        pButton
-        type="button"
-        label="Close"
-        class="btn-secondary"
-        (click)="displayUploadDialog = false"
-      ></button>
-    </div>
-
-
-  </div>
+  <p-table [value]="clientPolicies" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Policy Name</th>
+        <th>Underwritten</th>
+        <th>Type</th>
+        <th>Customer</th>
+        <th>Value</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-policy>
+      <tr>
+        <td>{{ policy.policyName }}</td>
+        <td>{{ policy.underwritten }}</td>
+        <td>{{ policy.policyType?.name || policy.policyTypeID }}</td>
+        <td>{{ policy.customer?.fullName || policy.customerID }}</td>
+        <td>{{ policy.value | currency }}</td>
+        <td>{{ policy.policyInitiationDate | date:'shortDate' }}</td>
+        <td>{{ policy.policyExpirationDate | date:'shortDate' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </p-dialog>
 
 
@@ -506,7 +503,7 @@
         </div>
         <div class="flex-container-row">
           <p-floatlabel variant="on">
-            <p-dropdown id="provinceID" [options]="provinces" optionLabel="name" optionValue="id"
+            <p-dropdown id="provinceID" [options]="provinces" optionLabel="provinceName" optionValue="id"
                         formControlName="provinceID"></p-dropdown>
             <label for="provinceID">Province</label>
           </p-floatlabel>
@@ -519,7 +516,7 @@
       <div class="grid-container">
         <div class="flex-container-row">
           <p-floatlabel variant="on">
-            <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="status" optionValue="id"
+            <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="statusName" optionValue="id"
                         formControlName="maritalStatusID"></p-dropdown>
             <label for="maritalStatusID">Marital Status</label>
           </p-floatlabel>
@@ -600,6 +597,14 @@
         <p-floatLabel variant="on">
           <input pInputText id="policyName" formControlName="policyName" class="full-width" />
           <label for="policyName">Policy Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Policy Number -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText id="policyNumber" formControlName="policyNumber" class="full-width" />
+          <label for="policyNumber">Policy Number</label>
         </p-floatLabel>
       </div>
 
@@ -716,3 +721,183 @@
 
 
 
+
+<!-- Client Dashboard Modal -->
+<p-dialog 
+  header="Client Dashboard - {{statementDashboardClient?.firstName}} {{statementDashboardClient?.surname}}" 
+  [(visible)]="showStatementDashboard" 
+  [modal]="true" 
+  [responsive]="true"
+  [maximizable]="true"
+  [style]="{width: '95vw', height: '90vh'}"
+  (onHide)="onStatementDashboardClose()">
+  
+  <div class="statement-dashboard-content">
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingStatementData" class="loading-container" style="text-align: center; padding: 2rem;">
+      <p-progressSpinner strokeWidth="4" animationDuration="1s" [style]="{'width': '60px', 'height': '60px'}"></p-progressSpinner>
+      <p style="margin-top: 1rem; color: #666;">Loading statement data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="statementDataError && !isLoadingStatementData" class="error-container" style="text-align: center; padding: 2rem;">
+      <p style="color: #f44336; font-weight: 500;">{{statementDataError}}</p>
+      <button type="button" pButton label="Try Again" (click)="loadStatementData(statementDashboardClient!.id)" class="p-button-sm"></button>
+    </div>
+
+    <!-- Data Content -->
+    <div *ngIf="!isLoadingStatementData && !statementDataError">
+      
+      <!-- Dashboard Grid Layout -->
+      <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        
+        <!-- Pie Chart Section -->
+        <div class="chart-section">
+          <h3 class="section-title">Spending Breakdown</h3>
+          <div *ngIf="categorySummary.length === 0" class="no-data-message" style="text-align: center; padding: 2rem; color: #666;">
+            <p>No transaction data available.</p>
+          </div>
+          <div *ngIf="categorySummary.length > 0" style="height: 600px; min-height: 600px; width: 100%; min-width: 500px;">
+            <p-chart type="doughnut" 
+                     [data]="pieChartData" 
+                     [options]="pieChartOptions"
+                     width="500"
+                     height="500"
+                     style="display: block; width: 500px !important; height: 500px !important;">
+            </p-chart>
+          </div>
+        </div>
+
+        <!-- Category Summary Table -->
+        <div class="category-section">
+          <h3 class="section-title">Category Summary</h3>
+          <div *ngIf="categorySummary.length === 0" class="no-data-message" style="text-align: center; padding: 2rem; color: #666;">
+            <p>No transaction data available.</p>
+          </div>
+          <p-table *ngIf="categorySummary.length > 0" [value]="categorySummary" [scrollable]="true" scrollHeight="350px">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 60px">#</th>
+                <th style="width: 200px">Category</th>
+                <th style="width: 120px">Total (R)</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-category let-i="rowIndex">
+              <tr>
+                <td>{{i + 1}}</td>
+                <td>
+                  <span class="category-tag" [style]="{'background-color': category.color, 'color': 'white', 'padding': '2px 8px', 'border-radius': '4px', 'font-size': '12px'}">
+                    {{category.name}}
+                  </span>
+                </td>
+                <td class="category-total" style="font-weight: 500;">R {{category.total.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+
+      <!-- Extracted Transactions Section (Future Enhancement) -->
+      <div class="transactions-section" *ngIf="extractedTransactions.length > 0">
+        <h3 class="section-title">Individual Transactions ({{extractedTransactions.length}} total)</h3>
+        <p-table [value]="extractedTransactions" [scrollable]="true" scrollHeight="400px">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 60px">#</th>
+              <th style="width: 120px">Date</th>
+              <th style="width: 300px">Description</th>
+              <th style="width: 120px">Amount (R)</th>
+              <th style="width: 150px">Category</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-transaction let-i="rowIndex">
+            <tr>
+              <td>{{i + 1}}</td>
+              <td>{{transaction.date | date:'yyyy-MM-dd'}}</td>
+              <td>{{transaction.description}}</td>
+              <td [class]="transaction.amount >= 0 ? 'positive-amount' : 'negative-amount'">
+                {{transaction.amount >= 0 ? '' : '-'}}R {{Math.abs(transaction.amount).toFixed(2)}}
+              </td>
+              <td>
+                <span class="category-tag" [style]="{'background-color': transaction.categoryColor}">
+                  {{transaction.category}}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Client Policies Section -->
+    <div class="client-policies-section" style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+      <h3 class="section-title" style="margin-bottom: 1rem; color: #275368; font-weight: 600; display: flex; align-items: center;">
+        <i class="pi pi-book" style="margin-right: 8px; color: #275368;"></i>
+        Client Policies ({{ clientPolicies.length }} total)
+      </h3>
+      
+      <div *ngIf="clientPolicies.length === 0" class="no-data-message" style="text-align: center; padding: 2rem; color: #666;">
+        <p>No policies found for this client.</p>
+        <p style="font-size: 0.9em; margin-top: 0.5rem;">Use "Policy Management" from the client menu to add policies.</p>
+      </div>
+
+      <p-table *ngIf="clientPolicies.length > 0" [value]="clientPolicies" [paginator]="true" [rows]="5" [responsive]="true" 
+               [scrollable]="true" scrollHeight="300px" 
+               styleClass="p-datatable-striped p-datatable-gridlines">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 150px">Policy Number</th>
+            <th style="width: 200px">Policy Name</th>
+            <th style="width: 120px">Type</th>
+            <th style="width: 150px">Premium</th>
+            <th style="width: 150px">Coverage</th>
+            <th style="width: 120px">Start Date</th>
+            <th style="width: 120px">End Date</th>
+            <th style="width: 120px">Underwritten</th>
+            <th style="width: 100px">Status</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-policy>
+          <tr>
+            <td>
+              <span style="font-weight: 600; color: #275368;">{{ policy.policyNumber }}</span>
+            </td>
+            <td>{{ policy.policyName || 'N/A' }}</td>
+            <td>
+              <span class="policy-type-badge" 
+                    style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                {{ getPolicyTypeName(policy.policyTypeID) }}
+              </span>
+            </td>
+            <td style="font-weight: 500;">
+              <span *ngIf="policy.premiumAmount">R {{ formatCurrency(policy.premiumAmount) }}</span>
+              <span *ngIf="!policy.premiumAmount" style="color: #666;">-</span>
+            </td>
+            <td style="font-weight: 500;">
+              <span *ngIf="policy.coverageAmount">R {{ formatCurrency(policy.coverageAmount) }}</span>
+              <span *ngIf="!policy.coverageAmount" style="color: #666;">-</span>
+            </td>
+            <td>
+              <span *ngIf="policy.startDate">{{ policy.startDate | date:'yyyy-MM-dd' }}</span>
+              <span *ngIf="!policy.startDate" style="color: #666;">-</span>
+            </td>
+            <td>
+              <span *ngIf="policy.endDate">{{ policy.endDate | date:'yyyy-MM-dd' }}</span>
+              <span *ngIf="!policy.endDate" style="color: #666;">-</span>
+            </td>
+            <td>{{ policy.underwritten || '-' }}</td>
+            <td>
+              <span [class]="policy.isActive ? 'status-active' : 'status-inactive'"
+                    style="padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 500;">
+                {{ policy.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+  </div>
+</p-dialog>

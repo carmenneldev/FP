@@ -50,6 +50,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'client-statements/:id',
+    loadComponent: () => import('./pages/client-statements/client-statements.component').then(m => m.ClientStatementsComponent),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'client',
     component: ClientOverviewComponent
   },
@@ -65,6 +70,11 @@ export const routes: Routes = [
       { path: 'crossSelling', component: CrossSellingComponent },
       { path: 'calender', component: CalenderComponent },
       { path: 'settings', component: DataManagementComponent },
+      { 
+        path: 'profile', 
+        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [AuthGuard]
+      },
       { path: 'cashflow/:id', component: CashFlowComponent },
       { path: 'assets/:id', component: AssertsLiabilitiesComponent },
       { path: 'legacy/:id', component: ProtectingMyLegacyComponent },

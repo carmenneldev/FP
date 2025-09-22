@@ -4,14 +4,14 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import SegaBlue from '@primeng/themes/lara';
-import { provideHttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './services/auth.interceptor';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './services/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
     providePrimeNG({
         theme: {
@@ -20,7 +20,6 @@ export const appConfig: ApplicationConfig = {
             darkModeSelector: '.my-app-dark'
           }
         }
-    }),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    })
   ]
 };

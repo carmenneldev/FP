@@ -20,7 +20,9 @@ import { DataCleanerHelper } from '../../shared/data-cleaner.helper';
 import { Dialog } from "primeng/dialog";
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { PeriodService } from '../../shared/PeriodService/period.service';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable, of } from 'rxjs';
+import { map, catchError, forkJoin } from 'rxjs';
+import { PolicyService } from '../../services/policy.service';
 
 
 
@@ -64,6 +66,14 @@ export class AgentDashboardComponent implements OnInit{
   isDropdownOpen = false;
 
   clientCount$!: Observable<number>;
+  
+  // Policy statistics
+  activePoliciesCount: number = 0;
+  shortTermPoliciesCount: number = 0;
+  longTermPoliciesCount: number = 0;
+  
+  // Current month for "Month to Target"
+  currentMonthRange: string = '';
 
 
 
@@ -98,6 +108,7 @@ policies = [
           private userContext: UserContextService,
           public dataCleanerHelper: DataCleanerHelper,
           private periodService: PeriodService,
+          private policyService: PolicyService
          
   ) {}
 
@@ -119,7 +130,9 @@ policies = [
     }
 
      this.loadTopClients();
-
+     this.loadPolicyStatistics();
+     this.setupClientCount();
+     this.setCurrentMonthDefaults();
      this.IteratePolicies();
 
   }
@@ -134,6 +147,91 @@ policies = [
         console.error('Failed to load clients:', err);
       }
     });
+  }
+
+  loadPolicyStatistics() {
+    // Get both clients and policies, then filter policies for this advisor's clients only
+    forkJoin({
+      clients: this.clientService.getAll(),
+      policies: this.policyService.getAll()
+    }).subscribe({
+      next: ({ clients, policies }) => {
+        const now = new Date();
+        let activeCount = 0;
+        let shortTermCount = 0;
+        let longTermCount = 0;
+        
+        // Get client IDs for this advisor
+        const clientIds = new Set(clients.map(client => client.id));
+        
+        // Filter policies to only include those belonging to this advisor's clients
+        const advisorPolicies = policies.filter(policy => clientIds.has(policy.customerID));
+        
+        // Single pass through advisor's policies with proper edge case handling
+        advisorPolicies.forEach(p => {
+          // Skip policies with missing/invalid dates
+          if (!p.policyInitiationDate || !p.policyExpirationDate) return;
+          
+          const startDate = new Date(p.policyInitiationDate);
+          const endDate = new Date(p.policyExpirationDate);
+          
+          // Skip policies with invalid date ranges
+          if (endDate <= startDate) return;
+          
+          // Count active policies (current date between start and end)
+          if (now >= startDate && now <= endDate) {
+            activeCount++;
+          }
+          
+          // Calculate term length with day accuracy
+          const timeDiff = endDate.getTime() - startDate.getTime();
+          const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+          const monthsDiff = daysDiff / 30.44; // Average month length
+          
+          // Classify as short-term (≤12 months) or long-term (>12 months)
+          if (monthsDiff <= 12) {
+            shortTermCount++;
+          } else {
+            longTermCount++;
+          }
+        });
+        
+        this.activePoliciesCount = activeCount;
+        this.shortTermPoliciesCount = shortTermCount;
+        this.longTermPoliciesCount = longTermCount;
+      },
+      error: (err) => {
+        console.error('Failed to load policy statistics:', err);
+      }
+    });
+  }
+
+  setupClientCount() {
+    this.clientCount$ = this.clientService.getAll().pipe(
+      map(clients => clients.length),
+      catchError(err => {
+        console.error('Failed to load client count:', err);
+        return of(0);
+      })
+    );
+  }
+
+  setCurrentMonthDefaults() {
+    const now = new Date();
+    
+    // Set fallback date range to current month
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+    this.displayDateRange = `${firstDay.toLocaleDateString('en-GB', options)} - ${lastDay.toLocaleDateString('en-GB', options)}`;
+    
+    // Set current month range for "Month to Target"
+    const dayOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short' };
+    this.currentMonthRange = `${firstDay.toLocaleDateString('en-GB', dayOptions)} - ${lastDay.toLocaleDateString('en-GB', dayOptions)}`;
+    
+    // Set month dropdown to default to "1 Month" (since these are duration options, not month names)
+    this.selectedMonth = this.monthOptions[0]; // Default to first option: "1 Month"
   }
 
   
@@ -178,7 +276,17 @@ policies = [
 
 
     get fallbackDateRange(): string {
-      return this.displayDateRange || '01 Jan - 21 Jan, 2024';
+      if (this.displayDateRange) {
+        return this.displayDateRange;
+      }
+      
+      // Default to current month if no date range is set
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+      
+      return `${firstDay.toLocaleDateString('en-GB', options)} - ${lastDay.toLocaleDateString('en-GB', options)}`;
     }
 
 

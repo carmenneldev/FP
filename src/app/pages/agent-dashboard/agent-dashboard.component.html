@@ -41,21 +41,21 @@
             <div class="flex-container-details">
                 <div class="container">
                     <div class="item">Active Policies</div>
-                    <div class="item font-s">142</div>
+                    <div class="item font-s">{{ activePoliciesCount }}</div>
                     <div class="item flex-img-container">
                         <img [src]="upArrowIcon" alt="">
                     </div>
                 </div>
                 <div class="container">
                     <div class="item">Short Term Policies</div>
-                    <div class="item font-s">100</div>
+                    <div class="item font-s">{{ shortTermPoliciesCount }}</div>
                     <div class="item flex-img-container">
                         <img [src]="upArrowIcon" alt="">
                     </div>
                 </div>
                 <div class="container">
                     <div class="item">Long Term Policies</div>
-                    <div class="item font-s">50</div>
+                    <div class="item font-s">{{ longTermPoliciesCount }}</div>
                     <div class="item flex-img-container">
                         <img [src]="downArrowIcon" alt="">
                     </div>
@@ -75,7 +75,7 @@
                 </div>
                 <div class="container">
                     <div class="item">Opportunities</div>
-                    <div class="item font-s">50</div>
+                    <div class="item font-s">0</div>
                     <div class="item flex-img-container">
                         <img [src]="proceedIcon" alt="">
                     </div>
@@ -179,7 +179,7 @@
                 <div class="grid-commisionClass">
                     <div class="flex-col-1">
                         <div class="title font-size font-size-2">Month to Target</div>
-                        <div class="title title-2">01 Jan - 31 Jan</div>
+                        <div class="title title-2">{{ currentMonthRange }}</div>
                     </div>
                     <div class="col-2">
                         <div class="amount-container">

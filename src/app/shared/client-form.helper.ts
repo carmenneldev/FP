@@ -25,7 +25,7 @@ export class ClientFormHelper {
 
   static toPayload(formValue: any,advisorId: number ): any {
   return {
-    id: 0,
+    // DO NOT include 'id' for new client creation - let database auto-generate it
     financialAdvisorID: advisorId,
     firstName: formValue.firstName,
     surname: formValue.surname,

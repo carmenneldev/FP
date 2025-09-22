@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserCredential } from '../models/user-credential.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment.dev';
 
 export interface LoginRequest {
   username: string;

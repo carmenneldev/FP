@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/flight_plan",
+            "outputPath": "dist/flight-plan",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -67,6 +67,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "host": "0.0.0.0",
+            "port": 5000,
+            "disableHostCheck": true,
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "flight_plan:build:production"

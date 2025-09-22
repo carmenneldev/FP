@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Policy } from '../models/policy.model';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment.dev';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

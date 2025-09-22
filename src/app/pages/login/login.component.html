@@ -169,6 +169,13 @@
                 <a class="reset-password-link" routerLink="/reset-password">Forgot password?</a>
               </div>
 
+              <!-- Login Error Message -->
+              <div *ngIf="error" class="error-message-container">
+                <p-message severity="error" size="small" variant="simple">
+                  {{ error }}
+                </p-message>
+              </div>
+
               <!-- Login Button -->
               <button
                 type="button"

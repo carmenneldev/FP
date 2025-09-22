@@ -122,9 +122,9 @@ export class LoginComponent {
         localStorage.setItem('userEmail', JSON.stringify(response.user.username));
         localStorage.setItem('userId', JSON.stringify(response.user.userID));
 
-        //  Saving  advisor ID separately (assumes 'id' holds the advisor's ID)
-        if (response.user?.id) {
-          localStorage.setItem('advisorId', response.user.id.toString());
+        //  Saving  advisor ID separately (use userID which is the actual advisor ID)
+        if (response.user?.userID) {
+          localStorage.setItem('advisorId', response.user.userID.toString());
         }
 
         this.router.navigate(['/home']); 

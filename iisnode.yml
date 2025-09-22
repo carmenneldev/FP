@@ -1,0 +1,21 @@
+# IISNode configuration for Azure App Service
+# This file overrides settings from web.config
+
+# Logging
+loggingEnabled: true
+logDirectory: logs
+
+# Performance
+nodeProcessCountPerApplication: 1
+maxConcurrentRequestsPerProcess: 1024
+maxRequestBufferSize: 65536
+
+# Security
+devErrorsEnabled: false
+debuggingEnabled: false
+
+# Environment
+node_env: production
+
+# File watching (disabled for production)
+watchedFiles: ""
