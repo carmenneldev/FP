@@ -10,6 +10,13 @@ FlightPlan is a comprehensive Angular application for managing clients, policies
 - **Backend**: External API expected at `/api` endpoint (placeholder configured)
 
 ## Recent Changes
+### Azure App Service Port Fix (Sept 22, 2025)
+- **CRITICAL FIX**: Updated server port configuration for Azure App Service compatibility
+  - server/index.ts: Now uses `PORT || WEBSITES_PORT || 8080` instead of hardcoded 3001
+  - server.js: Now uses `PORT || WEBSITES_PORT || 8080` instead of hardcoded 3000
+  - **Issue**: Azure App Service expects apps to run on port 8080, but app was defaulting to wrong ports
+  - **Result**: Fixed "Container didn't respond to HTTP pings on port: 8080" startup failure
+
 ### Azure Deployment Configuration (Sept 22, 2025)
 - **Production Build System**: Created comprehensive Azure deployment configuration
   - Updated package.json with Azure-compatible build scripts and Node.js 18.x engine specification

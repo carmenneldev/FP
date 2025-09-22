@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || process.env.WEBSITES_PORT || 8080;
 
 // Middleware for parsing JSON and URL-encoded bodies
 app.use(express.json({ limit: '50mb' }));

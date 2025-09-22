@@ -9,7 +9,7 @@ import * as path from 'path';
 import { createHash } from 'crypto';
 import Papa from 'papaparse';
 import pdfParse from 'pdf-parse';
-import { db, initializeAzureSQL } from './db';
+import { db, initializeAzureSQL, checkDatabaseHealth, dbConfig } from './db';
 import { DatabaseService } from './database-service';
 import { 
   financialAdvisors, 
@@ -33,7 +33,7 @@ import { eq, desc, sql, and, gte, lte } from 'drizzle-orm';
 import { CategorizationService } from './categorization.service';
 
 const app = express();
-const PORT = parseInt(process.env['PORT'] || '3001');
+const PORT = parseInt(process.env['PORT'] || process.env['WEBSITES_PORT'] || '8080');
 // Enforce JWT secret in production
 const JWT_SECRET = process.env['JWT_SECRET'];
 if (!JWT_SECRET) {
@@ -1464,6 +1464,35 @@ app.use('/uploads/profile-images', express.static(path.join(__dirname, '../uploa
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Database health check endpoint
+app.get('/api/health/database', async (req, res) => {
+  try {
+    const health = await checkDatabaseHealth();
+    res.json(health);
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'unhealthy', 
+      error: (error as Error).message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Environment debug endpoint (for Azure troubleshooting)
+app.get('/api/debug/env', (req, res) => {
+  res.json({
+    nodeEnv: process.env['NODE_ENV'],
+    dbType: process.env['DB_TYPE'],
+    hasAzureSqlServer: !!process.env['AZURE_SQL_SERVER'],
+    hasAzureSqlDatabase: !!process.env['AZURE_SQL_DATABASE'],
+    hasAzureSqlUser: !!process.env['AZURE_SQL_USER'],
+    hasAzureSqlPassword: !!process.env['AZURE_SQL_PASSWORD'],
+    hasJwtSecret: !!process.env['JWT_SECRET'],
+    databaseConfigType: dbConfig.type,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Export the router for production use
