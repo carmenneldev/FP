@@ -1,9 +1,8 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
-import { drizzle as drizzleMssql } from 'drizzle-orm/node-postgres';
-import * as sql from 'mssql';
 import ws from "ws";
 import * as schema from "../shared/schema";
+import { AzureSQLAdapter } from './azure-sql-adapter';
 
 // Environment-specific database configuration
 interface DatabaseConfig {
@@ -14,8 +13,8 @@ interface DatabaseConfig {
 }
 
 const getDatabaseConfig = (): DatabaseConfig => {
-  const environment = process.env.NODE_ENV || 'development';
-  const dbType = process.env.DB_TYPE || 'postgresql';
+  const environment = process.env['NODE_ENV'] || 'development';
+  const dbType = process.env['DB_TYPE'] || 'postgresql';
   
   if (environment === 'production' && dbType === 'azure-sql') {
     return {
@@ -35,13 +34,14 @@ const getDatabaseConfig = (): DatabaseConfig => {
 };
 
 const dbConfig = getDatabaseConfig();
-console.log(`🗄️  Database configuration: ${dbConfig.type} (${process.env.NODE_ENV || 'development'})`);
+console.log(`🗄️  Database configuration: ${dbConfig.type} (${process.env['NODE_ENV'] || 'development'})`);
 
 // Database connection setup
 let db: any;
 let pool: any;
+let azureSqlAdapter: AzureSQLAdapter | null = null;
 
-if (dbConfig.type === 'azure-sql' && process.env.NODE_ENV === 'production') {
+if (dbConfig.type === 'azure-sql' && process.env['NODE_ENV'] === 'production') {
   // Azure SQL Server configuration for production
   console.log('🔄 Configuring Azure SQL Server database connection...');
   
@@ -54,41 +54,24 @@ if (dbConfig.type === 'azure-sql' && process.env.NODE_ENV === 'production') {
     console.log('🔄 Falling back to PostgreSQL configuration...');
   } else {
     try {
-      // Configure Azure SQL connection
-      const azureConfig: sql.config = {
-        server: process.env.AZURE_SQL_SERVER!,
-        database: process.env.AZURE_SQL_DATABASE!,
-        user: process.env.AZURE_SQL_USER!,
-        password: process.env.AZURE_SQL_PASSWORD!,
+      // Create Azure SQL adapter instance
+      azureSqlAdapter = new AzureSQLAdapter({
+        server: process.env['AZURE_SQL_SERVER']!,
+        database: process.env['AZURE_SQL_DATABASE']!,
+        user: process.env['AZURE_SQL_USER']!,
+        password: process.env['AZURE_SQL_PASSWORD']!,
         port: 1433,
-        options: {
-          encrypt: true, // Required for Azure SQL
-          trustServerCertificate: false,
-          enableArithAbort: true,
-          requestTimeout: dbConfig.requestTimeout,
-          connectionTimeout: dbConfig.connectionTimeout
-        },
-        pool: {
-          max: 10,
-          min: 0,
-          idleTimeoutMillis: 30000
-        }
-      };
-      
-      // Create connection pool
-      pool = new sql.ConnectionPool(azureConfig);
-      
-      // Initialize connection
-      pool.connect().then(() => {
-        console.log('✅ Azure SQL Server database connection established');
-      }).catch((err) => {
-        console.error('❌ Azure SQL connection failed:', err);
-        throw err;
+        connectionTimeout: dbConfig.connectionTimeout,
+        requestTimeout: dbConfig.requestTimeout
       });
       
-      // Note: For now, we'll continue using the PostgreSQL schema
-      // In a full migration, you'd need to update the schema for SQL Server types
-      console.log('⚠️  Using PostgreSQL schema with Azure SQL - schema migration needed for full compatibility');
+      // Initialize connection with proper async handling
+      // Note: Connection will be established before serving requests in production
+      console.log('⏳ Azure SQL adapter created, will connect during server startup');
+      
+      // Set db to the adapter for consistent interface
+      db = azureSqlAdapter;
+      console.log('✅ Azure SQL database configured with custom adapter');
       
     } catch (error) {
       console.error('❌ Azure SQL setup failed:', error);
@@ -103,14 +86,14 @@ if (!db) {
   
   neonConfig.webSocketConstructor = ws;
   
-  if (!process.env.DATABASE_URL) {
+  if (!process.env['DATABASE_URL']) {
     throw new Error(
       "DATABASE_URL must be set. Did you forget to provision a database?"
     );
   }
   
   pool = new Pool({ 
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env['DATABASE_URL'],
     connectionTimeoutMillis: dbConfig.connectionTimeout
   });
   
@@ -119,15 +102,31 @@ if (!db) {
   console.log('✅ PostgreSQL database connection configured');
 }
 
-export { pool, db, dbConfig };
+export { pool, db, dbConfig, azureSqlAdapter };
+
+// Initialize Azure SQL connection for production
+export const initializeAzureSQL = async () => {
+  if (azureSqlAdapter && dbConfig.type === 'azure-sql') {
+    console.log('🔄 Connecting to Azure SQL Database...');
+    await azureSqlAdapter.connect();
+    console.log('✅ Azure SQL Database connected successfully');
+  }
+};
 
 // Database health check function
 export const checkDatabaseHealth = async () => {
   try {
-    const result = await pool.query('SELECT 1 as health');
-    return { status: 'healthy', type: dbConfig.type, timestamp: new Date().toISOString() };
+    if (azureSqlAdapter) {
+      // Use Azure SQL adapter health check
+      const result = await azureSqlAdapter.healthCheck();
+      return { type: dbConfig.type, ...result };
+    } else {
+      // Use PostgreSQL pool health check
+      const result = await pool.query('SELECT 1 as health');
+      return { status: 'healthy', type: dbConfig.type, timestamp: new Date().toISOString() };
+    }
   } catch (error) {
     console.error('Database health check failed:', error);
-    return { status: 'unhealthy', type: dbConfig.type, error: error.message, timestamp: new Date().toISOString() };
+    return { status: 'unhealthy', type: dbConfig.type, error: (error as Error).message, timestamp: new Date().toISOString() };
   }
 };

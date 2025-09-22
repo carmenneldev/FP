@@ -9,7 +9,8 @@ import * as path from 'path';
 import { createHash } from 'crypto';
 import Papa from 'papaparse';
 import pdfParse from 'pdf-parse';
-import { db } from './db';
+import { db, initializeAzureSQL } from './db';
+import { DatabaseService } from './database-service';
 import { 
   financialAdvisors, 
   userCredentials, 
@@ -36,18 +37,39 @@ const PORT = parseInt(process.env['PORT'] || '3001');
 // Enforce JWT secret in production
 const JWT_SECRET = process.env['JWT_SECRET'];
 if (!JWT_SECRET) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env['NODE_ENV'] === 'production') {
     throw new Error('JWT_SECRET environment variable must be set in production');
   }
   console.warn('⚠️  Using default JWT secret for development. Set JWT_SECRET environment variable for production.');
 }
 const SAFE_JWT_SECRET = JWT_SECRET || 'dev-only-secret-change-for-production';
 
-// Initialize categorization service
-(async () => {
-  await CategorizationService.initialize();
-  console.log('✅ Categorization service initialized');
-})();
+// Initialize services and start server
+async function initializeApp() {
+  try {
+    // Initialize Azure SQL if needed
+    await initializeAzureSQL();
+    
+    // Initialize categorization service
+    await CategorizationService.initialize();
+    console.log('✅ Categorization service initialized');
+    
+    // Only start server if this file is executed directly (development mode)
+    if (require.main === module) {
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Development server running on port ${PORT}`);
+        console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+        console.log(`🌐 External access: https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:${PORT}/api/health`);
+      });
+    }
+  } catch (error) {
+    console.error('❌ Failed to initialize application:', error);
+    process.exit(1);
+  }
+}
+
+// Start the application
+initializeApp();
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -173,10 +195,7 @@ app.post('/api/UserCredential/login', async (req, res) => {
     
 
     // Find user by username
-    const [userCred] = await db
-      .select()
-      .from(userCredentials)
-      .where(eq(userCredentials.username, username));
+    const userCred = await DatabaseService.getUserCredentialByUsername(username);
 
     if (!userCred) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -191,11 +210,7 @@ app.post('/api/UserCredential/login', async (req, res) => {
     // Get user details based on userType
     let userData = null;
     if (userCred.userType === 'Advisor') {
-      const [advisor] = await db
-        .select()
-        .from(financialAdvisors)
-        .where(eq(financialAdvisors.id, userCred.userID));
-      userData = advisor;
+      userData = await DatabaseService.getFinancialAdvisorById(userCred.userID);
     }
 
     // Generate JWT token
@@ -211,10 +226,7 @@ app.post('/api/UserCredential/login', async (req, res) => {
     );
 
     // Update last login
-    await db
-      .update(userCredentials)
-      .set({ lastLogin: new Date() })
-      .where(eq(userCredentials.id, userCred.id));
+    await DatabaseService.updateUserLastLogin(userCred.id);
 
     res.json({
       token,
@@ -249,10 +261,7 @@ app.post('/api/FinancialAdvisor', async (req, res) => {
       // Let database handle id (auto-generated), createdAt/updatedAt (defaultNow)
     };
     
-    const [newAdvisor] = await db
-      .insert(financialAdvisors)
-      .values(advisorData)
-      .returning();
+    const newAdvisor = await DatabaseService.createFinancialAdvisor(advisorData);
 
     res.status(201).json(newAdvisor);
   } catch (error) {
@@ -279,7 +288,7 @@ app.post('/api/FinancialAdvisor', async (req, res) => {
 // Get all Financial Advisors
 app.get('/api/FinancialAdvisor', authenticateToken, async (req, res) => {
   try {
-    const advisors = await db.select().from(financialAdvisors);
+    const advisors = await DatabaseService.getFinancialAdvisors();
     res.json(advisors);
   } catch (error) {
     console.error('Error fetching advisors:', error);
@@ -291,10 +300,7 @@ app.get('/api/FinancialAdvisor', authenticateToken, async (req, res) => {
 app.get('/api/FinancialAdvisor/:id', authenticateToken, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const [advisor] = await db
-      .select()
-      .from(financialAdvisors)
-      .where(eq(financialAdvisors.id, id));
+    const advisor = await DatabaseService.getFinancialAdvisorById(id);
 
     if (!advisor) {
       return res.status(404).json({ error: 'Advisor not found' });
@@ -327,13 +333,7 @@ app.post('/api/UserCredential', async (req, res) => {
       // Let database handle createdAt/updatedAt with defaultNow()
     };
     
-    const [newUserCred] = await db
-      .insert(userCredentials)
-      .values(userCredData)
-      .returning();
-
-    // Don't return the password hash
-    const { passwordHash: _, ...userCredWithoutPassword } = newUserCred;
+    const userCredWithoutPassword = await DatabaseService.createUserCredential(userCredData);
     res.status(201).json(userCredWithoutPassword);
   } catch (error) {
     console.error('Error creating user credential:', error);
@@ -350,7 +350,7 @@ app.post('/api/UserCredential', async (req, res) => {
 // Get all Provinces
 app.get('/api/Province', async (req, res) => {
   try {
-    const provinceList = await db.select().from(provinces);
+    const provinceList = await DatabaseService.getProvinces();
     res.json(provinceList);
   } catch (error) {
     console.error('Error fetching provinces:', error);
@@ -361,10 +361,7 @@ app.get('/api/Province', async (req, res) => {
 // Create Province
 app.post('/api/Province', authenticateToken, async (req, res) => {
   try {
-    const [newProvince] = await db
-      .insert(provinces)
-      .values(req.body)
-      .returning();
+    const newProvince = await DatabaseService.createProvince(req.body);
     res.status(201).json(newProvince);
   } catch (error) {
     console.error('Error creating province:', error);
@@ -377,14 +374,7 @@ app.post('/api/Province', authenticateToken, async (req, res) => {
 // Get all Customers
 app.get('/api/Customer', authenticateToken, async (req, res) => {
   try {
-    const customerList = await db.query.customers.findMany({
-      with: {
-        maritalStatus: true,
-        preferredLanguage: true,
-        province: true,
-        qualification: true
-      }
-    });
+    const customerList = await DatabaseService.getCustomers();
     res.json(customerList);
   } catch (error) {
     console.error('Error fetching customers:', error);
@@ -395,10 +385,7 @@ app.get('/api/Customer', authenticateToken, async (req, res) => {
 // Create Customer
 app.post('/api/Customer', authenticateToken, async (req, res) => {
   try {
-    const [newCustomer] = await db
-      .insert(customers)
-      .values(req.body)
-      .returning();
+    const newCustomer = await DatabaseService.createCustomer(req.body);
     res.status(201).json(newCustomer);
   } catch (error) {
     console.error('Error creating customer:', error);
@@ -412,11 +399,7 @@ app.put('/api/Customer/:id', authenticateToken, async (req, res) => {
     const id = parseInt(req.params.id);
     const { id: bodyId, createdAt, updatedAt, ...updateData } = req.body;
     
-    const [updatedCustomer] = await db
-      .update(customers)
-      .set({ ...updateData, updatedAt: new Date() })
-      .where(eq(customers.id, id))
-      .returning();
+    const updatedCustomer = await DatabaseService.updateCustomer(id, updateData);
 
     if (!updatedCustomer) {
       return res.status(404).json({ error: 'Customer not found' });
@@ -434,7 +417,7 @@ app.put('/api/Customer/:id', authenticateToken, async (req, res) => {
 // Marital Status endpoints
 app.get('/api/MaritalStatus', async (req, res) => {
   try {
-    const statuses = await db.select().from(maritalStatuses);
+    const statuses = await DatabaseService.getMaritalStatuses();
     res.json(statuses);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch marital statuses' });
@@ -443,10 +426,7 @@ app.get('/api/MaritalStatus', async (req, res) => {
 
 app.post('/api/MaritalStatus', authenticateToken, async (req, res) => {
   try {
-    const [newStatus] = await db
-      .insert(maritalStatuses)
-      .values(req.body)
-      .returning();
+    const newStatus = await DatabaseService.createMaritalStatus(req.body);
     res.status(201).json(newStatus);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create marital status' });
@@ -456,7 +436,7 @@ app.post('/api/MaritalStatus', authenticateToken, async (req, res) => {
 // Preferred Language endpoints
 app.get('/api/PreferredLanguage', async (req, res) => {
   try {
-    const languages = await db.select().from(preferredLanguages);
+    const languages = await DatabaseService.getPreferredLanguages();
     res.json(languages);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch languages' });
@@ -465,10 +445,7 @@ app.get('/api/PreferredLanguage', async (req, res) => {
 
 app.post('/api/PreferredLanguage', authenticateToken, async (req, res) => {
   try {
-    const [newLanguage] = await db
-      .insert(preferredLanguages)
-      .values(req.body)
-      .returning();
+    const newLanguage = await DatabaseService.createPreferredLanguage(req.body);
     res.status(201).json(newLanguage);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create language' });
@@ -478,7 +455,7 @@ app.post('/api/PreferredLanguage', authenticateToken, async (req, res) => {
 // Policy Type endpoints
 app.get('/api/PolicyType', async (req, res) => {
   try {
-    const types = await db.select().from(policyTypes);
+    const types = await DatabaseService.getPolicyTypes();
     res.json(types);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch policy types' });
@@ -488,10 +465,10 @@ app.get('/api/PolicyType', async (req, res) => {
 // Policy endpoints
 app.get('/api/Policy', authenticateToken, async (req, res) => {
   try {
-    const policyList = await db.select().from(policies);
+    const policyList = await DatabaseService.getPolicies();
     
     // Map database field names to frontend expected field names
-    const mappedPolicies = policyList.map(policy => ({
+    const mappedPolicies = policyList.map((policy: any) => ({
       ...policy,
       policyInitiationDate: policy.startDate,
       policyExpirationDate: policy.endDate,
@@ -533,10 +510,7 @@ app.post('/api/Policy', authenticateToken, async (req, res) => {
     
     console.log('Creating policy with mapped data:', policyData);
     
-    const [newPolicy] = await db
-      .insert(policies)
-      .values(policyData)
-      .returning();
+    const newPolicy = await DatabaseService.createPolicy(policyData);
       
     res.status(201).json(newPolicy);
   } catch (error) {
@@ -548,7 +522,7 @@ app.post('/api/Policy', authenticateToken, async (req, res) => {
 // Qualification endpoints
 app.get('/api/Qualification', async (req, res) => {
   try {
-    const qualificationList = await db.select().from(qualifications);
+    const qualificationList = await DatabaseService.getQualifications();
     res.json(qualificationList);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch qualifications' });
@@ -608,10 +582,7 @@ app.post('/api/Customer/:id/Statement', authenticateToken, upload.single('statem
       uploadStatus: 'uploaded'
     };
 
-    const [newStatement] = await db
-      .insert(bankStatements)
-      .values(statementData)
-      .returning();
+    const newStatement = await DatabaseService.createBankStatement(statementData);
 
     // Process the file asynchronously
     processStatementFile(newStatement.id, file.path);
@@ -636,10 +607,7 @@ app.post('/api/Customer/:id/Statement', authenticateToken, upload.single('statem
 app.get('/api/Customer/:id/Statements', authenticateToken, async (req, res) => {
   try {
     const customerId = parseInt(req.params['id']);
-    const statements = await db.query.bankStatements.findMany({
-      where: eq(bankStatements.customerID, customerId),
-      orderBy: desc(bankStatements.uploadedAt)
-    });
+    const statements = await DatabaseService.getBankStatements(customerId);
     
     res.json(statements);
   } catch (error) {
@@ -652,9 +620,7 @@ app.get('/api/Customer/:id/Statements', authenticateToken, async (req, res) => {
 app.get('/api/Statements/:id/status', authenticateToken, async (req, res) => {
   try {
     const statementId = parseInt(req.params.id);
-    const statement = await db.query.bankStatements.findFirst({
-      where: eq(bankStatements.id, statementId)
-    });
+    const statement = await DatabaseService.getBankStatementById(statementId);
     
     if (!statement) {
       return res.status(404).json({ error: 'Statement not found' });
@@ -1194,7 +1160,7 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
           }
           
           // Clean and standardize the data
-          const numAmount = parseAmount(amount);
+          const numAmount = parseAmount(amount || '0');
           const numBalance = balance ? parseAmount(balance) : null;
           
           if (!isNaN(numAmount) && date && description) {
@@ -1364,11 +1330,7 @@ app.get('/api/Profile', authenticateToken, async (req, res) => {
 
     if (user.userType === 'Advisor') {
       // Fetch financial advisor profile
-      const [advisor] = await db
-        .select()
-        .from(financialAdvisors)
-        .where(eq(financialAdvisors.id, user.userID));
-      profile = advisor;
+      profile = await DatabaseService.getFinancialAdvisorById(user.userID);
     } else if (user.userType === 'Client') {
       // Fetch customer profile
       const [customer] = await db
@@ -1403,20 +1365,10 @@ app.put('/api/Profile', authenticateToken, async (req, res) => {
 
     if (user.userType === 'Advisor') {
       // Update financial advisor profile
-      const [updated] = await db
-        .update(financialAdvisors)
-        .set(updateData)
-        .where(eq(financialAdvisors.id, user.userID))
-        .returning();
-      updatedProfile = updated;
+      updatedProfile = await DatabaseService.updateAdvisorProfile(user.userID, updateData);
     } else if (user.userType === 'Client') {
       // Update customer profile  
-      const [updated] = await db
-        .update(customers)
-        .set(updateData)
-        .where(eq(customers.id, user.userID))
-        .returning();
-      updatedProfile = updated;
+      updatedProfile = await DatabaseService.updateCustomerProfile(user.userID, updateData);
     }
 
     if (!updatedProfile) {
@@ -1458,15 +1410,9 @@ app.post('/api/Profile/avatar', authenticateToken, uploadProfileImage.single('av
     
     // Update the user's profile with the new avatar URL
     if (user.userType === 'Advisor') {
-      await db
-        .update(financialAdvisors)
-        .set({ profileImageUrl: avatarUrl, updatedAt: new Date() })
-        .where(eq(financialAdvisors.id, user.userID));
+      await DatabaseService.updateAdvisorProfile(user.userID, { profileImageUrl: avatarUrl });
     } else if (user.userType === 'Client') {
-      await db
-        .update(customers)
-        .set({ profileImageUrl: avatarUrl, updatedAt: new Date() })
-        .where(eq(customers.id, user.userID));
+      await DatabaseService.updateCustomerProfile(user.userID, { profileImageUrl: avatarUrl });
     }
 
     res.json({
@@ -1489,15 +1435,9 @@ app.delete('/api/Profile/avatar', authenticateToken, async (req, res) => {
     
     // Remove the profile image URL from the database
     if (user.userType === 'Advisor') {
-      await db
-        .update(financialAdvisors)
-        .set({ profileImageUrl: null, updatedAt: new Date() })
-        .where(eq(financialAdvisors.id, user.userID));
+      await DatabaseService.updateAdvisorProfile(user.userID, { profileImageUrl: null });
     } else if (user.userType === 'Client') {
-      await db
-        .update(customers)
-        .set({ profileImageUrl: null, updatedAt: new Date() })
-        .where(eq(customers.id, user.userID));
+      await DatabaseService.updateCustomerProfile(user.userID, { profileImageUrl: null });
     }
 
     res.json({
@@ -1520,11 +1460,4 @@ app.get('/api/health', (req, res) => {
 // Export the router for production use
 export const router = app;
 
-// Only start the server if this file is executed directly (development mode)
-if (require.main === module) {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Development server running on port ${PORT}`);
-    console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
-    console.log(`🌐 External access: https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:${PORT}/api/health`);
-  });
-}
+// Note: Server startup is now handled in initializeApp() function above
