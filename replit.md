@@ -19,7 +19,7 @@ FlightPlan is a comprehensive Angular application for managing clients, policies
 
 ### Azure Deployment Configuration (Sept 22, 2025)
 - **Production Build System**: Created comprehensive Azure deployment configuration
-  - Updated package.json with Azure-compatible build scripts and Node.js 18.x engine specification
+  - Updated package.json with Azure-compatible build scripts and Node.js 20.x engine specification
   - Created production server.js entry point for single Azure App Service deployment
   - Fixed build pipeline to include devDependencies for Angular CLI compilation
   - Added tsconfig.server.json for proper TypeScript server compilation

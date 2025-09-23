@@ -1,40 +1,32 @@
-// server.js
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || process.env.WEBSITES_PORT || 8080;
 
-// --- Health check first (configure App Service -> Health check -> /healthz) ---
-app.get('/healthz', (_req, res) => res.status(200).send('ok'));
-
-// --- Parsers ---
+// Middleware for parsing JSON and URL-encoded bodies
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// --- CORS (lenient in dev; explicit allowlist in prod) ---
-const prodOrigins = [process.env.FRONTEND_URL, process.env.AZURE_APP_URL].filter(Boolean);
+// CORS configuration for production
+const cors = require('cors');
 app.use(cors({
-  origin: (origin, cb) => {
-    if (process.env.NODE_ENV !== 'production') return cb(null, true);
-    if (!origin || prodOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error('Not allowed by CORS'));
-  },
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL, process.env.AZURE_APP_URL]
+    : ['http://localhost:4200', 'http://localhost:5000'],
   credentials: true
 }));
 
-// --- Security headers ---
-app.use((_, res, next) => {
+// Security middleware
+app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   next();
 });
 
-// --- Static Angular app ---
-const spaPath = path.join(__dirname, 'dist/flight-plan');
-app.use(express.static(spaPath, {
+// Serve Angular static files from dist directory with cache headers
+app.use(express.static(path.join(__dirname, 'dist/flight-plan'), {
   maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0',
   etag: true,
   lastModified: true,
@@ -42,53 +34,76 @@ app.use(express.static(spaPath, {
   immutable: process.env.NODE_ENV === 'production'
 }));
 
-// --- Uploaded files (optional) ---
+// Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- Load compiled API routes if present (do NOT require tsx in prod) ---
-let apiLoaded = false;
+// Load and use API routes
 try {
-  // Must exist if you've built your server code (e.g., tsc / tsup / esbuild)
-  const serverModule = require('./dist/server/index.js');
-
-  // Support various export styles: {router}, default router, or express app
-  const router =
-    (serverModule && serverModule.router) ||
-    (serverModule && serverModule.default && serverModule.default.router) ||
-    (serverModule && serverModule.default);
-
-  if (router) {
-    app.use('/', router);
-    apiLoaded = true;
-    console.log('✅ API routes loaded from dist/server/index.js');
-  } else {
-    console.warn('⚠️ dist/server/index.js loaded but no router exported.');
+  // Import the compiled server code or fallback to TypeScript version
+  let serverModule;
+  try {
+    serverModule = require('./dist/server/index.js');
+  } catch (err) {
+    console.log('Using TypeScript server for development...');
+    require('tsx/cjs');
+    serverModule = require('./server/index.ts');
   }
-} catch (e) {
-  console.warn('⚠️ API build not found (dist/server/index.js). Serving SPA/static only.');
-  app.get('/api/health', (_req, res) => {
-    res.json({ status: 'DEGRADED', api: false, reason: 'API build missing', time: new Date().toISOString() });
+  
+  // If the server module exports routes, use them
+  if (serverModule && serverModule.router) {
+    // The exported router already has /api prefix in routes, so mount at root
+    app.use('/', serverModule.router);
+  } else {
+    console.log('Server module loaded but no router found. API routes should be defined in server/index.ts');
+  }
+} catch (error) {
+  console.error('Error loading server module:', error);
+  
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Production deployment failed - API module could not be loaded');
+    process.exit(1);
+  }
+  
+  // Development fallback: serve a basic API status endpoint
+  app.get('/api/health', (req, res) => {
+    res.json({ 
+      status: 'ERROR', 
+      message: 'Server running but API routes not loaded',
+      error: error.message,
+      timestamp: new Date().toISOString() 
+    });
   });
 }
 
-// --- SPA fallback (after API/static) ---
+// Angular routing fallback - serve index.html for all non-API routes
 app.get('*', (req, res) => {
-  if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'API endpoint not found' });
-  res.sendFile(path.join(spaPath, 'index.html'));
+  // Don't serve index.html for API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  res.sendFile(path.join(__dirname, 'dist/flight-plan/index.html'));
 });
 
-// --- Error handler ---
-app.use((err, _req, res, _next) => {
+// Error handling middleware
+app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
 });
 
-// --- Start server on 0.0.0.0:8080 (Azure requires this) ---
 app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 FlightPlan server on ${port}`);
-  console.log(`🌐 NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📁 SPA dir: ${spaPath}`);
-  if (!apiLoaded) console.log('ℹ️ API not loaded (dist/server missing).');
+  console.log(`🚀 FlightPlan server running on port ${port}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📁 Serving static files from: ${path.join(__dirname, 'dist/flight-plan')}`);
+  
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`🔗 App URL: ${process.env.AZURE_APP_URL || 'Not set'}`);
+  } else {
+    console.log(`🔗 Local URL: http://localhost:${port}`);
+  }
 });
 
 module.exports = app;
