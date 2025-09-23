@@ -1,0 +1,67 @@
+Command: oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform nodejs --platform-version 20 -p virtualenv_name= --log-file /tmp/build-debug.log  -i /tmp/8ddfa711558c83b -p compress_node_modules=tar-gz | tee /tmp/oryx-build.log
+Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+You can report issues at https://github.com/Microsoft/Oryx/issues
+Oryx Version: 0.2.20250611.1+0649de32f1279969c9023dd41b389cce4bb94493, Commit: 0649de32f1279969c9023dd41b389cce4bb94493, ReleaseTagName: 20250611.1
+Build Operation ID: 531e9abc98c79fee
+Repository Commit : 639cfcd7-4bc4-4e76-99d8-be7cccc4a417
+OS Type           : bookworm
+Image Type        : githubactions
+Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+Backup SDK Storage URL: https://oryxsdks-cdn.azureedge.net
+Detecting platforms...
+External SDK provider is enabled.
+Requesting metadata for platform nodejs from external SDK provider
+Requesting metadata for platform nodejs from external SDK provider
+Detected following platforms:
+  nodejs: 20.19.3
+Detected the following frameworks: Angular,Typescript,Express
+Using intermediate directory '/tmp/8ddfa711558c83b'.
+Copying files to the intermediate directory...
+Done in 0 sec(s).
+Source directory     : /tmp/8ddfa711558c83b
+Destination directory: /home/site/wwwroot
+Removing existing manifest file
+Creating directory for command manifest file if it does not exist
+Creating a manifest file...
+Node Build Command Manifest file created.
+Found npm version spec to follow in package.json: '>=10.0.0'
+Updating version of npm installed to meet the above version spec.
+changed 15 packages in 17s
+25 packages are looking for funding
+  run `npm fund` for details
+Using Node version:
+v20.19.3
+Using Npm version:
+11.6.0
+Running 'npm install'...
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+added 304 packages, and audited 305 packages in 2m
+37 packages are looking for funding
+  run `npm fund` for details
+4 moderate severity vulnerabilities
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+Running 'npm run build'...
+> flight-plan@0.0.0 build
+> ng build --configuration=production && npm run build:server
+sh: 1: ng: not found
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is\nnpm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is\nsh: 1: ng: not found\n/bin/bash -c "oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform nodejs --platform-version 20 -p virtualenv_name= --log-file /tmp/build-debug.log  -i /tmp/8ddfa711558c83b -p compress_node_modules=tar-gz | tee /tmp/oryx-build.log ; exit $PIPESTATUS "
+Generating summary of Oryx build
+Parsing the build logs
+Found 0 issue(s)
+Build Summary :
+===============
+Errors (0)
+Warnings (0)
+Deployment Failed. deployer = OneDeploy deploymentPath = OneDeploy
+Error: Failed to deploy web package to App Service.
+Error: Deployment Failed, Package deployment using ZIP Deploy failed. Refer logs for more details.
+App Service Application URL: https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net
+##[debug]Deployment failed
+##[debug]Node Action run completed with exit code 1
+##[debug]AZURE_HTTP_USER_AGENT='GITHUBACTIONS_DeployWebAppToAzure_230e739a25b300aea43d600d4169800007133d37ad0826aa2d010a80f16c9366'
+##[debug]AZURE_HTTP_USER_AGENT=''
+##[debug]Set output webapp-url = https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net
+##[debug]Finishing: Deploy to Azure Web App (zip)
