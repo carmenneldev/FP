@@ -13,7 +13,7 @@
     "server": "node server/index.js",
     "server:dev": "npx tsx server/index.ts",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
+    "db:studio": "drizzle-kit studio"
   },
   "private": true,
   "dependencies": {
