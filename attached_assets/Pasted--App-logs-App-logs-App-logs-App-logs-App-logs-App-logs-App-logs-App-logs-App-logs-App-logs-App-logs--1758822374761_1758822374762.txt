@@ -1,0 +1,521 @@
+
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+App logs
+Log details
+Deployment ID: 704b5a3d-e08d-4729-8541-ef3b287de105
+2025/09/25, 07:34:20 PM
+Updating submodules.
+2025/09/25, 07:34:22 PM
+Preparing deployment for commit id '704b5a3d-e'.
+2025/09/25, 07:34:25 PM
+PreDeployment: context.CleanOutputPath False
+2025/09/25, 07:34:25 PM
+PreDeployment: context.OutputPath /home/site/wwwroot
+2025/09/25, 07:34:26 PM
+Repository path is /tmp/zipdeploy/extracted
+2025/09/25, 07:34:26 PM
+Running oryx build...
+Show logs
+
+Command: oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform nodejs --platform-version 20 -p virtualenv_name= --log-file /tmp/build-debug.log  -i /tmp/8ddfc59c435271e -p compress_node_modules=tar-gz | tee /tmp/oryx-build.log
+
+Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+
+You can report issues at https://github.com/Microsoft/Oryx/issues
+
+
+
+Oryx Version: 0.2.20250611.1+0649de32f1279969c9023dd41b389cce4bb94493, Commit: 0649de32f1279969c9023dd41b389cce4bb94493, ReleaseTagName: 20250611.1
+
+
+
+Build Operation ID: e488aa41b32f3ac2
+
+Repository Commit : 704b5a3d-e08d-4729-8541-ef3b287de105
+
+OS Type           : bookworm
+
+Image Type        : githubactions
+
+
+
+Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+
+Backup SDK Storage URL: https://oryxsdks-cdn.azureedge.net
+
+Detecting platforms...
+
+External SDK provider is enabled.
+
+Requesting metadata for platform nodejs from external SDK provider
+
+Requesting metadata for platform nodejs from external SDK provider
+
+Detected following platforms:
+
+  nodejs: 20.19.3
+
+Requesting metadata for platform nodejs from external SDK provider
+
+Version '20.19.3' of platform 'nodejs' is not installed. Generating script to install it...
+
+Detected the following frameworks: Angular,Express
+
+
+
+Using intermediate directory '/tmp/8ddfc59c435271e'.
+
+
+
+Copying files to the intermediate directory...
+
+Done in 2 sec(s).
+
+
+
+Source directory     : /tmp/8ddfc59c435271e
+
+Destination directory: /home/site/wwwroot
+
+
+
+
+
+Downloading and extracting 'nodejs' version '20.19.3' to '/tmp/oryx/platforms/nodejs/20.19.3'...
+
+Detected image debian flavor: bookworm.
+
+Skipping download of nodejs version 20.19.3 as it is available in external sdk provider cache...
+
+Extracting contents...
+
+Successfully extracted nodejs version 20.19.3 from external sdk provider cache...
+
+Done in 22 sec(s).
+
+
+
+Removing existing manifest file
+
+Creating directory for command manifest file if it does not exist
+
+Creating a manifest file...
+
+Node Build Command Manifest file created.
+
+
+
+Found npm version spec to follow in package.json: '>=10.0.0'
+
+Updating version of npm installed to meet the above version spec.
+
+npm warn config production Use `--omit=dev` instead.
+
+
+
+removed 17 packages, and changed 118 packages in 21s
+
+
+
+28 packages are looking for funding
+
+  run `npm fund` for details
+
+
+
+
+
+Using Node version:
+
+v20.19.3
+
+
+
+Using Npm version:
+
+11.6.1
+
+npm warn config production Use `--omit=dev` instead.
+
+
+
+Running 'npm install'...
+
+
+
+npm warn config production Use `--omit=dev` instead.
+
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+
+
+added 1177 packages, and audited 1178 packages in 5m
+
+
+
+176 packages are looking for funding
+
+  run `npm fund` for details
+
+
+
+14 vulnerabilities (8 low, 6 moderate)
+
+
+
+To address issues that do not require attention, run:
+
+  npm audit fix
+
+
+
+To address all issues (including breaking changes), run:
+
+  npm audit fix --force
+
+
+
+Run `npm audit` for details.
+
+
+
+Running 'npm run build'...
+
+
+
+npm warn config production Use `--omit=dev` instead.
+
+
+
+> flight-plan@0.0.0 build
+
+> ng build --configuration=production && npm run build:server
+
+
+
+❯ Building...
+
+✔ Building...
+
+Initial chunk files   | Names                       |  Raw size | Estimated transfer size
+
+chunk-QNHUTO2C.js     | -                           | 366.77 kB |                63.87 kB
+
+chunk-3XOE6HSZ.js     | -                           | 213.96 kB |                63.74 kB
+
+chunk-6XHS44L2.js     | -                           | 182.88 kB |                44.00 kB
+
+main-U3LVRAEU.js      | main                        | 169.62 kB |                22.96 kB
+
+chunk-73NJSR2Q.js     | -                           | 164.40 kB |                48.02 kB
+
+chunk-YUN3SFWH.js     | -                           | 159.94 kB |                31.28 kB
+
+chunk-UROA67NY.js     | -                           | 127.10 kB |                27.84 kB
+
+chunk-IDHYUTAQ.js     | -                           |  82.77 kB |                17.55 kB
+
+chunk-KF2LHWVD.js     | -                           |  73.94 kB |                19.00 kB
+
+chunk-HKCXLCQY.js     | -                           |  62.67 kB |                13.96 kB
+
+chunk-GC3BJ3Q5.js     | -                           |  45.74 kB |                 7.51 kB
+
+chunk-UGMP7KZK.js     | -                           |  37.78 kB |                 8.81 kB
+
+chunk-5SCVURSX.js     | -                           |  37.53 kB |                 8.96 kB
+
+polyfills-B6TNHZQ6.js | polyfills                   |  34.58 kB |                11.32 kB
+
+chunk-2SWL4PLK.js     | -                           |  20.07 kB |                 4.71 kB
+
+chunk-4AVIBQP2.js     | -                           |  15.15 kB |                 3.67 kB
+
+chunk-JDHCJGLF.js     | -                           |  14.92 kB |                 3.16 kB
+
+styles-42TKS7GR.css   | styles                      |  14.65 kB |                 2.78 kB
+
+chunk-BHG5OBGI.js     | -                           |   9.95 kB |                 2.54 kB
+
+chunk-VN2NUKIZ.js     | -                           |   5.55 kB |                 1.47 kB
+
+chunk-GADKMIW7.js     | -                           |   4.71 kB |                 1.56 kB
+
+chunk-F2X3VGZZ.js     | -                           |   4.28 kB |                 1.10 kB
+
+chunk-CU4PJS6W.js     | -                           |   1.71 kB |               792 bytes
+
+chunk-X3SR7YZK.js     | -                           |   1.03 kB |               524 bytes
+
+chunk-PXKTFLC7.js     | -                           | 627 bytes |               627 bytes
+
+chunk-R26FGQ4L.js     | -                           | 264 bytes |               264 bytes
+
+
+
+                      | Initial total               |   1.85 MB |               412.04 kB
+
+
+
+Lazy chunk files      | Names                       |  Raw size | Estimated transfer size
+
+chunk-TO47B262.js     | browser                     |  64.06 kB |                17.11 kB
+
+chunk-OSMCOBUR.js     | login-component             |  21.17 kB |                 5.31 kB
+
+chunk-WX3AJIGH.js     | registrationform-component  |  20.34 kB |                 4.66 kB
+
+chunk-7F3ZFEKQ.js     | profile-component           |  19.83 kB |                 4.71 kB
+
+chunk-L3TJPVWH.js     | reset-password-component    |   7.68 kB |                 2.28 kB
+
+chunk-QA5IVIF3.js     | client-statements-component |   7.16 kB |                 2.50 kB
+
+chunk-47HORWFA.js     | -                           |   5.34 kB |                 1.61 kB
+
+chunk-VSPF6BDL.js     | -                           | 661 bytes |               661 bytes
+
+chunk-USQ2N2MO.js     | view-clients-component      | 607 bytes |               607 bytes
+
+chunk-YRZAAG3Y.js     | agent-dashboard-component   | 498 bytes |               498 bytes
+
+▲ [WARNING] TS-998113: LoginComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+chunk-SOWO3H5M.js     | register-page-component     | 300 bytes |               300 bytes
+
+
+
+
+
+    src/app/app.component.ts:11:12:
+
+Application bundle generation complete. [260.041 seconds]
+
+      11 │   imports: [LoginComponent, LandingPageDashboardComponent, AgentDa...
+
+         ╵             ~~~~~~~~~~~~~~
+
+
+
+
+
+Output location: /tmp/8ddfc59c435271e/dist/flight-plan
+
+
+
+
+
+▲ [WARNING] TS-998113: LandingPageDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+
+
+    src/app/app.component.ts:11:28:
+
+      11 │ ...[LoginComponent, LandingPageDashboardComponent, AgentDashboardC...
+
+         ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: AgentDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+
+
+    src/app/app.component.ts:11:59:
+
+      11 │ ...DashboardComponent, AgentDashboardComponent, LandingPageDashboa...
+
+         ╵                        ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: LandingPageDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+
+
+    src/app/app.component.ts:11:84:
+
+      11 │ ...hboardComponent, LandingPageDashboardComponent, LoginComponent,...
+
+         ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: LoginComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+
+
+    src/app/app.component.ts:11:115:
+
+      11 │ ...gPageDashboardComponent, LoginComponent, MainComponent, Registr...
+
+         ╵                             ~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: MainComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+
+
+    src/app/app.component.ts:11:131:
+
+      11 │ ...mponent, LoginComponent, MainComponent, RegistrationformCompone...
+
+         ╵                             ~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: RegistrationformComponent is not used within the template of AppComponent [plugin angular-compiler]
+
+
+
+    src/app/app.component.ts:11:146:
+
+      11 │ ...omponent, MainComponent, RegistrationformComponent, RouterModule],
+
+         ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: NgIf is not used within the template of AddClientFormComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/client-onboarding/client-onboarding.component.ts:25:25:
+
+      25 │   imports: [CommonModule,NgIf,FloatLabel, ReactiveFormsModule, Inp...
+
+         ╵                          ~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: NgClass is not used within the template of AsideNavigationComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/layout/aside-navigation/aside-navigation.component.ts:8:30:
+
+      8 │   imports: [RouterLink, NgIf, NgClass, Button],
+
+        ╵                               ~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: Button is not used within the template of AsideNavigationComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/layout/aside-navigation/aside-navigation.component.ts:8:39:
+
+      8 │   imports: [RouterLink, NgIf, NgClass, Button],
+
+        ╵                                        ~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: NgIf is not used within the template of MainComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/layout/main/main.component.ts:10:85:
+
+      10 │ ...ntComponent, AsideNavigationComponent, RouterOutlet, Button,NgIf],
+
+         ╵                                                                ~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: HeaderComponent is not used within the template of RegisterPageComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/register-page/register-page.component.ts:8:46:
+
+      8 │   imports: [RouterLink, ContactFormComponent, HeaderComponent],
+
+        ╵                                               ~~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: ContactFormComponent is not used within the template of RegistrationformComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/registrationform/registrationform.component.ts:31:47:
+
+      31 │ ... ReactiveFormsModule, ContactFormComponent, RouterLink, InputTe...
+
+         ╵                          ~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+▲ [WARNING] TS-998113: Badge is not used within the template of ViewClientsComponent [plugin angular-compiler]
+
+
+
+    src/app/pages/view-clients/view-clients.component.ts:92:4:
+
+      92 │     Badge,
+
+         ╵     ~~~~~
+
+
+
+
+
+▲ [WARNING] src/app/pages/view-clients/view-clients.component.scss exceeded maximum budget. Budget 10.00 kB was not met by 3.41 kB with a total of 13.41 kB.
+
+
+
+
+
+npm warn config production Use `--omit=dev` instead.
+
+
+
+> flight-plan@0.0.0 build:server
+
+> npx tsc -p tsconfig.server.json
+

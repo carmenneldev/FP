@@ -1,0 +1,11 @@
+2025-09-22T21:24:10.937709544Z npm notice/home/LogFiles/2025_09_22_lw1sdlwk0004YX_docker.log  (https://flightplanapp-e4c6bqgcewbnhkgp.scm.southafricanorth-01.azurewebsites.net/api/vfs/LogFiles/2025_09_22_lw1sdlwk0004YX_docker.log)
+2025-09-22T15:28:53.923Z ERROR - Container flightplanapp_0_b20057e8 for site flightplanapp has exited, failing site start
+2025-09-22T15:28:53.963Z ERROR - Container flightplanapp_0_b20057e8 didn't respond to HTTP pings on port: 8080. Failing site start. See container logs for debugging.
+2025-09-22T15:28:54.012Z INFO  - Stopping site flightplanapp because it failed during startup.
+2025-09-22T21:23:42.442Z INFO  - Starting container for site
+2025-09-22T21:23:42.446Z INFO  - docker run -d --expose=8080 --name flightplanapp_0_d63e426c -e WEBSITE_USE_DIAGNOSTIC_SERVER=true -e WEBSITES_PORT=8080 -e WEBSITE_SITE_NAME=FlightPlanApp -e WEBSITE_AUTH_ENABLED=False -e WEBSITE_ROLE_INSTANCE_ID=0 -e WEBSITE_HOSTNAME=flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net -e WEBSITE_INSTANCE_ID=84f4af19344465db30543668c631d927a587594760196ab65667920fd4ce7bdf -e HTTP_LOGGING_ENABLED=1 appsvc/node:20-lts_20250724.2.tuxprod
+2025-09-22T21:23:45.619Z INFO  - Initiating warmup request to container flightplanapp_0_d63e426c for site flightplanapp
+2025-09-22T21:24:03.550Z INFO  - Waiting for response to warmup request for container flightplanapp_0_d63e426c. Elapsed time = 17.9320592 sec
+2025-09-22T21:24:11.920Z ERROR - Container flightplanapp_0_d63e426c for site flightplanapp has exited, failing site start
+2025-09-22T21:24:11.943Z ERROR - Container flightplanapp_0_d63e426c didn't respond to HTTP pings on port: 8080. Failing site start. See container logs for debugging.
+2025-09-22T21:24:12.060Z INFO  - Stopping site flightplanapp because it failed during startup./home/LogFiles/2025_09_23_lw1sdlwk0004YX_default_docker.log  (https://flightplanapp-e4c6bqgcewbnhkgp.scm.southafricanorth-01.azurewebsites.net/api/vfs/LogFiles/2025_09_23_lw1sdlwk0004YX_default_docker.log)
