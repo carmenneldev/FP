@@ -1,0 +1,1 @@
+var e={production:!0,apiUrl:"/api",appName:"Flight Plan",database:{type:"azure-sql",ssl:!0,connectionTimeout:3e4,requestTimeout:3e4,provider:"mssql"},azure:{appService:!0,region:"default"},features:{fileUpload:!0,aiAnalysis:!0,realTimeUpdates:!1}};export{e as a};

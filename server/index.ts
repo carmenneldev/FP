@@ -68,8 +68,10 @@ async function initializeApp() {
   }
 }
 
-// Start the application
-initializeApp();
+// Start the application (only when run directly, not when imported)
+if (require.main === module) {
+  initializeApp();
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -776,14 +778,7 @@ app.post('/api/Transactions/:id/Category', authenticateToken, async (req, res) =
     const transactionId = parseInt(req.params.id);
     const { categoryId } = req.body;
     
-    await db.update(bankTransactions)
-      .set({
-        categoryID: categoryId,
-        isManualOverride: true,
-        confidence: '1.0000', // 100% confidence for manual overrides
-        updatedAt: new Date()
-      })
-      .where(eq(bankTransactions.id, transactionId));
+    await DatabaseService.updateTransactionCategory(transactionId, categoryId);
 
     res.json({ success: true });
   } catch (error) {
@@ -872,20 +867,17 @@ async function processStatementFile(statementId: number, filePath: string) {
 
     // Insert all transactions
     if (processedTransactions.length > 0) {
-      await db.insert(bankTransactions).values(processedTransactions);
+      await DatabaseService.insertBankTransactions(processedTransactions);
     }
 
     // Update statement with totals and completion status
-    await db.update(bankStatements)
-      .set({
-        uploadStatus: 'completed',
-        totalIn: totalIn.toFixed(2),
-        totalOut: totalOut.toFixed(2),
-        netAmount: (totalIn - totalOut).toFixed(2),
-        transactionCount: processedTransactions.length,
-        processedAt: new Date()
-      })
-      .where(eq(bankStatements.id, statementId));
+    await DatabaseService.updateBankStatementCompletion(
+      statementId,
+      totalIn.toFixed(2),
+      totalOut.toFixed(2),
+      (totalIn - totalOut).toFixed(2),
+      processedTransactions.length
+    );
 
     console.log(`✅ Statement ${statementId} processed successfully`);
     
@@ -897,12 +889,10 @@ async function processStatementFile(statementId: number, filePath: string) {
   } catch (error) {
     console.error(`❌ Error processing statement ${statementId}:`, error);
     
-    await db.update(bankStatements)
-      .set({
-        uploadStatus: 'failed',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      })
-      .where(eq(bankStatements.id, statementId));
+    await DatabaseService.updateBankStatementError(
+      statementId, 
+      error instanceof Error ? error.message : 'Unknown error'
+    );
   }
 }
 
@@ -1463,39 +1453,15 @@ app.use('/uploads/profile-images', express.static(path.join(__dirname, '../uploa
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
-});
-
-// Database health check endpoint
-app.get('/api/health/database', async (req, res) => {
-  try {
-    const health = await checkDatabaseHealth();
-    res.json(health);
-  } catch (error) {
-    res.status(500).json({ 
-      status: 'unhealthy', 
-      error: (error as Error).message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Environment debug endpoint (for Azure troubleshooting)
-app.get('/api/debug/env', (req, res) => {
-  res.json({
-    nodeEnv: process.env['NODE_ENV'],
-    dbType: process.env['DB_TYPE'],
-    hasAzureSqlServer: !!process.env['AZURE_SQL_SERVER'],
-    hasAzureSqlDatabase: !!process.env['AZURE_SQL_DATABASE'],
-    hasAzureSqlUser: !!process.env['AZURE_SQL_USER'],
-    hasAzureSqlPassword: !!process.env['AZURE_SQL_PASSWORD'],
-    hasJwtSecret: !!process.env['JWT_SECRET'],
-    databaseConfigType: dbConfig.type,
-    timestamp: new Date().toISOString()
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    database: dbConfig.type,
+    environment: process.env['NODE_ENV'] || 'development'
   });
 });
 
-// Export the router for production use
+// Export the main app directly - server.js will handle the mounting
 export const router = app;
 
 // Note: Server startup is now handled in initializeApp() function above

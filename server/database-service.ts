@@ -320,4 +320,66 @@ export class DatabaseService {
       .returning();
     return updated;
   }
+
+  // Transaction Category Updates
+  static async updateTransactionCategory(transactionId: number, categoryId: number) {
+    if (isAzureSQL()) {
+      // TODO: Implement updateTransactionCategory in AzureSQLAdapter
+      throw new Error('Transaction category updates not yet implemented for Azure SQL mode');
+    }
+    return await db.update(bankTransactions)
+      .set({
+        categoryID: categoryId,
+        isManualOverride: true,
+        confidence: '1.0000',
+        updatedAt: new Date()
+      })
+      .where(eq(bankTransactions.id, transactionId));
+  }
+
+  // Bulk Transaction Insert
+  static async insertBankTransactions(transactions: InsertBankTransaction[]) {
+    if (isAzureSQL()) {
+      // TODO: Implement insertBankTransactions in AzureSQLAdapter
+      throw new Error('Bank transaction insertion not yet implemented for Azure SQL mode');
+    }
+    return await db.insert(bankTransactions).values(transactions);
+  }
+
+  // Statement Status Updates
+  static async updateBankStatementCompletion(
+    statementId: number, 
+    totalIn: string, 
+    totalOut: string, 
+    netAmount: string, 
+    transactionCount: number
+  ) {
+    if (isAzureSQL()) {
+      // TODO: Implement updateBankStatementCompletion in AzureSQLAdapter
+      throw new Error('Bank statement completion updates not yet implemented for Azure SQL mode');
+    }
+    return await db.update(bankStatements)
+      .set({
+        uploadStatus: 'completed',
+        totalIn,
+        totalOut,
+        netAmount,
+        transactionCount,
+        processedAt: new Date()
+      })
+      .where(eq(bankStatements.id, statementId));
+  }
+
+  static async updateBankStatementError(statementId: number, error: string) {
+    if (isAzureSQL()) {
+      // TODO: Implement updateBankStatementError in AzureSQLAdapter
+      throw new Error('Bank statement error updates not yet implemented for Azure SQL mode');
+    }
+    return await db.update(bankStatements)
+      .set({
+        uploadStatus: 'failed',
+        error
+      })
+      .where(eq(bankStatements.id, statementId));
+  }
 }

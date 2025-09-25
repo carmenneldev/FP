@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 // Serve Angular static files from dist directory with cache headers
-app.use(express.static(path.join(__dirname, 'dist/flight-plan'), {
+app.use(express.static(path.join(__dirname, 'dist/flight-plan/browser'), {
   maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0',
   etag: true,
   lastModified: true,
@@ -42,7 +42,7 @@ try {
   // Import the compiled server code or fallback to TypeScript version
   let serverModule;
   try {
-    serverModule = require('./dist/server/index.js');
+    serverModule = require('./dist/server/server/index.js');
   } catch (err) {
     console.log('Using TypeScript server for development...');
     require('tsx/cjs');
@@ -51,8 +51,9 @@ try {
   
   // If the server module exports routes, use them
   if (serverModule && serverModule.router) {
-    // The exported router already has /api prefix in routes, so mount at root
+    // Mount the API router at root - routes already have /api prefix
     app.use('/', serverModule.router);
+    console.log('✅ API routes loaded and mounted at root (routes have /api prefix)');
   } else {
     console.log('Server module loaded but no router found. API routes should be defined in server/index.ts');
   }
@@ -76,13 +77,9 @@ try {
 }
 
 // Angular routing fallback - serve index.html for all non-API routes
-app.get('*', (req, res) => {
-  // Don't serve index.html for API routes
-  if (req.path.startsWith('/api/')) {
-    return res.status(404).json({ error: 'API endpoint not found' });
-  }
-  
-  res.sendFile(path.join(__dirname, 'dist/flight-plan/index.html'));
+// Use regex pattern to avoid path-to-regexp conflicts
+app.get(/^(?!\/api\/).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/flight-plan/browser/index.html'));
 });
 
 // Error handling middleware

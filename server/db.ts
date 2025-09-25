@@ -16,7 +16,8 @@ const getDatabaseConfig = (): DatabaseConfig => {
   const environment = process.env['NODE_ENV'] || 'development';
   const dbType = process.env['DB_TYPE'] || 'postgresql';
   
-  if (environment === 'production' && dbType === 'azure-sql') {
+  // Allow Azure SQL mode when explicitly requested via DB_TYPE
+  if (dbType === 'azure-sql') {
     return {
       type: 'azure-sql',
       ssl: true,
@@ -41,7 +42,7 @@ let db: any;
 let pool: any;
 let azureSqlAdapter: AzureSQLAdapter | null = null;
 
-if (dbConfig.type === 'azure-sql' && process.env['NODE_ENV'] === 'production') {
+if (dbConfig.type === 'azure-sql') {
   // Azure SQL Server configuration for production
   console.log('🔄 Configuring Azure SQL Server database connection...');
   
