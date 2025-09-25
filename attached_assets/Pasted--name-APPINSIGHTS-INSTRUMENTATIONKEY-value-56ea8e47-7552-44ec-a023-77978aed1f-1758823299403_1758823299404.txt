@@ -1,0 +1,147 @@
+[
+  {
+    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+    "value": "56ea8e47-7552-44ec-a023-77978aed1f2c",
+    "slotSetting": true
+  },
+  {
+    "name": "APPINSIGHTS_PROFILERFEATURE_VERSION",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "APPINSIGHTS_SNAPSHOTFEATURE_VERSION",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+    "value": "InstrumentationKey=56ea8e47-7552-44ec-a023-77978aed1f2c;IngestionEndpoint=https://southafricanorth-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southafricanorth.livediagnostics.monitor.azure.com/;ApplicationId=05ef636a-4587-4801-9f66-7562522fb309",
+    "slotSetting": false
+  },
+  {
+    "name": "ApplicationInsightsAgent_EXTENSION_VERSION",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "AZURE_APP_URL",
+    "value": "flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net",
+    "slotSetting": false
+  },
+  {
+    "name": "AZURE_SQL_DATABASE",
+    "value": "flightplan-db",
+    "slotSetting": false
+  },
+  {
+    "name": "AZURE_SQL_PASSWORD",
+    "value": "x4k=DXaFPAiD-@A",
+    "slotSetting": false
+  },
+  {
+    "name": "AZURE_SQL_SERVER",
+    "value": "flightplan.database.windows.net",
+    "slotSetting": false
+  },
+  {
+    "name": "AZURE_SQL_USER",
+    "value": "flightplan",
+    "slotSetting": false
+  },
+  {
+    "name": "DB_TYPE",
+    "value": "azure-sql",
+    "slotSetting": false
+  },
+  {
+    "name": "DiagnosticServices_EXTENSION_VERSION",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "ENABLE_ORYX_BUILD",
+    "value": "true",
+    "slotSetting": false
+  },
+  {
+    "name": "FRONTEND_URL",
+    "value": "flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net",
+    "slotSetting": false
+  },
+  {
+    "name": "InstrumentationEngine_EXTENSION_VERSION",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "JWT_SECRET",
+    "value": "mysupersecretkey123!",
+    "slotSetting": false
+  },
+  {
+    "name": "NODE_ENV",
+    "value": "production",
+    "slotSetting": false
+  },
+  {
+    "name": "NPM_CONFIG_ENGINE_STRICT",
+    "value": "false",
+    "slotSetting": false
+  },
+  {
+    "name": "NPM_CONFIG_LEGACY_PEER_DEPS",
+    "value": "1",
+    "slotSetting": false
+  },
+  {
+    "name": "NPM_CONFIG_PRODUCTION",
+    "value": "false",
+    "slotSetting": false
+  },
+  {
+    "name": "OPENAI_API_KEY",
+    "value": "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",
+    "slotSetting": false
+  },
+  {
+    "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+    "value": "true",
+    "slotSetting": false
+  },
+  {
+    "name": "SnapshotDebugger_EXTENSION_VERSION",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+    "value": "30",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITE_NODE_DEFAULT_VERSION",
+    "value": "20.11.0",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITE_RUN_FROM_PACKAGE",
+    "value": "0",
+    "slotSetting": false
+  },
+  {
+    "name": "XDT_MicrosoftApplicationInsights_BaseExtensions",
+    "value": "disabled",
+    "slotSetting": true
+  },
+  {
+    "name": "XDT_MicrosoftApplicationInsights_Mode",
+    "value": "default",
+    "slotSetting": true
+  },
+  {
+    "name": "XDT_MicrosoftApplicationInsights_PreemptSdk",
+    "value": "disabled",
+    "slotSetting": true
+  }
+]

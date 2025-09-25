@@ -1,0 +1,577 @@
+
+Logs
+Instances
+Lookback period
+Connected!
+2025-09-25T17:33:03.4919699Z chown: changing ownership of '/temp': Operation not permitted
+2025-09-25T17:33:03.4988085Z chmod: changing permissions of '/temp': Operation not permitted
+2025-09-25T17:33:03.7880397Z     __ __          __      __    _ __
+2025-09-25T17:33:03.7880708Z    / //_/_  _ ____/ /_  __/ /   (_) /____
+2025-09-25T17:33:03.7880746Z   / ,< / / / / __  / / / / /   / / __/ _
+2025-09-25T17:33:03.788078Z  / /| / /_/ / /_/ / /_/ / /___/ / /_/  __/
+2025-09-25T17:33:03.7880814Z /_/ |_\__,_/\__,_/\__,_/_____/_/\__/\___/
+2025-09-25T17:33:03.7880858Z
+2025-09-25T17:33:03.7880935Z
+2025-09-25T17:33:03.788097Z DEBUG CONSOLE | AZURE APP SERVICE ON LINUX
+2025-09-25T17:33:03.7881001Z
+2025-09-25T17:33:03.7881038Z Documentation: http://aka.ms/webapp-linux
+2025-09-25T17:33:03.7881072Z Kudu Version : 20250623.5
+2025-09-25T17:33:03.7881106Z Commit       : 353543ec4c45fcbfd4750522d32c94e23b31927a
+2025-09-25T17:33:03.7881136Z
+2025-09-25T17:33:10.0747706Z Restarting OpenBSD Secure Shell server: sshd.
+2025-09-25T17:33:10.3101677Z node not running, starting node /opt/webssh/index.js
+2025-09-25T17:33:22.8438252Z Thu Sep 25 17:33:22 UTC 2025 running .net core
+2025-09-25T17:33:24.2212293Z Startup : 05.33.24.202416
+2025-09-25T17:33:24.2752051Z Configure Services : 05.33.24.274975
+2025-09-25T17:33:24.862119Z Configure : 05.33.24.861914
+2025-09-25T17:33:25.182383Z Setting Up Routes : 05.33.25.182182
+2025-09-25T17:33:25.9483364Z Exiting Configure : 05.33.25.948157
+2025-09-25T17:33:26.2858755Z Hosting environment: Production
+2025-09-25T17:33:26.2952133Z Content root path: /opt/Kudu
+2025-09-25T17:33:26.2964938Z Now listening on: http://0.0.0.0:8181
+2025-09-25T17:33:26.2983066Z Application started. Press Ctrl+C to shut down.
+2025-09-25T17:33:49.8406133Z    _____
+2025-09-25T17:33:49.8408649Z   /  _  \ __________ _________   ____
+2025-09-25T17:33:49.8408709Z  /  /_\  \\___   /  |  \_  __ \_/ __ \
+2025-09-25T17:33:49.8408744Z /    |    \/    /|  |  /|  | \/\  ___/
+2025-09-25T17:33:49.8408836Z \____|__  /_____ \____/ |__|    \___  >
+2025-09-25T17:33:49.8408882Z         \/      \/                  \/
+2025-09-25T17:33:49.8408916Z A P P   S E R V I C E   O N   L I N U X
+2025-09-25T17:33:49.8408948Z
+2025-09-25T17:33:49.840899Z Documentation: http://aka.ms/webapp-linux
+2025-09-25T17:33:49.8409028Z NodeJS quickstart: https://aka.ms/node-qs
+2025-09-25T17:33:49.8409084Z NodeJS Version : v20.19.3
+2025-09-25T17:33:49.840912Z Note: Any data outside '/home' is not persisted
+2025-09-25T17:33:49.8409151Z
+2025-09-25T17:33:54.797781Z Starting OpenBSD Secure Shell server: sshd.
+2025-09-25T17:33:54.8274831Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2025-09-25T17:33:54.897382Z Updating certificates in /etc/ssl/certs...
+2025-09-25T17:34:18.9350825Z Deploy Async
+2025-09-25T17:34:22.5317478Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2025-09-25T17:34:22.6319954Z 4 added, 0 removed; done.
+2025-09-25T17:34:22.6428248Z Running hooks in /etc/ca-certificates/update.d...
+2025-09-25T17:34:22.6509969Z done.
+2025-09-25T17:34:22.7098693Z CA certificates copied and updated successfully.
+2025-09-25T17:34:23.1964106Z Starting periodic command scheduler: cron.
+2025-09-25T17:34:23.4102555Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2025-09-25T17:34:23.429611Z Could not find operation ID in manifest. Generating an operation id...
+2025-09-25T17:34:23.4296616Z Build Operation ID: 6a8bf93c-9157-4b39-bbe2-7429ef688929
+2025-09-25T17:34:25.2039951Z Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2025-09-25T17:34:25.3837905Z Writing output script to '/opt/startup/startup.sh'
+2025-09-25T17:34:25.7464273Z Running #!/bin/sh
+2025-09-25T17:34:25.746503Z
+2025-09-25T17:34:25.7465156Z # Enter the source directory to make sure the script runs where the user expects
+2025-09-25T17:34:25.7465212Z cd "/home/site/wwwroot"
+2025-09-25T17:34:25.7465247Z
+2025-09-25T17:34:25.7465285Z export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2025-09-25T17:34:25.7465322Z if [ -z "$PORT" ]; then
+2025-09-25T17:34:25.7465357Z 		export PORT=8080
+2025-09-25T17:34:25.7465391Z fi
+2025-09-25T17:34:25.7465449Z
+2025-09-25T17:34:25.7465487Z npm start
+2025-09-25T17:34:34.6510916Z npm info using npm@10.9.2
+2025-09-25T17:34:34.6511616Z npm info using node@v20.19.3
+2025-09-25T17:34:34.6511664Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:34:41.7962646Z ..........
+2025-09-25T17:34:41.8056879Z Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+2025-09-25T17:34:41.8729129Z You can report issues at https://github.com/Microsoft/Oryx/issues
+2025-09-25T17:34:41.9437586Z
+2025-09-25T17:34:42.0890507Z Oryx Version: 0.2.20250611.1+0649de32f1279969c9023dd41b389cce4bb94493, Commit: 0649de32f1279969c9023dd41b389cce4bb94493, ReleaseTagName: 20250611.1
+2025-09-25T17:34:42.1594659Z
+2025-09-25T17:34:42.2590136Z Build Operation ID: e488aa41b32f3ac2
+2025-09-25T17:34:42.4516667Z Repository Commit : 704b5a3d-e08d-4729-8541-ef3b287de105
+2025-09-25T17:34:42.6198369Z OS Type           : bookworm
+2025-09-25T17:34:42.7727677Z Image Type        : githubactions
+2025-09-25T17:34:42.9097176Z
+2025-09-25T17:34:42.959672Z Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+2025-09-25T17:34:43.0036898Z Backup SDK Storage URL: https://oryxsdks-cdn.azureedge.net
+2025-09-25T17:34:43.0901718Z Detecting platforms...
+2025-09-25T17:34:43.1712032Z External SDK provider is enabled.
+2025-09-25T17:34:45.0942441Z Requesting metadata for platform nodejs from external SDK provider
+2025-09-25T17:34:48.9061648Z npm http fetch GET 200 https://registry.npmjs.org/npm 1870ms
+2025-09-25T17:34:49.7231789Z
+2025-09-25T17:34:49.7232366Z > flight-plan@0.0.0 start
+2025-09-25T17:34:49.723241Z > node server.js
+2025-09-25T17:34:49.7232443Z
+2025-09-25T17:34:51.277727Z node:internal/modules/cjs/loader:1215
+2025-09-25T17:34:51.2777598Z   throw err;
+2025-09-25T17:34:51.2777642Z   ^
+2025-09-25T17:34:51.2777678Z
+2025-09-25T17:34:51.2777716Z Error: Cannot find module 'express'
+2025-09-25T17:34:51.2777751Z Require stack:
+2025-09-25T17:34:51.2777787Z - /home/site/wwwroot/server.js
+2025-09-25T17:34:51.277785Z     at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+2025-09-25T17:34:51.2777891Z     at Module._load (node:internal/modules/cjs/loader:1043:27)
+2025-09-25T17:34:51.277793Z     at Module.require (node:internal/modules/cjs/loader:1298:19)
+2025-09-25T17:34:51.2777969Z     at require (node:internal/modules/helpers:182:18)
+2025-09-25T17:34:51.2778006Z     at Object.<anonymous> (/home/site/wwwroot/server.js:1:17)
+2025-09-25T17:34:51.2778046Z     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+2025-09-25T17:34:51.2778084Z     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+2025-09-25T17:34:51.2778147Z     at Module.load (node:internal/modules/cjs/loader:1275:32)
+2025-09-25T17:34:51.2778185Z     at Module._load (node:internal/modules/cjs/loader:1096:12)
+2025-09-25T17:34:51.2778223Z     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+2025-09-25T17:34:51.2778286Z   code: 'MODULE_NOT_FOUND',
+2025-09-25T17:34:51.2778323Z   requireStack: [ '/home/site/wwwroot/server.js' ]
+2025-09-25T17:34:51.2778382Z }
+2025-09-25T17:34:51.2778416Z
+2025-09-25T17:34:51.2778451Z Node.js v20.19.3
+2025-09-25T17:34:51.296639Z npm notice
+2025-09-25T17:34:51.2967025Z npm notice New major version of npm available! 10.9.2 -> 11.6.1
+2025-09-25T17:34:51.2967095Z npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.1
+2025-09-25T17:34:51.2967141Z npm notice To update run: npm install -g npm@11.6.1
+2025-09-25T17:34:51.2967228Z npm notice
+2025-09-25T17:34:57.5833578Z ........
+2025-09-25T17:34:57.5836523Z Requesting metadata for platform nodejs from external SDK provider
+2025-09-25T17:35:02.6706761Z .
+2025-09-25T17:35:02.7077716Z Detected following platforms:
+2025-09-25T17:35:02.8002675Z   nodejs: 20.19.3
+2025-09-25T17:35:02.897049Z Requesting metadata for platform nodejs from external SDK provider
+2025-09-25T17:35:05.8806558Z Version '20.19.3' of platform 'nodejs' is not installed. Generating script to install it...
+2025-09-25T17:35:06.6586859Z Detected the following frameworks: Angular,Express
+2025-09-25T17:35:07.5679166Z
+2025-09-25T17:35:07.7767815Z Using intermediate directory '/tmp/8ddfc59c435271e'.
+2025-09-25T17:35:07.8671012Z
+2025-09-25T17:35:07.9541903Z Copying files to the intermediate directory...
+2025-09-25T17:35:09.6283015Z Done in 2 sec(s).
+2025-09-25T17:35:09.7488991Z
+2025-09-25T17:35:09.763396Z Source directory     : /tmp/8ddfc59c435271e
+2025-09-25T17:35:09.8290861Z Destination directory: /home/site/wwwroot
+2025-09-25T17:35:09.8694193Z
+2025-09-25T17:35:09.9257007Z
+2025-09-25T17:35:09.9679723Z Downloading and extracting 'nodejs' version '20.19.3' to '/tmp/oryx/platforms/nodejs/20.19.3'...
+2025-09-25T17:35:10.0177713Z Detected image debian flavor: bookworm.
+2025-09-25T17:35:10.0672609Z Skipping download of nodejs version 20.19.3 as it is available in external sdk provider cache...
+2025-09-25T17:35:10.1274698Z Extracting contents...
+2025-09-25T17:35:31.3852498Z ................
+2025-09-25T17:35:31.3853118Z Successfully extracted nodejs version 20.19.3 from external sdk provider cache...
+2025-09-25T17:35:31.4546119Z Done in 22 sec(s).
+2025-09-25T17:35:31.5443494Z
+2025-09-25T17:35:32.3078472Z Removing existing manifest file
+2025-09-25T17:35:32.3588701Z Creating directory for command manifest file if it does not exist
+2025-09-25T17:35:32.4484394Z Creating a manifest file...
+2025-09-25T17:35:32.5566063Z Node Build Command Manifest file created.
+2025-09-25T17:35:32.6062888Z
+2025-09-25T17:35:32.6756664Z Found npm version spec to follow in package.json: '>=10.0.0'
+2025-09-25T17:35:32.7333067Z Updating version of npm installed to meet the above version spec.
+2025-09-25T17:35:34.5110227Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:35:55.5423343Z .................
+2025-09-25T17:35:55.5488822Z
+2025-09-25T17:35:55.5902352Z removed 17 packages, and changed 118 packages in 21s
+2025-09-25T17:35:55.6194388Z
+2025-09-25T17:35:55.6676331Z 28 packages are looking for funding
+2025-09-25T17:35:55.7163149Z   run `npm fund` for details
+2025-09-25T17:35:55.7459813Z
+2025-09-25T17:35:55.7789576Z
+2025-09-25T17:35:55.8083645Z Using Node version:
+2025-09-25T17:35:55.8458488Z v20.19.3
+2025-09-25T17:35:55.906461Z
+2025-09-25T17:35:55.9480284Z Using Npm version:
+2025-09-25T17:35:56.5283452Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:35:56.5479914Z 11.6.1
+2025-09-25T17:35:56.6485047Z
+2025-09-25T17:35:56.7081383Z Running 'npm install'...
+2025-09-25T17:35:56.771507Z
+2025-09-25T17:35:57.4454171Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:37:36.1696902Z ............................................................................................
+2025-09-25T17:37:36.2608176Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-09-25T17:37:36.715408Z npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+2025-09-25T17:37:40.4469615Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-09-25T17:37:43.736519Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-09-25T17:37:44.2071273Z npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+2025-09-25T17:41:11.8485696Z .....................................................................................................................................................................................................
+2025-09-25T17:41:11.8607583Z
+2025-09-25T17:41:11.9965798Z added 1177 packages, and audited 1178 packages in 5m
+2025-09-25T17:41:12.0282209Z
+2025-09-25T17:41:12.0664143Z 176 packages are looking for funding
+2025-09-25T17:41:12.1071873Z   run `npm fund` for details
+2025-09-25T17:41:12.1379801Z
+2025-09-25T17:41:12.1766695Z 14 vulnerabilities (8 low, 6 moderate)
+2025-09-25T17:41:12.2048595Z
+2025-09-25T17:41:12.2281328Z To address issues that do not require attention, run:
+2025-09-25T17:41:12.2745448Z   npm audit fix
+2025-09-25T17:41:12.3153956Z
+2025-09-25T17:41:12.3398208Z To address all issues (including breaking changes), run:
+2025-09-25T17:41:12.3489663Z   npm audit fix --force
+2025-09-25T17:41:12.3881278Z
+2025-09-25T17:41:12.4206967Z Run `npm audit` for details.
+2025-09-25T17:41:12.9100294Z
+2025-09-25T17:41:12.9316355Z Running 'npm run build'...
+2025-09-25T17:41:12.9684798Z
+2025-09-25T17:41:13.7213083Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:41:13.9627456Z
+2025-09-25T17:41:14.0578584Z > flight-plan@0.0.0 build
+2025-09-25T17:41:14.0894341Z > ng build --configuration=production && npm run build:server
+2025-09-25T17:41:14.1643296Z
+2025-09-25T17:41:20.5051347Z ..
+2025-09-25T17:41:20.5213142Z ❯ Building...
+2025-09-25T17:45:40.8900161Z ....................................................................................................................................................................................................................................................
+2025-09-25T17:45:40.906241Z ✔ Building...
+2025-09-25T17:45:42.7479485Z Initial chunk files   | Names                       |  Raw size | Estimated transfer size
+2025-09-25T17:45:42.7738457Z chunk-QNHUTO2C.js     | -                           | 366.77 kB |                63.87 kB
+2025-09-25T17:45:42.8635853Z chunk-3XOE6HSZ.js     | -                           | 213.96 kB |                63.74 kB
+2025-09-25T17:45:42.9243891Z chunk-6XHS44L2.js     | -                           | 182.88 kB |                44.00 kB
+2025-09-25T17:45:42.9903677Z main-U3LVRAEU.js      | main                        | 169.62 kB |                22.96 kB
+2025-09-25T17:45:43.0466964Z chunk-73NJSR2Q.js     | -                           | 164.40 kB |                48.02 kB
+2025-09-25T17:45:43.1552716Z chunk-YUN3SFWH.js     | -                           | 159.94 kB |                31.28 kB
+2025-09-25T17:45:43.2264651Z chunk-UROA67NY.js     | -                           | 127.10 kB |                27.84 kB
+2025-09-25T17:45:43.2952697Z chunk-IDHYUTAQ.js     | -                           |  82.77 kB |                17.55 kB
+2025-09-25T17:45:43.3543454Z chunk-KF2LHWVD.js     | -                           |  73.94 kB |                19.00 kB
+2025-09-25T17:45:43.3756513Z chunk-HKCXLCQY.js     | -                           |  62.67 kB |                13.96 kB
+2025-09-25T17:45:43.4241475Z chunk-GC3BJ3Q5.js     | -                           |  45.74 kB |                 7.51 kB
+2025-09-25T17:45:43.4657984Z chunk-UGMP7KZK.js     | -                           |  37.78 kB |                 8.81 kB
+2025-09-25T17:45:43.593692Z chunk-5SCVURSX.js     | -                           |  37.53 kB |                 8.96 kB
+2025-09-25T17:45:43.6446368Z polyfills-B6TNHZQ6.js | polyfills                   |  34.58 kB |                11.32 kB
+2025-09-25T17:45:43.6829431Z chunk-2SWL4PLK.js     | -                           |  20.07 kB |                 4.71 kB
+2025-09-25T17:45:43.7045913Z chunk-4AVIBQP2.js     | -                           |  15.15 kB |                 3.67 kB
+2025-09-25T17:45:43.7244456Z chunk-JDHCJGLF.js     | -                           |  14.92 kB |                 3.16 kB
+2025-09-25T17:45:43.775592Z styles-42TKS7GR.css   | styles                      |  14.65 kB |                 2.78 kB
+2025-09-25T17:45:43.8071497Z chunk-BHG5OBGI.js     | -                           |   9.95 kB |                 2.54 kB
+2025-09-25T17:45:43.8525596Z chunk-VN2NUKIZ.js     | -                           |   5.55 kB |                 1.47 kB
+2025-09-25T17:45:43.9554493Z chunk-GADKMIW7.js     | -                           |   4.71 kB |                 1.56 kB
+2025-09-25T17:45:44.0307836Z chunk-F2X3VGZZ.js     | -                           |   4.28 kB |                 1.10 kB
+2025-09-25T17:45:44.0358207Z chunk-CU4PJS6W.js     | -                           |   1.71 kB |               792 bytes
+2025-09-25T17:45:44.0456229Z chunk-X3SR7YZK.js     | -                           |   1.03 kB |               524 bytes
+2025-09-25T17:45:44.1113647Z chunk-PXKTFLC7.js     | -                           | 627 bytes |               627 bytes
+2025-09-25T17:45:44.1314735Z chunk-R26FGQ4L.js     | -                           | 264 bytes |               264 bytes
+2025-09-25T17:45:44.261544Z
+2025-09-25T17:45:44.2725522Z                       | Initial total               |   1.85 MB |               412.04 kB
+2025-09-25T17:45:44.3287315Z
+2025-09-25T17:45:44.4974918Z Lazy chunk files      | Names                       |  Raw size | Estimated transfer size
+2025-09-25T17:45:44.497507Z chunk-TO47B262.js     | browser                     |  64.06 kB |                17.11 kB
+2025-09-25T17:45:44.4987031Z chunk-OSMCOBUR.js     | login-component             |  21.17 kB |                 5.31 kB
+2025-09-25T17:45:44.5600829Z chunk-WX3AJIGH.js     | registrationform-component  |  20.34 kB |                 4.66 kB
+2025-09-25T17:45:44.7938683Z chunk-7F3ZFEKQ.js     | profile-component           |  19.83 kB |                 4.71 kB
+2025-09-25T17:45:44.8383002Z chunk-L3TJPVWH.js     | reset-password-component    |   7.68 kB |                 2.28 kB
+2025-09-25T17:45:45.6718375Z chunk-QA5IVIF3.js     | client-statements-component |   7.16 kB |                 2.50 kB
+2025-09-25T17:45:45.7009872Z chunk-47HORWFA.js     | -                           |   5.34 kB |                 1.61 kB
+2025-09-25T17:45:45.7584652Z chunk-VSPF6BDL.js     | -                           | 661 bytes |               661 bytes
+2025-09-25T17:45:46.1232406Z chunk-USQ2N2MO.js     | view-clients-component      | 607 bytes |               607 bytes
+2025-09-25T17:45:46.1744742Z chunk-YRZAAG3Y.js     | agent-dashboard-component   | 498 bytes |               498 bytes
+2025-09-25T17:45:46.2036968Z ▲ [WARNING] TS-998113: LoginComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:46.3044328Z chunk-SOWO3H5M.js     | register-page-component     | 300 bytes |               300 bytes
+2025-09-25T17:45:46.3061419Z
+2025-09-25T17:45:46.344888Z
+2025-09-25T17:45:46.3566641Z     src/app/app.component.ts:11:12:
+2025-09-25T17:45:46.4050846Z Application bundle generation complete. [260.041 seconds]
+2025-09-25T17:45:46.433936Z       11 │   imports: [LoginComponent, LandingPageDashboardComponent, AgentDa...
+2025-09-25T17:45:46.4742892Z
+2025-09-25T17:45:46.53504Z Output location: /tmp/8ddfc59c435271e/dist/flight-plan
+2025-09-25T17:45:46.5751186Z
+2025-09-25T17:45:46.4649735Z          ╵             ~~~~~~~~~~~~~~
+2025-09-25T17:45:46.6333594Z
+2025-09-25T17:45:46.6333781Z
+2025-09-25T17:45:46.6333848Z ▲ [WARNING] TS-998113: LandingPageDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:46.6333885Z
+2025-09-25T17:45:46.6902851Z     src/app/app.component.ts:11:28:
+2025-09-25T17:45:46.7108257Z       11 │ ...[LoginComponent, LandingPageDashboardComponent, AgentDashboardC...
+2025-09-25T17:45:46.7869271Z          ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2025-09-25T17:45:46.8386726Z
+2025-09-25T17:45:46.8874555Z
+2025-09-25T17:45:46.9204698Z ▲ [WARNING] TS-998113: AgentDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:46.9585729Z
+2025-09-25T17:45:47.015697Z     src/app/app.component.ts:11:59:
+2025-09-25T17:45:47.0307708Z       11 │ ...DashboardComponent, AgentDashboardComponent, LandingPageDashboa...
+2025-09-25T17:45:47.0960828Z          ╵                        ~~~~~~~~~~~~~~~~~~~~~~~
+2025-09-25T17:45:47.13643Z
+2025-09-25T17:45:47.2046285Z
+2025-09-25T17:45:47.2347305Z ▲ [WARNING] TS-998113: LandingPageDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:47.2659731Z
+2025-09-25T17:45:47.2877467Z     src/app/app.component.ts:11:84:
+2025-09-25T17:45:47.3258696Z       11 │ ...hboardComponent, LandingPageDashboardComponent, LoginComponent,...
+2025-09-25T17:45:47.3650003Z          ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2025-09-25T17:45:47.3962706Z
+2025-09-25T17:45:47.4451502Z
+2025-09-25T17:45:47.4592723Z ▲ [WARNING] TS-998113: LoginComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:47.5383108Z
+2025-09-25T17:45:47.5966426Z     src/app/app.component.ts:11:115:
+2025-09-25T17:45:47.6059705Z       11 │ ...gPageDashboardComponent, LoginComponent, MainComponent, Registr...
+2025-09-25T17:45:47.6576731Z          ╵                             ~~~~~~~~~~~~~~
+2025-09-25T17:45:47.6994484Z
+2025-09-25T17:45:47.7280272Z
+2025-09-25T17:45:47.7497051Z ▲ [WARNING] TS-998113: MainComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:47.8290287Z
+2025-09-25T17:45:47.8979192Z     src/app/app.component.ts:11:131:
+2025-09-25T17:45:47.9458251Z       11 │ ...mponent, LoginComponent, MainComponent, RegistrationformCompone...
+2025-09-25T17:45:47.9868034Z          ╵                             ~~~~~~~~~~~~~
+2025-09-25T17:45:48.0253546Z
+2025-09-25T17:45:48.0863864Z
+2025-09-25T17:45:48.1165537Z ▲ [WARNING] TS-998113: RegistrationformComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-25T17:45:48.1821116Z
+2025-09-25T17:45:48.24483Z     src/app/app.component.ts:11:146:
+2025-09-25T17:45:48.2598256Z       11 │ ...omponent, MainComponent, RegistrationformComponent, RouterModule],
+2025-09-25T17:45:48.3477668Z          ╵                             ~~~~~~~~~~~~~~~~~~~~~~~~~
+2025-09-25T17:45:48.3906224Z
+2025-09-25T17:45:48.4287377Z
+2025-09-25T17:45:48.448503Z ▲ [WARNING] TS-998113: NgIf is not used within the template of AddClientFormComponent [plugin angular-compiler]
+2025-09-25T17:45:48.691587Z
+2025-09-25T17:45:48.7400557Z     src/app/pages/client-onboarding/client-onboarding.component.ts:25:25:
+2025-09-25T17:45:48.8091346Z       25 │   imports: [CommonModule,NgIf,FloatLabel, ReactiveFormsModule, Inp...
+2025-09-25T17:45:49.0124269Z          ╵                          ~~~~
+2025-09-25T17:45:49.1114071Z
+2025-09-25T17:45:49.1482338Z
+2025-09-25T17:45:49.1791954Z ▲ [WARNING] TS-998113: NgClass is not used within the template of AsideNavigationComponent [plugin angular-compiler]
+2025-09-25T17:45:49.219517Z
+2025-09-25T17:45:49.3178251Z     src/app/pages/layout/aside-navigation/aside-navigation.component.ts:8:30:
+2025-09-25T17:45:49.6540172Z       8 │   imports: [RouterLink, NgIf, NgClass, Button],
+2025-09-25T17:45:49.8566076Z         ╵                               ~~~~~~~
+2025-09-25T17:45:49.9158518Z
+2025-09-25T17:45:49.9504921Z
+2025-09-25T17:45:49.9883942Z ▲ [WARNING] TS-998113: Button is not used within the template of AsideNavigationComponent [plugin angular-compiler]
+2025-09-25T17:45:50.2027437Z
+2025-09-25T17:45:50.2098436Z     src/app/pages/layout/aside-navigation/aside-navigation.component.ts:8:39:
+2025-09-25T17:45:50.3696713Z       8 │   imports: [RouterLink, NgIf, NgClass, Button],
+2025-09-25T17:45:50.3799221Z         ╵                                        ~~~~~~
+2025-09-25T17:45:50.418719Z
+2025-09-25T17:45:50.5043704Z
+2025-09-25T17:45:50.5732719Z ▲ [WARNING] TS-998113: NgIf is not used within the template of MainComponent [plugin angular-compiler]
+2025-09-25T17:45:50.6371941Z
+2025-09-25T17:45:50.7073479Z     src/app/pages/layout/main/main.component.ts:10:85:
+2025-09-25T17:45:50.7845625Z       10 │ ...ntComponent, AsideNavigationComponent, RouterOutlet, Button,NgIf],
+2025-09-25T17:45:50.8674998Z          ╵                                                                ~~~~
+2025-09-25T17:45:50.9068771Z
+2025-09-25T17:45:50.9382725Z
+2025-09-25T17:45:50.9773225Z ▲ [WARNING] TS-998113: HeaderComponent is not used within the template of RegisterPageComponent [plugin angular-compiler]
+2025-09-25T17:45:51.0955515Z
+2025-09-25T17:45:51.1342709Z     src/app/pages/register-page/register-page.component.ts:8:46:
+2025-09-25T17:45:51.1970756Z       8 │   imports: [RouterLink, ContactFormComponent, HeaderComponent],
+2025-09-25T17:45:51.3112422Z         ╵                                               ~~~~~~~~~~~~~~~
+2025-09-25T17:45:51.3618658Z
+2025-09-25T17:45:51.4468025Z
+2025-09-25T17:45:51.4614689Z ▲ [WARNING] TS-998113: ContactFormComponent is not used within the template of RegistrationformComponent [plugin angular-compiler]
+2025-09-25T17:45:51.491172Z
+2025-09-25T17:45:51.5395905Z     src/app/pages/registrationform/registrationform.component.ts:31:47:
+2025-09-25T17:45:51.586699Z       31 │ ... ReactiveFormsModule, ContactFormComponent, RouterLink, InputTe...
+2025-09-25T17:45:51.6375873Z          ╵                          ~~~~~~~~~~~~~~~~~~~~
+2025-09-25T17:45:51.6948597Z
+2025-09-25T17:45:51.7359068Z
+2025-09-25T17:45:51.754393Z ▲ [WARNING] TS-998113: Badge is not used within the template of ViewClientsComponent [plugin angular-compiler]
+2025-09-25T17:45:51.7940311Z
+2025-09-25T17:45:51.8322801Z     src/app/pages/view-clients/view-clients.component.ts:92:4:
+2025-09-25T17:45:51.8888941Z       92 │     Badge,
+2025-09-25T17:45:52.0025903Z          ╵     ~~~~~
+2025-09-25T17:45:52.0514903Z
+2025-09-25T17:45:52.0919764Z
+2025-09-25T17:45:52.109573Z ▲ [WARNING] src/app/pages/view-clients/view-clients.component.scss exceeded maximum budget. Budget 10.00 kB was not met by 3.41 kB with a total of 13.41 kB.
+2025-09-25T17:45:52.1393966Z
+2025-09-25T17:45:52.2206054Z
+2025-09-25T17:45:53.2217506Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:45:53.4460179Z
+2025-09-25T17:45:53.5088421Z > flight-plan@0.0.0 build:server
+2025-09-25T17:45:53.7150045Z > npx tsc -p tsconfig.server.json
+2025-09-25T17:45:53.7764053Z
+2025-09-25T17:45:54.4567175Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:46:41.8595436Z .........................................
+2025-09-25T17:46:41.8676861Z
+2025-09-25T17:46:41.898337Z Zipping existing node_modules folder...
+2025-09-25T17:49:03.8228596Z .......................................................................................................................................
+2025-09-25T17:49:03.8303572Z Done in 142 sec(s).
+2025-09-25T17:49:03.8741784Z Preparing output...
+2025-09-25T17:49:03.9211568Z
+2025-09-25T17:49:04.0567169Z Copying files to destination directory '/home/site/wwwroot'...
+2025-09-25T17:49:13.8942184Z .....
+2025-09-25T17:49:13.9017261Z Done in 10 sec(s).
+2025-09-25T17:49:14.0277545Z
+2025-09-25T17:49:14.0774094Z Removing existing manifest file
+2025-09-25T17:49:14.1579938Z Creating a manifest file...
+2025-09-25T17:49:14.2797798Z Manifest file created.
+2025-09-25T17:49:14.3595466Z Copying .ostype to manifest output directory.
+2025-09-25T17:49:14.4393104Z
+2025-09-25T17:49:14.5301953Z Done in 847 sec(s).
+2025-09-25T17:51:41.9558398Z     __ __          __      __    _ __
+2025-09-25T17:51:42.1281323Z    / //_/_  _ ____/ /_  __/ /   (_) /____
+2025-09-25T17:51:42.1281628Z   / ,< / / / / __  / / / / /   / / __/ _
+2025-09-25T17:51:42.1281669Z  / /| / /_/ / /_/ / /_/ / /___/ / /_/  __/
+2025-09-25T17:51:42.1281702Z /_/ |_\__,_/\__,_/\__,_/_____/_/\__/\___/
+2025-09-25T17:51:42.1281733Z
+2025-09-25T17:51:42.1281787Z
+2025-09-25T17:51:42.1281896Z DEBUG CONSOLE | AZURE APP SERVICE ON LINUX
+2025-09-25T17:51:42.1281928Z
+2025-09-25T17:51:42.1281961Z Documentation: http://aka.ms/webapp-linux
+2025-09-25T17:51:42.1281998Z Kudu Version : 20250623.5
+2025-09-25T17:51:42.1282033Z Commit       : 353543ec4c45fcbfd4750522d32c94e23b31927a
+2025-09-25T17:51:42.1282064Z
+2025-09-25T17:51:42.9520332Z chown: changing ownership of '/temp': Operation not permitted
+2025-09-25T17:51:42.9715461Z chmod: changing permissions of '/temp': Operation not permitted
+2025-09-25T17:51:46.3084133Z Restarting OpenBSD Secure Shell server: sshd.
+2025-09-25T17:51:46.4668751Z node not running, starting node /opt/webssh/index.js
+2025-09-25T17:52:10.6843896Z Thu Sep 25 17:52:10 UTC 2025 running .net core
+2025-09-25T17:52:15.2577429Z Startup : 05.52.15.122098
+2025-09-25T17:52:16.1033852Z Configure Services : 05.52.15.354179
+2025-09-25T17:52:16.1754957Z Configure : 05.52.16.175241
+2025-09-25T17:52:16.4648543Z Setting Up Routes : 05.52.16.464675
+2025-09-25T17:52:17.9710029Z Exiting Configure : 05.52.17.970734
+2025-09-25T17:52:19.7984241Z Hosting environment: Production
+2025-09-25T17:52:19.7984918Z Content root path: /opt/Kudu
+2025-09-25T17:52:19.798496Z Now listening on: http://0.0.0.0:8181
+2025-09-25T17:52:19.7985013Z Application started. Press Ctrl+C to shut down.
+2025-09-25T17:52:31.6369572Z    _____
+2025-09-25T17:52:31.6480582Z   /  _  \ __________ _________   ____
+2025-09-25T17:52:31.6480926Z  /  /_\  \\___   /  |  \_  __ \_/ __ \
+2025-09-25T17:52:31.6480966Z /    |    \/    /|  |  /|  | \/\  ___/
+2025-09-25T17:52:31.6481003Z \____|__  /_____ \____/ |__|    \___  >
+2025-09-25T17:52:31.6481074Z         \/      \/                  \/
+2025-09-25T17:52:31.6481169Z A P P   S E R V I C E   O N   L I N U X
+2025-09-25T17:52:31.6481205Z
+2025-09-25T17:52:31.6481254Z Documentation: http://aka.ms/webapp-linux
+2025-09-25T17:52:31.6481293Z NodeJS quickstart: https://aka.ms/node-qs
+2025-09-25T17:52:31.6481331Z NodeJS Version : v20.19.3
+2025-09-25T17:52:31.6481369Z Note: Any data outside '/home' is not persisted
+2025-09-25T17:52:31.6481404Z
+2025-09-25T17:52:51.4946723Z Starting OpenBSD Secure Shell server: sshd.
+2025-09-25T17:52:51.7591506Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2025-09-25T17:52:52.1878818Z Updating certificates in /etc/ssl/certs...
+2025-09-25T17:53:28.7772915Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2025-09-25T17:53:28.8611265Z 4 added, 0 removed; done.
+2025-09-25T17:53:28.8790708Z Running hooks in /etc/ca-certificates/update.d...
+2025-09-25T17:53:28.8894732Z done.
+2025-09-25T17:53:28.9379247Z CA certificates copied and updated successfully.
+2025-09-25T17:53:29.5252323Z Starting periodic command scheduler: cron.
+2025-09-25T17:53:30.2582699Z Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2025-09-25T17:53:30.3169174Z Build Operation ID: e488aa41b32f3ac2
+2025-09-25T17:53:31.5597872Z Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2025-09-25T17:53:31.7756437Z Writing output script to '/opt/startup/startup.sh'
+2025-09-25T17:53:32.0761032Z Running #!/bin/sh
+2025-09-25T17:53:32.0761571Z
+2025-09-25T17:53:32.0761625Z # Enter the source directory to make sure the script runs where the user expects
+2025-09-25T17:53:32.0761681Z cd "/home/site/wwwroot"
+2025-09-25T17:53:32.0761721Z
+2025-09-25T17:53:32.0761759Z export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2025-09-25T17:53:32.0761797Z if [ -z "$PORT" ]; then
+2025-09-25T17:53:32.0761929Z 		export PORT=8080
+2025-09-25T17:53:32.0761967Z fi
+2025-09-25T17:53:32.0762002Z
+2025-09-25T17:53:32.0762039Z echo Found tar.gz based node_modules.
+2025-09-25T17:53:32.0762078Z extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2025-09-25T17:53:32.0762117Z echo "Removing existing modules directory from root..."
+2025-09-25T17:53:32.0762153Z rm -fr /node_modules
+2025-09-25T17:53:32.0762217Z mkdir -p /node_modules
+2025-09-25T17:53:32.0762254Z echo Extracting modules...
+2025-09-25T17:53:32.0762289Z $extractionCommand
+2025-09-25T17:53:32.0762356Z export NODE_PATH="/node_modules":$NODE_PATH
+2025-09-25T17:53:32.0762395Z export PATH=/node_modules/.bin:$PATH
+2025-09-25T17:53:32.0762432Z if [ -d node_modules ]; then
+2025-09-25T17:53:32.0762469Z     mv -f node_modules _del_node_modules || true
+2025-09-25T17:53:32.0762528Z fi
+2025-09-25T17:53:32.0762563Z
+2025-09-25T17:53:32.0762598Z if [ -d /node_modules ]; then
+2025-09-25T17:53:32.0762635Z     ln -sfn /node_modules ./node_modules
+2025-09-25T17:53:32.0762669Z fi
+2025-09-25T17:53:32.0762702Z
+2025-09-25T17:53:32.0762737Z echo "Done."
+2025-09-25T17:53:32.0762796Z npm start
+2025-09-25T17:53:32.0975802Z Found tar.gz based node_modules.
+2025-09-25T17:53:32.1154844Z Removing existing modules directory from root...
+2025-09-25T17:53:32.2043658Z Extracting modules...
+2025-09-25T17:54:32.5493985Z mv: cannot move 'node_modules' to '_del_node_modules/node_modules': Permission denied
+2025-09-25T17:54:32.8434737Z Done.
+2025-09-25T17:54:35.195564Z npm info using npm@10.9.2
+2025-09-25T17:54:35.2035002Z npm info using node@v20.19.3
+2025-09-25T17:54:35.2035321Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:54:37.8578412Z
+2025-09-25T17:54:37.8675125Z > flight-plan@0.0.0 start
+2025-09-25T17:54:37.8675232Z > node server.js
+2025-09-25T17:54:37.8675273Z
+2025-09-25T17:54:39.2038273Z Using TypeScript server for development...
+2025-09-25T17:54:46.5897134Z 🗄️  Database configuration: azure-sql (production)
+2025-09-25T17:54:46.6078669Z 🔄 Configuring Azure SQL Server database connection...
+2025-09-25T17:54:46.6079245Z ⏳ Azure SQL adapter created, will connect during server startup
+2025-09-25T17:54:46.6079301Z ✅ Azure SQL database configured with custom adapter
+2025-09-25T17:54:47.5479209Z 🔄 Connecting to Azure SQL Database...
+2025-09-25T17:54:47.6158489Z /node_modules/path-to-regexp/dist/index.js:96
+2025-09-25T17:54:47.615904Z             throw new PathError(`Missing parameter name at index ${index}`, str);
+2025-09-25T17:54:47.6159087Z             ^
+2025-09-25T17:54:47.6159198Z
+2025-09-25T17:54:47.6159239Z PathError [TypeError]: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+2025-09-25T17:54:47.6159276Z     at name (/node_modules/path-to-regexp/dist/index.js:96:19)
+2025-09-25T17:54:47.6159314Z     at parse (/node_modules/path-to-regexp/dist/index.js:113:68)
+2025-09-25T17:54:47.6159349Z     at pathToRegexp (/node_modules/path-to-regexp/dist/index.js:267:58)
+2025-09-25T17:54:47.6159385Z     at Object.match (/node_modules/path-to-regexp/dist/index.js:237:30)
+2025-09-25T17:54:47.6159445Z     at matcher (/node_modules/router/lib/layer.js:86:23)
+2025-09-25T17:54:47.6159481Z     at new Layer (/node_modules/router/lib/layer.js:93:62)
+2025-09-25T17:54:47.6159517Z     at Function.route (/node_modules/router/index.js:428:17)
+2025-09-25T17:54:47.6159552Z     at Function.route (/node_modules/express/lib/application.js:257:22)
+2025-09-25T17:54:47.6159587Z     at app.<computed> [as get] (/node_modules/express/lib/application.js:478:22)
+2025-09-25T17:54:47.6159622Z     at Object.<anonymous> (/home/site/wwwroot/server.js:79:7) {
+2025-09-25T17:54:47.6159681Z   originalPath: '*'
+2025-09-25T17:54:47.6159714Z }
+2025-09-25T17:54:47.635961Z
+2025-09-25T17:54:47.6359929Z Node.js v20.19.3
+2025-09-25T17:54:47.7573465Z npm http fetch GET 200 https://registry.npmjs.org/npm 689ms
+2025-09-25T17:54:47.7969399Z npm notice
+2025-09-25T17:54:47.7970133Z npm notice New major version of npm available! 10.9.2 -> 11.6.1
+2025-09-25T17:54:47.7970286Z npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.1
+2025-09-25T17:54:47.7970329Z npm notice To update run: npm install -g npm@11.6.1
+2025-09-25T17:54:47.7970367Z npm notice
+2025-09-25T17:54:52.6903618Z Exception Message : The operation was canceled.
+2025-09-25T17:54:52.800761Z Exception StackTrace :    at System.Net.Http.HttpClient.HandleFailure(Exception e, Boolean telemetryStarted, HttpResponseMessage response, CancellationTokenSource cts, CancellationToken cancellationToken, CancellationTokenSource pendingRequestsCts)
+2025-09-25T17:54:52.8031996Z    at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+2025-09-25T17:54:52.8032071Z    at Microsoft.AspNetCore.Proxy.ProxyMiddleware.Invoke(HttpContext context)
+2025-09-25T17:54:52.8032101Z    at Kudu.Services.Web.Tracing.TraceMiddleware.Invoke(HttpContext context) in /tmp/KuduLite/Kudu.Services.Web/Tracing/TraceMiddleware.cs:line 101
+2025-09-25T17:58:18.8548212Z    _____
+2025-09-25T17:58:18.854934Z   /  _  \ __________ _________   ____
+2025-09-25T17:58:18.8549381Z  /  /_\  \\___   /  |  \_  __ \_/ __ \
+2025-09-25T17:58:18.854941Z /    |    \/    /|  |  /|  | \/\  ___/
+2025-09-25T17:58:18.8549438Z \____|__  /_____ \____/ |__|    \___  >
+2025-09-25T17:58:18.8549465Z         \/      \/                  \/
+2025-09-25T17:58:18.8549494Z A P P   S E R V I C E   O N   L I N U X
+2025-09-25T17:58:18.854952Z
+2025-09-25T17:58:18.854955Z Documentation: http://aka.ms/webapp-linux
+2025-09-25T17:58:18.8549577Z NodeJS quickstart: https://aka.ms/node-qs
+2025-09-25T17:58:18.8549605Z NodeJS Version : v20.19.3
+2025-09-25T17:58:18.8549634Z Note: Any data outside '/home' is not persisted
+2025-09-25T17:58:18.8549683Z
+2025-09-25T17:58:20.7332885Z Starting OpenBSD Secure Shell server: sshd.
+2025-09-25T17:58:20.7616129Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2025-09-25T17:58:20.819833Z Updating certificates in /etc/ssl/certs...
+2025-09-25T17:58:35.0893466Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2025-09-25T17:58:35.1572371Z 4 added, 0 removed; done.
+2025-09-25T17:58:35.1572895Z Running hooks in /etc/ca-certificates/update.d...
+2025-09-25T17:58:35.1789912Z done.
+2025-09-25T17:58:35.2099974Z CA certificates copied and updated successfully.
+2025-09-25T17:58:35.6385513Z Starting periodic command scheduler: cron.
+2025-09-25T17:58:36.0068239Z Found build manifest file at '/home/site/wwwroot/oryx-manifest.toml'. Deserializing it...
+2025-09-25T17:58:36.0069089Z Build Operation ID: e488aa41b32f3ac2
+2025-09-25T17:58:37.0337402Z Environment Variables for Application Insight's IPA Codeless Configuration exists..
+2025-09-25T17:58:37.2155903Z Writing output script to '/opt/startup/startup.sh'
+2025-09-25T17:58:37.5332069Z Running #!/bin/sh
+2025-09-25T17:58:37.5332626Z
+2025-09-25T17:58:37.5332664Z # Enter the source directory to make sure the script runs where the user expects
+2025-09-25T17:58:37.5332691Z cd "/home/site/wwwroot"
+2025-09-25T17:58:37.5332716Z
+2025-09-25T17:58:37.5332749Z export NODE_PATH=/usr/local/lib/node_modules:$NODE_PATH
+2025-09-25T17:58:37.5332833Z if [ -z "$PORT" ]; then
+2025-09-25T17:58:37.5332859Z 		export PORT=8080
+2025-09-25T17:58:37.5332884Z fi
+2025-09-25T17:58:37.5332907Z
+2025-09-25T17:58:37.5332934Z echo Found tar.gz based node_modules.
+2025-09-25T17:58:37.5332962Z extractionCommand="tar -xzf node_modules.tar.gz -C /node_modules"
+2025-09-25T17:58:37.5332988Z echo "Removing existing modules directory from root..."
+2025-09-25T17:58:37.5333015Z rm -fr /node_modules
+2025-09-25T17:58:37.533304Z mkdir -p /node_modules
+2025-09-25T17:58:37.5333065Z echo Extracting modules...
+2025-09-25T17:58:37.533309Z $extractionCommand
+2025-09-25T17:58:37.5333135Z export NODE_PATH="/node_modules":$NODE_PATH
+2025-09-25T17:58:37.5333163Z export PATH=/node_modules/.bin:$PATH
+2025-09-25T17:58:37.5333188Z if [ -d node_modules ]; then
+2025-09-25T17:58:37.5333214Z     mv -f node_modules _del_node_modules || true
+2025-09-25T17:58:37.5333239Z fi
+2025-09-25T17:58:37.5333262Z
+2025-09-25T17:58:37.5333287Z if [ -d /node_modules ]; then
+2025-09-25T17:58:37.5333314Z     ln -sfn /node_modules ./node_modules
+2025-09-25T17:58:37.5333337Z fi
+2025-09-25T17:58:37.533336Z
+2025-09-25T17:58:37.5333385Z echo "Done."
+2025-09-25T17:58:37.5333409Z npm start
+2025-09-25T17:58:37.5527597Z Found tar.gz based node_modules.
+2025-09-25T17:58:37.5532563Z Removing existing modules directory from root...
+2025-09-25T17:58:37.6224695Z Extracting modules...
+2025-09-25T17:59:28.4386199Z mv: cannot move 'node_modules' to '_del_node_modules/node_modules': Permission denied
+2025-09-25T17:59:28.67926Z Done.
+2025-09-25T17:59:29.898494Z npm info using npm@10.9.2
+2025-09-25T17:59:29.9058457Z npm info using node@v20.19.3
+2025-09-25T17:59:29.9063843Z npm warn config production Use `--omit=dev` instead.
+2025-09-25T17:59:32.0194595Z
+2025-09-25T17:59:32.0195377Z > flight-plan@0.0.0 start
+2025-09-25T17:59:32.019542Z > node server.js
+2025-09-25T17:59:32.0195449Z
+2025-09-25T17:59:34.254291Z Using TypeScript server for development...

@@ -235,3 +235,5 @@ Use this helper to ensure your frontend only works with clean, usable data.
 ---
 
 **For questions or support, please contact the project maintainers.**
+
+<!-- Azure deployment fix: Optimized startup command to prevent timeout loops (Sept 25, 2025) -->
