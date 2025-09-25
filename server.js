@@ -74,7 +74,7 @@ try {
     });
   });
 }
-//test
+
 // Angular routing fallback - serve index.html for all non-API routes
   app.get('*', (req, res) => {
   // Don't serve index.html for API routes
