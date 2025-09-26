@@ -33,7 +33,23 @@ class DatabaseService {
     }
     // Provinces
     static async getProvinces() {
-        return await this.ensureAzureSQL().getProvinces();
+        if (db_1.dbConfig.type === 'azure-sql') {
+            return await this.ensureAzureSQL().getProvinces();
+        }
+        else {
+            // Return hardcoded provinces for development
+            return [
+                { id: 1, name: 'Eastern Cape', code: 'EC' },
+                { id: 2, name: 'Free State', code: 'FS' },
+                { id: 3, name: 'Gauteng', code: 'GP' },
+                { id: 4, name: 'KwaZulu-Natal', code: 'KZN' },
+                { id: 5, name: 'Limpopo', code: 'LIM' },
+                { id: 6, name: 'Mpumalanga', code: 'MP' },
+                { id: 7, name: 'North West', code: 'NW' },
+                { id: 8, name: 'Northern Cape', code: 'NC' },
+                { id: 9, name: 'Western Cape', code: 'WC' }
+            ];
+        }
     }
     static async createProvince(province) {
         return await this.ensureAzureSQL().createProvince(province);

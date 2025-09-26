@@ -219,13 +219,28 @@ app.post('/api/UserCredential/login', async (req, res) => {
 app.get('/api/Province', async (req, res) => {
     try {
         console.log('🌍 Fetching provinces list');
+        console.log('🔍 Database type:', db_1.dbConfig.type);
         const provinces = await database_service_1.DatabaseService.getProvinces();
         console.log(`✅ Found ${provinces.length} provinces`);
         res.json(provinces);
     }
     catch (error) {
         console.error('❌ Error fetching provinces:', error);
-        res.status(500).json({ error: 'Failed to fetch provinces' });
+        console.error('❌ Full error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            name: error instanceof Error ? error.constructor.name : 'Unknown',
+            code: error?.code,
+            number: error?.number,
+            originalError: error?.originalError
+        });
+        res.status(500).json({
+            error: 'Failed to fetch provinces',
+            debug: {
+                dbType: db_1.dbConfig.type,
+                errorMessage: error instanceof Error ? error.message : 'Unknown error'
+            }
+        });
     }
 });
 // Create Province (for data management)
@@ -373,33 +388,6 @@ app.post('/api/UserCredential', async (req, res) => {
         else {
             res.status(500).json({ error: 'Failed to create user credential' });
         }
-    }
-});
-// ===== PROVINCE ENDPOINTS =====
-// Get all Provinces
-app.get('/api/Province', async (req, res) => {
-    try {
-        console.log('🌍 Fetching provinces list');
-        const provinces = await database_service_1.DatabaseService.getProvinces();
-        console.log(`✅ Found ${provinces.length} provinces`);
-        res.json(provinces);
-    }
-    catch (error) {
-        console.error('❌ Error fetching provinces:', error);
-        res.status(500).json({ error: 'Failed to fetch provinces' });
-    }
-});
-// Create Province (for data management)
-app.post('/api/Province', authenticateToken, async (req, res) => {
-    try {
-        console.log('🌍 Creating new province:', req.body);
-        const newProvince = await database_service_1.DatabaseService.createProvince(req.body);
-        console.log('✅ Province created successfully:', newProvince);
-        res.status(201).json(newProvince);
-    }
-    catch (error) {
-        console.error('❌ Error creating province:', error);
-        res.status(500).json({ error: 'Failed to create province' });
     }
 });
 // ===== CUSTOMER ENDPOINTS =====
