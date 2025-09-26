@@ -1,0 +1,22 @@
+ERROR 
+Object { headers: {…}, status: 500, statusText: "Internal Server Error", url: "https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/Province", ok: false, type: undefined, name: "HttpErrorResponse", message: "Http failure response for https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/Province: 500 Internal Server Error", error: {…} }
+chunk-73NJSR2Q.js:7:25642
+    handleError https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    next https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    next https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    _next https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    next https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    next https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    at https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    next https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    emit https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    onHandleError https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    invoke https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    run https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    runOutsideAngular https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    onHandleError https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    handleError https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    runTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    invokeTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    invoke https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    0 https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1

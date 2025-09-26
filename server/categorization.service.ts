@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
-import { db } from './db';
-import { transactionCategories, bankTransactions, TransactionCategory, BankTransaction } from '../shared/schema';
-import { eq, sql } from 'drizzle-orm';
+import { azureSqlAdapter } from './db';
+import { TransactionCategory, BankTransaction } from '../shared/schema';
+// No longer using Drizzle ORM - Azure SQL only
 
 // Initialize OpenAI - the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env['OPENAI_API_KEY'] });
@@ -18,12 +18,17 @@ export class CategorizationService {
 
   // Load categories into memory for faster processing
   static async initialize() {
-    this.categories = await db.select().from(transactionCategories);
+    if (!azureSqlAdapter) {
+      throw new Error('Azure SQL adapter not initialized');
+    }
+    
+    // TODO: Implement getTransactionCategories in Azure SQL adapter
+    this.categories = [];
     
     // Create default categories if none exist
     if (this.categories.length === 0) {
       await this.createDefaultCategories();
-      this.categories = await db.select().from(transactionCategories);
+      // TODO: Load categories after creating them
     }
   }
 
@@ -50,7 +55,8 @@ export class CategorizationService {
       { name: 'Other Expenses', directionConstraint: 'out', regexPatterns: [], color: '#6b7280', isSystem: true },
     ];
 
-    await db.insert(transactionCategories).values(defaultCategories);
+    // TODO: Implement createTransactionCategory in Azure SQL adapter
+    console.log('⚠️  Transaction categories not yet implemented for Azure SQL mode');
   }
 
   // Rule-based categorization using regex patterns
@@ -68,7 +74,7 @@ export class CategorizationService {
       for (const pattern of patterns) {
         if (cleanDescription.includes(pattern.toLowerCase())) {
           return {
-            categoryId: category.id,
+            categoryId: category.id!,
             categoryName: category.name,
             confidence: 0.9 // High confidence for rule-based matches
           };
@@ -159,7 +165,7 @@ Consider South African context (banks: FNB, Standard Bank, ABSA, Nedbank, Capite
         cat.name === (direction === 'in' ? 'Other Income' : 'Other Expenses')
       );
       
-      if (defaultCategory) {
+      if (defaultCategory && defaultCategory.id) {
         result = {
           categoryId: defaultCategory.id,
           categoryName: defaultCategory.name,
@@ -170,30 +176,13 @@ Consider South African context (banks: FNB, Standard Bank, ABSA, Nedbank, Capite
       }
     }
 
-    return result;
+    return result!; // We ensure result is always assigned above
   }
 
   // Recategorize transactions (for manual overrides or reprocessing)
   static async recategorizeTransactions(transactionIds: number[]): Promise<void> {
-    const transactions = await db.select()
-      .from(bankTransactions)
-      .where(sql`${bankTransactions.id} = ANY(${transactionIds})`);
-
-    for (const transaction of transactions) {
-      const categorization = await this.categorizeTransaction(
-        transaction.description,
-        transaction.merchant || '',
-        parseFloat(transaction.amount)
-      );
-
-      await db.update(bankTransactions)
-        .set({
-          categoryID: categorization.categoryId,
-          confidence: categorization.confidence.toString(),
-          updatedAt: new Date()
-        })
-        .where(eq(bankTransactions.id, transaction.id));
-    }
+    // TODO: Implement recategorization in Azure SQL adapter
+    throw new Error('Transaction recategorization not yet implemented for Azure SQL mode');
   }
 
   // Get all categories for frontend

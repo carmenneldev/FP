@@ -1,7 +1,186 @@
-import { pgTable, integer, text, boolean, timestamp, varchar, decimal, jsonb } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+// Note: This schema file provides TypeScript types only for Azure SQL mode
+// All Drizzle ORM table definitions are commented out since we use Azure SQL adapter
 
-// FinancialAdvisor table - based on src/app/models/financial-advisor.model.ts
+// TypeScript interfaces for Azure SQL mode
+export interface FinancialAdvisor {
+  id?: number;
+  firstName: string;
+  surname: string;
+  identityNumber: string;
+  mobileNumber: string;
+  emailAddress: string;
+  physicalAddress1: string;
+  physicalAddress2?: string;
+  provinceID: number;
+  postalCode: string;
+  fsca_Number?: string;
+  profileImageUrl?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface UserCredential {
+  id?: number;
+  userType: string;
+  userID: number;
+  username: string;
+  passwordHash: string;
+  isActive?: boolean;
+  lastLogin?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface Province {
+  id?: number;
+  name: string;
+  abbreviation: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface Customer {
+  id?: number;
+  firstName: string;
+  surname: string;
+  identityNumber: string;
+  mobileNumber: string;
+  emailAddress: string;
+  physicalAddress1: string;
+  physicalAddress2?: string;
+  provinceID: number;
+  postalCode: string;
+  dateOfBirth: Date;
+  age?: number;
+  maritalStatusID: number;
+  preferredLanguageID: number;
+  financialAdvisorID: number;
+  profileImageUrl?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface MaritalStatus {
+  id?: number;
+  name: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface PreferredLanguage {
+  id?: number;
+  name: string;
+  languageCode: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface PolicyType {
+  id?: number;
+  name: string;
+  description?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface Policy {
+  id?: number;
+  customerID: number;
+  policyTypeID: number;
+  policyNumber: string;
+  startDate: Date;
+  endDate?: Date;
+  premiumAmount?: string;
+  coverageAmount?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface Qualification {
+  id?: number;
+  name: string;
+  description?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface BankStatement {
+  id?: number;
+  customerID: number;
+  fileName: string;
+  displayName?: string;
+  storagePath?: string;
+  mimeType?: string;
+  fileHash?: string;
+  uploadStatus?: string;
+  fileType?: 'PDF' | 'CSV';
+  uploadDate?: Date;
+  statementPeriod?: string;
+  totalTransactions?: number;
+  transactionCount?: number;
+  totalIn?: string;
+  totalOut?: string;
+  netAmount?: string;
+  isProcessed?: boolean;
+  processedAt?: Date;
+  error?: string;
+  errorMessage?: string;
+  rawFileData?: any;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface BankTransaction {
+  id?: number;
+  statementID: number;
+  customerID: number;
+  txnDate: Date;
+  description: string;
+  merchant?: string;
+  amount: string;
+  direction: 'in' | 'out';
+  balance?: string;
+  categoryID?: number;
+  confidence?: string;
+  rawData?: any;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface TransactionCategory {
+  id?: number;
+  name: string;
+  directionConstraint?: 'in' | 'out';
+  regexPatterns?: string[] | any;
+  color: string;
+  isSystem?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// Export types for insertions
+export type InsertFinancialAdvisor = Omit<FinancialAdvisor, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertUserCredential = Omit<UserCredential, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertProvince = Omit<Province, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertCustomer = Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertMaritalStatus = Omit<MaritalStatus, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertPreferredLanguage = Omit<PreferredLanguage, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertPolicyType = Omit<PolicyType, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertPolicy = Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertQualification = Omit<Qualification, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertBankStatement = Omit<BankStatement, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertBankTransaction = Omit<BankTransaction, 'id' | 'createdAt' | 'updatedAt'>;
+export type InsertTransactionCategory = Omit<TransactionCategory, 'id' | 'createdAt' | 'updatedAt'>;
+
+// All Drizzle ORM table definitions commented out for Azure SQL mode
+/*
 export const financialAdvisors = pgTable('financial_advisors', {
   id: integer('id').primaryKey().generatedByDefaultAsIdentity(),
   firstName: varchar('first_name', { length: 255 }).notNull(),
@@ -252,9 +431,4 @@ export type PolicyType = typeof policyTypes.$inferSelect;
 export type Qualification = typeof qualifications.$inferSelect;
 
 // Bank Statement and Transaction types
-export type BankStatement = typeof bankStatements.$inferSelect;
-export type InsertBankStatement = typeof bankStatements.$inferInsert;
-export type BankTransaction = typeof bankTransactions.$inferSelect;
-export type InsertBankTransaction = typeof bankTransactions.$inferInsert;
-export type TransactionCategory = typeof transactionCategories.$inferSelect;
-export type InsertTransactionCategory = typeof transactionCategories.$inferInsert;
+*/  // End of commented out Drizzle ORM definitions

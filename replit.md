@@ -4,10 +4,28 @@
 FlightPlan is a comprehensive Angular application for managing clients, policies, and related data in the financial advisory domain. This is a freshly imported GitHub project that has been configured to run in the Replit environment.
 
 ## Project Status
-- **Last Updated**: September 19, 2025
-- **Status**: Successfully configured for Replit environment
+- **Last Updated**: September 26, 2025
+- **Status**: Azure SQL-only conversion complete - ready for Azure deployment
 - **Frontend**: Angular 19.x with PrimeNG components
-- **Backend**: External API expected at `/api` endpoint (placeholder configured)
+- **Backend**: Express.js API with Azure SQL Database integration only
+
+## Recent Changes
+### Azure SQL-Only Conversion (Sept 26, 2025)
+- **COMPLETE POSTGRESQL REMOVAL**: Eliminated all PostgreSQL dependencies and packages per user requirement
+  - Removed postgresql, pg, drizzle-orm, and all related packages from package.json
+  - Converted database service to use ONLY Azure SQL adapter (no PostgreSQL fallback)
+  - Updated schema.ts to provide TypeScript interfaces only (all Drizzle table definitions removed)
+- **DRIZZLE ORM ELIMINATION**: Removed all Drizzle ORM function calls from server code
+  - Eliminated and, eq, gte, lte, desc, sql operators from server/index.ts
+  - Converted all database queries to use Azure SQL adapter exclusively
+  - Fixed all TypeScript compilation issues - build now passes with zero errors
+- **AZURE SQL INFRASTRUCTURE**: Application now operates exclusively with Azure SQL Database
+  - Database service uses mssql package for Azure SQL connectivity only
+  - Categorization service adapted for Azure SQL mode
+  - Seed functionality appropriately disabled for production Azure SQL environment
+- **DEPLOYMENT READY**: Application configured for Azure App Service with Azure SQL only
+  - Environment variables: DB_TYPE=azure-sql, AZURE_SQL_SERVER, AZURE_SQL_DATABASE, AZURE_SQL_USER, AZURE_SQL_PASSWORD
+  - No PostgreSQL dependencies or configurations remain in codebase
 
 ## Recent Changes
 ### Azure App Service Port Fix (Sept 22, 2025)

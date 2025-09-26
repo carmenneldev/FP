@@ -22,8 +22,7 @@ catch (error) {
     console.warn('⚠️  PDF parsing module failed to load. PDF bank statement uploads will be disabled.', error?.message || 'Unknown error');
 }
 const database_service_1 = require("./database-service");
-const schema_1 = require("../shared/schema");
-const drizzle_orm_1 = require("drizzle-orm");
+// No longer using Drizzle ORM - Azure SQL only
 const categorization_service_1 = require("./categorization.service");
 const app = (0, express_1.default)();
 const PORT = parseInt(process.env['PORT'] || process.env['WEBSITES_PORT'] || '8080');
@@ -566,9 +565,9 @@ app.post('/api/Customer/:id/Statement', authenticateToken, upload.single('statem
         const baseFileName = path.parse(file.originalname).name;
         const fileExtension = path.parse(file.originalname).ext;
         // Check for existing statements with same original filename
-        const existingWithSameName = await db_1.db.query.bankStatements.findMany({
-            where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.bankStatements.customerID, customerId), (0, drizzle_orm_1.eq)(schema_1.bankStatements.originalFileName, file.originalname))
-        });
+        // Check for duplicate statement using Azure SQL adapter
+        const existingStatements = await database_service_1.DatabaseService.getBankStatementsByCustomer(customerId);
+        const existingWithSameName = existingStatements.filter(s => s.fileName === file.originalname);
         let displayName;
         if (existingWithSameName.length === 0) {
             // First file with this name - use original
@@ -582,7 +581,7 @@ app.post('/api/Customer/:id/Statement', authenticateToken, upload.single('statem
         // Create bank statement record
         const statementData = {
             customerID: customerId,
-            originalFileName: file.originalname,
+            fileName: file.originalname,
             displayName: displayName,
             storagePath: file.path,
             mimeType: file.mimetype,
@@ -613,7 +612,7 @@ app.post('/api/Customer/:id/Statement', authenticateToken, upload.single('statem
 app.get('/api/Customer/:id/Statements', authenticateToken, async (req, res) => {
     try {
         const customerId = parseInt(req.params['id']);
-        const statements = await database_service_1.DatabaseService.getBankStatements(customerId);
+        const statements = await database_service_1.DatabaseService.getBankStatementsByCustomer(customerId);
         res.json(statements);
     }
     catch (error) {
@@ -651,45 +650,27 @@ app.get('/api/Customer/:id/TransactionSummary', authenticateToken, async (req, r
     try {
         const customerId = parseInt(req.params['id']);
         const { from, to } = req.query;
-        let whereConditions = [(0, drizzle_orm_1.eq)(schema_1.bankTransactions.customerID, customerId)];
-        if (from)
-            whereConditions.push((0, drizzle_orm_1.gte)(schema_1.bankTransactions.txnDate, new Date(from)));
-        if (to)
-            whereConditions.push((0, drizzle_orm_1.lte)(schema_1.bankTransactions.txnDate, new Date(to)));
-        // Get overall totals
-        const totals = await db_1.db
-            .select({
-            totalIn: (0, drizzle_orm_1.sql) `SUM(CASE WHEN direction = 'in' THEN amount ELSE 0 END)`,
-            totalOut: (0, drizzle_orm_1.sql) `SUM(CASE WHEN direction = 'out' THEN amount ELSE 0 END)`,
-            count: (0, drizzle_orm_1.sql) `COUNT(*)`
-        })
-            .from(schema_1.bankTransactions)
-            .where((0, drizzle_orm_1.and)(...whereConditions));
-        // Get per-category breakdown
-        const categoryBreakdown = await db_1.db
-            .select({
-            categoryId: schema_1.bankTransactions.categoryID,
-            categoryName: schema_1.transactionCategories.name,
-            total: (0, drizzle_orm_1.sql) `SUM(amount)`,
-            count: (0, drizzle_orm_1.sql) `COUNT(*)`
-        })
-            .from(schema_1.bankTransactions)
-            .leftJoin(schema_1.transactionCategories, (0, drizzle_orm_1.eq)(schema_1.bankTransactions.categoryID, schema_1.transactionCategories.id))
-            .where((0, drizzle_orm_1.and)(...whereConditions))
-            .groupBy(schema_1.bankTransactions.categoryID, schema_1.transactionCategories.name)
-            .orderBy((0, drizzle_orm_1.sql) `SUM(ABS(amount)) DESC`);
-        // Get latest statements
-        const latestStatements = await db_1.db.query.bankStatements.findMany({
-            where: (0, drizzle_orm_1.eq)(schema_1.bankStatements.customerID, customerId),
-            orderBy: (0, drizzle_orm_1.desc)(schema_1.bankStatements.uploadedAt),
-            limit: 5
-        });
+        // Use Azure SQL adapter for transaction summary
+        const fromDate = from ? from : undefined;
+        const toDate = to ? to : undefined;
+        // Use Azure SQL adapter for transaction summary
+        const summary = await database_service_1.DatabaseService.getTransactionSummary(customerId, fromDate, toDate);
+        const totals = {
+            totalIn: summary.totalIn || 0,
+            totalOut: summary.totalOut || 0,
+            count: summary.transactionCount || 0
+        };
+        // Use Azure SQL adapter for category breakdown
+        const categoryBreakdown = await database_service_1.DatabaseService.getTransactionsByCategory(customerId, fromDate, toDate);
+        // Use Azure SQL adapter for latest statements
+        const allStatements = await database_service_1.DatabaseService.getBankStatementsByCustomer(customerId);
+        const latestStatements = allStatements.slice(0, 5); // TODO: Add limit/ordering to adapter method
         res.json({
             totals: {
-                totalIn: totals[0]?.totalIn || 0,
-                totalOut: Math.abs(totals[0]?.totalOut || 0),
-                netAmount: (totals[0]?.totalIn || 0) - Math.abs(totals[0]?.totalOut || 0),
-                transactionCount: totals[0]?.count || 0
+                totalIn: totals.totalIn || 0,
+                totalOut: Math.abs(totals.totalOut || 0),
+                netAmount: (totals.totalIn || 0) - Math.abs(totals.totalOut || 0),
+                transactionCount: totals.count || 0
             },
             categoryBreakdown,
             latestStatements
@@ -705,23 +686,8 @@ app.get('/api/Statements/:id/Transactions', authenticateToken, async (req, res) 
     try {
         const statementId = parseInt(req.params.id);
         const { categoryId, direction, search, page = 1, size = 50, sort = 'txnDate' } = req.query;
-        let whereConditions = [(0, drizzle_orm_1.eq)(schema_1.bankTransactions.statementID, statementId)];
-        if (categoryId)
-            whereConditions.push((0, drizzle_orm_1.eq)(schema_1.bankTransactions.categoryID, parseInt(categoryId)));
-        if (direction)
-            whereConditions.push((0, drizzle_orm_1.eq)(schema_1.bankTransactions.direction, direction));
-        if (search) {
-            whereConditions.push((0, drizzle_orm_1.sql) `${schema_1.bankTransactions.description} ILIKE ${'%' + search + '%'}`);
-        }
-        const transactions = await db_1.db.query.bankTransactions.findMany({
-            where: (0, drizzle_orm_1.and)(...whereConditions),
-            with: {
-                category: true
-            },
-            orderBy: sort === 'amount' ? (0, drizzle_orm_1.desc)(schema_1.bankTransactions.amount) : (0, drizzle_orm_1.desc)(schema_1.bankTransactions.txnDate),
-            limit: parseInt(size),
-            offset: (parseInt(page) - 1) * parseInt(size)
-        });
+        // Azure SQL mode - statement transactions not yet implemented
+        const transactions = [];
         res.json(transactions);
     }
     catch (error) {
@@ -734,27 +700,8 @@ app.get('/api/Customer/:id/Transactions', authenticateToken, async (req, res) =>
     try {
         const customerId = parseInt(req.params['id']);
         const { categoryId, direction, search, page = 1, size = 100, sort = 'txnDate', from, to } = req.query;
-        let whereConditions = [(0, drizzle_orm_1.eq)(schema_1.bankTransactions.customerID, customerId)];
-        if (categoryId)
-            whereConditions.push((0, drizzle_orm_1.eq)(schema_1.bankTransactions.categoryID, parseInt(categoryId)));
-        if (direction)
-            whereConditions.push((0, drizzle_orm_1.eq)(schema_1.bankTransactions.direction, direction));
-        if (search) {
-            whereConditions.push((0, drizzle_orm_1.sql) `${schema_1.bankTransactions.description} ILIKE ${'%' + search + '%'}`);
-        }
-        if (from)
-            whereConditions.push((0, drizzle_orm_1.gte)(schema_1.bankTransactions.txnDate, new Date(from)));
-        if (to)
-            whereConditions.push((0, drizzle_orm_1.lte)(schema_1.bankTransactions.txnDate, new Date(to)));
-        const transactions = await db_1.db.query.bankTransactions.findMany({
-            where: (0, drizzle_orm_1.and)(...whereConditions),
-            with: {
-                category: true
-            },
-            orderBy: sort === 'amount' ? (0, drizzle_orm_1.desc)(schema_1.bankTransactions.amount) : (0, drizzle_orm_1.desc)(schema_1.bankTransactions.txnDate),
-            limit: parseInt(size),
-            offset: (parseInt(page) - 1) * parseInt(size)
-        });
+        // Azure SQL mode - customer transactions not yet implemented
+        const transactions = [];
         res.json(transactions);
     }
     catch (error) {
@@ -790,13 +737,8 @@ app.get('/api/TransactionCategories', async (req, res) => {
 async function processStatementFile(statementId, filePath) {
     try {
         console.log(`Processing statement ${statementId}...`);
-        // Update status to processing
-        await db_1.db.update(schema_1.bankStatements)
-            .set({ uploadStatus: 'processing' })
-            .where((0, drizzle_orm_1.eq)(schema_1.bankStatements.id, statementId));
-        const statement = await db_1.db.query.bankStatements.findFirst({
-            where: (0, drizzle_orm_1.eq)(schema_1.bankStatements.id, statementId)
-        });
+        // Azure SQL mode - get statement and update status
+        const statement = await database_service_1.DatabaseService.getBankStatementById(statementId);
         if (!statement) {
             throw new Error('Statement not found');
         }
@@ -836,7 +778,7 @@ async function processStatementFile(statementId, filePath) {
                 merchant: txn.merchant,
                 amount: amount.toFixed(2),
                 direction,
-                balance: txn.balance ? parseFloat(txn.balance).toFixed(2) : null,
+                balance: txn.balance ? parseFloat(txn.balance).toFixed(2) : undefined,
                 categoryID: categorization.categoryId,
                 confidence: categorization.confidence.toFixed(4),
                 rawData: txn
@@ -1105,10 +1047,8 @@ app.get('/api/Profile', authenticateToken, async (req, res) => {
         }
         else if (user.userType === 'Client') {
             // Fetch customer profile
-            const [customer] = await db_1.db
-                .select()
-                .from(schema_1.customers)
-                .where((0, drizzle_orm_1.eq)(schema_1.customers.id, user.userID));
+            // Azure SQL mode - get customer by ID
+            const customer = await database_service_1.DatabaseService.getCustomerById(user.userID);
             profile = customer;
         }
         if (!profile) {

@@ -1,0 +1,155 @@
+
+Logs
+Instances
+Lookback period
+Connected!
+2025-09-26T07:16:48.3099814Z Deploy Async
+2025-09-26T07:16:53.7799776Z Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+2025-09-26T07:16:53.8690015Z You can report issues at https://github.com/Microsoft/Oryx/issues
+2025-09-26T07:16:53.9189258Z
+2025-09-26T07:16:53.9585365Z Oryx Version: 0.2.20250611.1+0649de32f1279969c9023dd41b389cce4bb94493, Commit: 0649de32f1279969c9023dd41b389cce4bb94493, ReleaseTagName: 20250611.1
+2025-09-26T07:16:53.9720875Z
+2025-09-26T07:16:54.0293951Z Build Operation ID: 678f26af72b96b56
+2025-09-26T07:16:54.0670662Z Repository Commit : a90a5264-4d07-4928-9f7d-e8a76fec804a
+2025-09-26T07:16:54.1255627Z OS Type           : bookworm
+2025-09-26T07:16:54.158423Z Image Type        : githubactions
+2025-09-26T07:16:54.2152556Z
+2025-09-26T07:16:54.2537643Z Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+2025-09-26T07:16:54.2859949Z Backup SDK Storage URL: https://oryxsdks-cdn.azureedge.net
+2025-09-26T07:16:54.3348637Z Detecting platforms...
+2025-09-26T07:16:54.3650007Z External SDK provider is enabled.
+2025-09-26T07:16:54.6939574Z Requesting metadata for platform nodejs from external SDK provider
+2025-09-26T07:16:58.1615962Z Requesting metadata for platform nodejs from external SDK provider
+2025-09-26T07:16:59.235701Z Detected following platforms:
+2025-09-26T07:16:59.2964414Z   nodejs: 20.19.3
+2025-09-26T07:16:59.3487457Z Requesting metadata for platform nodejs from external SDK provider
+2025-09-26T07:17:00.9298959Z Version '20.19.3' of platform 'nodejs' is not installed. Generating script to install it...
+2025-09-26T07:17:01.2108141Z Detected the following frameworks: Angular,Express
+2025-09-26T07:17:01.7506235Z
+2025-09-26T07:17:01.8582932Z Using intermediate directory '/tmp/8ddfccca94e6a08'.
+2025-09-26T07:17:01.9268717Z
+2025-09-26T07:17:01.9680081Z Copying files to the intermediate directory...
+2025-09-26T07:17:04.4135144Z Done in 3 sec(s).
+2025-09-26T07:17:04.6015125Z
+2025-09-26T07:17:04.7813797Z Source directory     : /tmp/8ddfccca94e6a08
+2025-09-26T07:17:04.8712758Z Destination directory: /home/site/wwwroot
+2025-09-26T07:17:04.9610227Z
+2025-09-26T07:17:05.0639323Z
+2025-09-26T07:17:05.1540783Z Downloading and extracting 'nodejs' version '20.19.3' to '/tmp/oryx/platforms/nodejs/20.19.3'...
+2025-09-26T07:17:05.2341675Z Detected image debian flavor: bookworm.
+2025-09-26T07:17:05.3456348Z Skipping download of nodejs version 20.19.3 as it is available in external sdk provider cache...
+2025-09-26T07:17:05.3755196Z Extracting contents...
+2025-09-26T07:17:22.9651345Z .............
+2025-09-26T07:17:22.9651954Z Successfully extracted nodejs version 20.19.3 from external sdk provider cache...
+2025-09-26T07:17:23.1143059Z Done in 18 sec(s).
+2025-09-26T07:17:23.1863815Z
+2025-09-26T07:17:25.4505422Z Removing existing manifest file
+2025-09-26T07:17:25.5988747Z Creating directory for command manifest file if it does not exist
+2025-09-26T07:17:25.6860223Z Creating a manifest file...
+2025-09-26T07:17:25.764856Z Node Build Command Manifest file created.
+2025-09-26T07:17:26.507883Z
+2025-09-26T07:17:26.6040501Z Found npm version spec to follow in package.json: '>=10.0.0'
+2025-09-26T07:17:26.6604522Z Updating version of npm installed to meet the above version spec.
+2025-09-26T07:17:32.6295138Z .
+2025-09-26T07:17:32.7295763Z npm warn config production Use `--omit=dev` instead.
+2025-09-26T07:18:18.9499831Z .......................................
+2025-09-26T07:18:18.9609047Z
+2025-09-26T07:18:19.0681525Z removed 17 packages, and changed 118 packages in 48s
+2025-09-26T07:18:19.1090537Z
+2025-09-26T07:18:19.1586303Z 28 packages are looking for funding
+2025-09-26T07:18:19.2506143Z   run `npm fund` for details
+2025-09-26T07:18:19.3004478Z
+2025-09-26T07:18:19.3492422Z
+2025-09-26T07:18:19.3781789Z Using Node version:
+2025-09-26T07:18:19.4181771Z v20.19.3
+2025-09-26T07:18:19.4621374Z
+2025-09-26T07:18:19.510679Z Using Npm version:
+2025-09-26T07:18:20.1080956Z npm warn config production Use `--omit=dev` instead.
+2025-09-26T07:18:20.1197457Z 11.6.1
+2025-09-26T07:18:20.2961521Z
+2025-09-26T07:18:20.344974Z Running 'npm install'...
+2025-09-26T07:18:20.4060782Z
+2025-09-26T07:18:21.362674Z npm warn config production Use `--omit=dev` instead.
+2025-09-26T07:19:50.9583141Z ..................................................................................
+2025-09-26T07:19:50.9683957Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-09-26T07:19:51.5265981Z npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+2025-09-26T07:19:55.0125605Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-09-26T07:19:55.8157154Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-09-26T07:19:56.2181985Z npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+2025-09-26T07:22:48.0842655Z ............................................................................................................................................................warn: Microsoft.AspNetCore.Server.Kestrel[22]
+2025-09-26T07:22:48.0949724Z       As of "09/26/2025 07:22:45 +00:00", the heartbeat has been running for "00:00:01.3641075" which is longer than "00:00:01". This could be caused by thread pool starvation.
+2025-09-26T07:24:42.0812194Z ...............................................................................................................
+2025-09-26T07:24:42.1088738Z
+2025-09-26T07:24:42.2264044Z added 1177 packages, and audited 1178 packages in 6m
+2025-09-26T07:24:42.2953548Z
+2025-09-26T07:24:42.340979Z 176 packages are looking for funding
+2025-09-26T07:24:42.3656228Z   run `npm fund` for details
+2025-09-26T07:24:42.5107997Z
+2025-09-26T07:24:42.5810909Z 14 vulnerabilities (8 low, 6 moderate)
+2025-09-26T07:24:42.6941234Z
+2025-09-26T07:24:42.7009736Z To address issues that do not require attention, run:
+2025-09-26T07:24:42.7220061Z   npm audit fix
+2025-09-26T07:24:42.7518569Z
+2025-09-26T07:24:42.7746662Z To address all issues (including breaking changes), run:
+2025-09-26T07:24:42.7822566Z   npm audit fix --force
+2025-09-26T07:24:42.8200871Z
+2025-09-26T07:24:42.8356082Z Run `npm audit` for details.
+2025-09-26T07:24:43.50157Z
+2025-09-26T07:24:43.5525705Z Running 'npm run build'...
+2025-09-26T07:24:43.6039414Z
+2025-09-26T07:24:44.609917Z npm warn config production Use `--omit=dev` instead.
+2025-09-26T07:24:44.770691Z
+2025-09-26T07:24:44.8577749Z > flight-plan@0.0.0 build
+2025-09-26T07:24:44.8983432Z > ng build --configuration=production && npm run build:server
+2025-09-26T07:24:44.9607245Z
+2025-09-26T07:24:50.7842948Z .
+2025-09-26T07:24:50.7847073Z ❯ Building...
+2025-09-26T07:29:55.8384914Z ..................................................................................................................................................................................................................................................................................................
+2025-09-26T07:29:55.843757Z ✔ Building...
+2025-09-26T07:29:56.6604778Z Initial chunk files   | Names                       |  Raw size | Estimated transfer size
+2025-09-26T07:29:56.6903525Z chunk-QNHUTO2C.js     | -                           | 366.77 kB |                63.87 kB
+2025-09-26T07:29:56.7095874Z chunk-3XOE6HSZ.js     | -                           | 213.96 kB |                63.74 kB
+2025-09-26T07:29:56.7217068Z chunk-6XHS44L2.js     | -                           | 182.88 kB |                44.00 kB
+2025-09-26T07:29:56.8294961Z main-U3LVRAEU.js      | main                        | 169.62 kB |                22.96 kB
+2025-09-26T07:29:57.0258972Z chunk-73NJSR2Q.js     | -                           | 164.40 kB |                48.02 kB
+2025-09-26T07:29:57.0971096Z ▲ [WARNING] TS-998113: LoginComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-26T07:29:57.1742699Z chunk-YUN3SFWH.js     | -                           | 159.94 kB |                31.28 kB
+2025-09-26T07:29:57.2620942Z
+2025-09-26T07:29:57.2923522Z chunk-UROA67NY.js     | -                           | 127.10 kB |                27.84 kB
+2025-09-26T07:29:57.3039401Z     src/app/app.component.ts:11:12:
+2025-09-26T07:29:57.3932434Z chunk-IDHYUTAQ.js     | -                           |  82.77 kB |                17.55 kB
+2025-09-26T07:29:57.4420296Z       11 │   imports: [LoginComponent, LandingPageDashboardComponent, AgentDa...
+2025-09-26T07:29:57.5226102Z          ╵             ~~~~~~~~~~~~~~
+2025-09-26T07:29:57.5227252Z chunk-KF2LHWVD.js     | -                           |  73.94 kB |                19.00 kB
+2025-09-26T07:29:57.6332276Z chunk-HKCXLCQY.js     | -                           |  62.67 kB |                13.96 kB
+2025-09-26T07:29:57.8524652Z
+2025-09-26T07:29:57.8985859Z
+2025-09-26T07:29:57.917304Z chunk-GC3BJ3Q5.js     | -                           |  45.74 kB |                 7.51 kB
+2025-09-26T07:29:57.9772166Z chunk-UGMP7KZK.js     | -                           |  37.78 kB |                 8.81 kB
+2025-09-26T07:29:57.9936679Z ▲ [WARNING] TS-998113: LandingPageDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-26T07:29:58.0254873Z chunk-5SCVURSX.js     | -                           |  37.53 kB |                 8.96 kB
+2025-09-26T07:29:58.0271385Z
+2025-09-26T07:29:58.0567056Z polyfills-B6TNHZQ6.js | polyfills                   |  34.58 kB |                11.32 kB
+2025-09-26T07:29:58.1241683Z     src/app/app.component.ts:11:28:
+2025-09-26T07:29:58.1494504Z chunk-2SWL4PLK.js     | -                           |  20.07 kB |                 4.71 kB
+2025-09-26T07:29:58.1587904Z       11 │ ...[LoginComponent, LandingPageDashboardComponent, AgentDashboardC...
+2025-09-26T07:29:58.1815211Z chunk-4AVIBQP2.js     | -                           |  15.15 kB |                 3.67 kB
+2025-09-26T07:29:58.243546Z          ╵                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2025-09-26T07:29:58.3404204Z
+2025-09-26T07:29:58.3412697Z chunk-JDHCJGLF.js     | -                           |  14.92 kB |                 3.16 kB
+2025-09-26T07:29:58.3631035Z
+2025-09-26T07:29:58.385219Z styles-42TKS7GR.css   | styles                      |  14.65 kB |                 2.78 kB
+2025-09-26T07:29:58.4700091Z chunk-BHG5OBGI.js     | -                           |   9.95 kB |                 2.54 kB
+2025-09-26T07:29:58.4880391Z ▲ [WARNING] TS-998113: AgentDashboardComponent is not used within the template of AppComponent [plugin angular-compiler]
+2025-09-26T07:29:58.5479501Z chunk-VN2NUKIZ.js     | -                           |   5.55 kB |                 1.47 kB
+2025-09-26T07:29:58.6039183Z chunk-GADKMIW7.js     | -                           |   4.71 kB |                 1.56 kB
+2025-09-26T07:29:58.5490255Z
+2025-09-26T07:29:58.6039621Z     src/app/app.component.ts:11:59:
+2025-09-26T07:29:58.6163137Z chunk-F2X3VGZZ.js     | -                           |   4.28 kB |                 1.10 kB
+2025-09-26T07:29:58.6351022Z       11 │ ...DashboardComponent, AgentDashboardComponent, LandingPageDashboa...
+2025-09-26T07:29:58.6543981Z chunk-CU4PJS6W.js     | -                           |   1.71 kB |               792 bytes
+2025-09-26T07:29:58.7502141Z          ╵                        ~~~~~~~~~~~~~~~~~~~~~~~
+2025-09-26T07:29:58.8059194Z chunk-X3SR7YZK.js     | -                           |   1.03 kB |               524 bytes
+2025-09-26T07:29:58.876534Z
+2025-09-26T07:29:58.8957544Z chunk-PXKTFLC7.js     | -                           | 627 bytes |               627 bytes
+2025-09-26T07:29:58.9440505Z
