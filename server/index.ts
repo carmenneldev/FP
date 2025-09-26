@@ -8,8 +8,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
 import Papa from 'papaparse';
-import pdfParse from 'pdf-parse';
 import { db, initializeAzureSQL, checkDatabaseHealth, dbConfig } from './db';
+
+// Conditional PDF parsing import with error handling for Azure deployment
+let pdfParse: any = null;
+try {
+  pdfParse = require('pdf-parse');
+  console.log('✅ PDF parsing module loaded successfully');
+} catch (error: any) {
+  console.warn('⚠️  PDF parsing module failed to load. PDF bank statement uploads will be disabled.', error?.message || 'Unknown error');
+}
 import { DatabaseService } from './database-service';
 import { 
   financialAdvisors, 
@@ -96,17 +104,22 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    const allowedMimes = [
-      'text/csv', 
-      'application/pdf'
-    ];
-    const allowedExtensions = ['.csv', '.pdf'];
+    // Only allow PDF if parsing is available
+    const allowedMimes = pdfParse 
+      ? ['text/csv', 'application/pdf']
+      : ['text/csv'];
+    const allowedExtensions = pdfParse 
+      ? ['.csv', '.pdf']
+      : ['.csv'];
     
     if (allowedMimes.includes(file.mimetype) || 
         allowedExtensions.some(ext => file.originalname.toLowerCase().endsWith(ext))) {
       cb(null, true);
     } else {
-      cb(new Error('Only CSV and PDF files are allowed'));
+      const message = pdfParse 
+        ? 'Only CSV and PDF files are allowed'
+        : 'Only CSV files are allowed (PDF parsing unavailable)';
+      cb(new Error(message));
     }
   }
 });
@@ -821,6 +834,9 @@ async function processStatementFile(statementId: number, filePath: string) {
     let transactions;
     
     if (fileExtension === '.pdf') {
+      if (!pdfParse) {
+        throw new Error('PDF parsing is not available. Please upload a CSV file instead.');
+      }
       transactions = await parsePDFFile(filePath);
     } else {
       transactions = await parseCSVFile(filePath);
@@ -928,6 +944,10 @@ async function parseCSVFile(filePath: string): Promise<any[]> {
 
 // Parse PDF file function
 async function parsePDFFile(filePath: string): Promise<any[]> {
+  if (!pdfParse) {
+    throw new Error('PDF parsing is not available in this environment');
+  }
+  
   try {
     const dataBuffer = fs.readFileSync(filePath);
     const pdfData = await pdfParse(dataBuffer);
@@ -937,18 +957,18 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
     console.log('PDF Text Preview (first 500 chars):', text.substring(0, 500));
     
     // Extract transaction lines using common bank statement patterns
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const lines = text.split('\n').map((line: string) => line.trim()).filter((line: string) => line.length > 0);
     console.log('Total lines found:', lines.length);
     
     // Debug: Log first 50 lines to understand the structure
     console.log('First 50 lines from PDF:');
-    lines.slice(0, 50).forEach((line, i) => {
+    lines.slice(0, 50).forEach((line: string, i: number) => {
       console.log(`Line ${i}: "${line}"`);
     });
     
     // Also log lines that might contain transactions (skip very short ones)
     console.log('Lines with potential transaction data (length > 15):');
-    lines.filter(line => line.length > 15).slice(0, 30).forEach((line, i) => {
+    lines.filter((line: string) => line.length > 15).slice(0, 30).forEach((line: string, i: number) => {
       console.log(`Potential transaction ${i}: "${line}"`);
     });
     const transactions: any[] = [];
