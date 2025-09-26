@@ -1,0 +1,23 @@
+2025-09-26T09:32:09.2213536Z ❌ Error fetching provinces: Error: Database not connected
+2025-09-26T09:32:09.2213938Z     at AzureSQLAdapter.query (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:83:19)
+2025-09-26T09:32:09.2213975Z     at AzureSQLAdapter.getProvinces (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:222:31)
+2025-09-26T09:32:09.2214008Z     at DatabaseService.getProvinces (/home/site/wwwroot/dist/server/server/database-service.js:36:44)
+2025-09-26T09:32:09.2214039Z     at /home/site/wwwroot/dist/server/server/index.js:222:68
+2025-09-26T09:32:09.2214069Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T09:32:09.2214099Z     at next (/node_modules/router/lib/route.js:157:13)
+2025-09-26T09:32:09.2214129Z     at Route.dispatch (/node_modules/router/lib/route.js:117:3)
+2025-09-26T09:32:09.2214158Z     at handle (/node_modules/router/index.js:435:11)
+2025-09-26T09:32:09.2214186Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T09:32:09.2214215Z     at /node_modules/router/index.js:295:15
+2025-09-26T09:36:02.0373729Z 🌍 Fetching provinces list
+2025-09-26T09:36:02.0376057Z ❌ Error fetching provinces: Error: Database not connected
+2025-09-26T09:36:02.0376127Z     at AzureSQLAdapter.query (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:83:19)
+2025-09-26T09:36:02.0376161Z     at AzureSQLAdapter.getProvinces (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:222:31)
+2025-09-26T09:36:02.0376192Z     at DatabaseService.getProvinces (/home/site/wwwroot/dist/server/server/database-service.js:36:44)
+2025-09-26T09:36:02.0376221Z     at /home/site/wwwroot/dist/server/server/index.js:222:68
+2025-09-26T09:36:02.0376251Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T09:36:02.037628Z     at next (/node_modules/router/lib/route.js:157:13)
+2025-09-26T09:36:02.0376309Z     at Route.dispatch (/node_modules/router/lib/route.js:117:3)
+2025-09-26T09:36:02.0376337Z     at handle (/node_modules/router/index.js:435:11)
+2025-09-26T09:36:02.0376365Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T09:36:02.0376393Z     at /node_modules/router/index.js:295:15

@@ -52,12 +52,15 @@ async function initializeApp() {
     console.log('✅ Categorization service initialized');
     
     // Only start server if this file is executed directly (development mode)
+    // In production, server.js handles the server startup
     if (require.main === module) {
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 Development server running on port ${PORT}`);
         console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
         console.log(`🌐 External access: https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:${PORT}/api/health`);
       });
+    } else {
+      console.log(`✅ Server module initialized for production (database connected)`);
     }
   } catch (error) {
     console.error('❌ Failed to initialize application:', error);
@@ -65,10 +68,8 @@ async function initializeApp() {
   }
 }
 
-// Start the application (only when run directly, not when imported)
-if (require.main === module) {
-  initializeApp();
-}
+// Always initialize the application (both when imported and run directly)
+initializeApp();
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
