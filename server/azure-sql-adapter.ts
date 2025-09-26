@@ -334,11 +334,11 @@ export class AzureSQLAdapter {
 
   async createCustomer(customer: any): Promise<any> {
     const result = await this.query(`
-      INSERT INTO customers (firstName, surname, identityNumber, mobileNumber, emailAddress,
+      INSERT INTO customers (financial_advisor_id, firstName, surname, identityNumber, mobileNumber, emailAddress,
                            physicalAddress1, physicalAddress2, provinceID, postalCode,
                            maritalStatusID, preferredLanguageID, qualificationID)
       OUTPUT INSERTED.*
-      VALUES (@firstName, @surname, @identityNumber, @mobileNumber, @emailAddress,
+      VALUES (@financialAdvisorID, @firstName, @surname, @identityNumber, @mobileNumber, @emailAddress,
               @physicalAddress1, @physicalAddress2, @provinceID, @postalCode,
               @maritalStatusID, @preferredLanguageID, @qualificationID)
     `, customer);
