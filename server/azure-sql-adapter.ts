@@ -127,35 +127,89 @@ export class AzureSQLAdapter {
 
   // Financial Advisors
   async getFinancialAdvisors(): Promise<any[]> {
-    return await this.query(`
-      SELECT id, firstName, surname, identityNumber, mobileNumber, emailAddress, 
-             physicalAddress1, physicalAddress2, provinceID, postalCode, fsca_Number,
-             createdAt, updatedAt, profileImageUrl
-      FROM financialAdvisors 
-      ORDER BY createdAt DESC
-    `);
+    // Try/fallback query for backward compatibility with table/column names
+    try {
+      // Try new schema first (camelCase table/columns)
+      return await this.query(`
+        SELECT id, firstName, surname, identityNumber, mobileNumber, emailAddress, 
+               physicalAddress1, physicalAddress2, provinceID, postalCode, fsca_Number,
+               createdAt, updatedAt, profileImageUrl
+        FROM financialAdvisors 
+        ORDER BY createdAt DESC
+      `);
+    } catch (error: any) {
+      if (error.number === 207 || error.number === 208 || error?.originalError?.info?.number === 207 || error?.originalError?.info?.number === 208) {
+        // Fallback to legacy schema (snake_case table/columns)
+        return await this.query(`
+          SELECT id, first_name as firstName, surname, identity_number as identityNumber, 
+                 mobile_number as mobileNumber, email_address as emailAddress, 
+                 physical_address1 as physicalAddress1, physical_address2 as physicalAddress2, 
+                 province_id as provinceID, postal_code as postalCode, fsca_number as fsca_Number,
+                 created_at as createdAt, updated_at as updatedAt, profile_image_url as profileImageUrl
+          FROM financial_advisors 
+          ORDER BY created_at DESC
+        `);
+      }
+      throw error;
+    }
   }
 
   async getFinancialAdvisorById(id: number): Promise<any> {
-    const result = await this.query(`
-      SELECT id, firstName, surname, identityNumber, mobileNumber, emailAddress, 
-             physicalAddress1, physicalAddress2, provinceID, postalCode, fsca_Number,
-             createdAt, updatedAt, profileImageUrl
-      FROM financialAdvisors 
-      WHERE id = @id
-    `, { id });
-    return result[0] || null;
+    // Try/fallback query for backward compatibility
+    try {
+      // Try new schema first (camelCase table/columns)
+      const result = await this.query(`
+        SELECT id, firstName, surname, identityNumber, mobileNumber, emailAddress, 
+               physicalAddress1, physicalAddress2, provinceID, postalCode, fsca_Number,
+               createdAt, updatedAt, profileImageUrl
+        FROM financialAdvisors 
+        WHERE id = @id
+      `, { id });
+      return result[0] || null;
+    } catch (error: any) {
+      if (error.number === 207 || error.number === 208 || error?.originalError?.info?.number === 207 || error?.originalError?.info?.number === 208) {
+        // Fallback to legacy schema (snake_case table/columns)
+        const result = await this.query(`
+          SELECT id, first_name as firstName, surname, identity_number as identityNumber, 
+                 mobile_number as mobileNumber, email_address as emailAddress, 
+                 physical_address1 as physicalAddress1, physical_address2 as physicalAddress2, 
+                 province_id as provinceID, postal_code as postalCode, fsca_number as fsca_Number,
+                 created_at as createdAt, updated_at as updatedAt, profile_image_url as profileImageUrl
+          FROM financial_advisors 
+          WHERE id = @id
+        `, { id });
+        return result[0] || null;
+      }
+      throw error;
+    }
   }
 
   async createFinancialAdvisor(advisor: any): Promise<any> {
-    const result = await this.query(`
-      INSERT INTO financialAdvisors (firstName, surname, identityNumber, mobileNumber, emailAddress, 
-                                   physicalAddress1, physicalAddress2, provinceID, postalCode, fsca_Number)
-      OUTPUT INSERTED.*
-      VALUES (@firstName, @surname, @identityNumber, @mobileNumber, @emailAddress, 
-              @physicalAddress1, @physicalAddress2, @provinceID, @postalCode, @fsca_Number)
-    `, advisor);
-    return result[0];
+    // Try/fallback insert for backward compatibility
+    try {
+      // Try new schema first (camelCase table/columns)
+      const result = await this.query(`
+        INSERT INTO financialAdvisors (firstName, surname, identityNumber, mobileNumber, emailAddress, 
+                                     physicalAddress1, physicalAddress2, provinceID, postalCode, fsca_Number)
+        OUTPUT INSERTED.*
+        VALUES (@firstName, @surname, @identityNumber, @mobileNumber, @emailAddress, 
+                @physicalAddress1, @physicalAddress2, @provinceID, @postalCode, @fsca_Number)
+      `, advisor);
+      return result[0];
+    } catch (error: any) {
+      if (error.number === 207 || error.number === 208 || error?.originalError?.info?.number === 207 || error?.originalError?.info?.number === 208) {
+        // Fallback to legacy schema (snake_case table/columns)
+        const result = await this.query(`
+          INSERT INTO financial_advisors (first_name, surname, identity_number, mobile_number, email_address, 
+                                        physical_address1, physical_address2, province_id, postal_code, fsca_number)
+          OUTPUT INSERTED.*
+          VALUES (@firstName, @surname, @identityNumber, @mobileNumber, @emailAddress, 
+                  @physicalAddress1, @physicalAddress2, @provinceID, @postalCode, @fsca_Number)
+        `, advisor);
+        return result[0];
+      }
+      throw error;
+    }
   }
 
   // User Credentials
@@ -188,40 +242,94 @@ export class AzureSQLAdapter {
 
   // Provinces
   async getProvinces(): Promise<any[]> {
-    return await this.query(`
-      SELECT id, name, code
-      FROM provinces 
-      ORDER BY name
-    `);
+    // Try/fallback queries for backward compatibility
+    try {
+      // Try new schema first (province_name)
+      return await this.query(`
+        SELECT id, province_name as name, code
+        FROM provinces 
+        ORDER BY province_name
+      `);
+    } catch (error: any) {
+      if (error.number === 207 || error?.originalError?.info?.number === 207) { // Invalid column name error
+        // Fallback to old schema (name)
+        return await this.query(`
+          SELECT id, name, code
+          FROM provinces 
+          ORDER BY name
+        `);
+      }
+      throw error;
+    }
   }
 
   async createProvince(province: any): Promise<any> {
-    const result = await this.query(`
-      INSERT INTO provinces (name, code)
-      OUTPUT INSERTED.*
-      VALUES (@name, @code)
-    `, province);
-    return result[0];
+    // Try/fallback insert for backward compatibility
+    try {
+      // Try new schema first (province_name)
+      const result = await this.query(`
+        INSERT INTO provinces (province_name, code)
+        OUTPUT INSERTED.*
+        VALUES (@name, @code)
+      `, province);
+      return result[0];
+    } catch (error: any) {
+      if (error.number === 207 || error?.originalError?.info?.number === 207) { // Invalid column name error
+        // Fallback to old schema (name)
+        const result = await this.query(`
+          INSERT INTO provinces (name, code)
+          OUTPUT INSERTED.*
+          VALUES (@name, @code)
+        `, province);
+        return result[0];
+      }
+      throw error;
+    }
   }
 
   // Customers
   async getCustomers(): Promise<any[]> {
-    return await this.query(`
-      SELECT c.id, c.firstName, c.surname, c.identityNumber, c.mobileNumber, c.emailAddress,
-             c.physicalAddress1, c.physicalAddress2, c.provinceID, c.postalCode,
-             c.maritalStatusID, c.preferredLanguageID, c.qualificationID, c.profileImageUrl,
-             c.createdAt, c.updatedAt,
-             ms.name as maritalStatusName,
-             pl.name as preferredLanguageName,
-             p.name as provinceName,
-             q.name as qualificationName
-      FROM customers c
-      LEFT JOIN maritalStatuses ms ON c.maritalStatusID = ms.id
-      LEFT JOIN preferredLanguages pl ON c.preferredLanguageID = pl.id
-      LEFT JOIN provinces p ON c.provinceID = p.id
-      LEFT JOIN qualifications q ON c.qualificationID = q.id
-      ORDER BY c.createdAt DESC
-    `);
+    // Try/fallback query for backward compatibility with province column names
+    try {
+      // Try new schema first (province_name)
+      return await this.query(`
+        SELECT c.id, c.firstName, c.surname, c.identityNumber, c.mobileNumber, c.emailAddress,
+               c.physicalAddress1, c.physicalAddress2, c.provinceID, c.postalCode,
+               c.maritalStatusID, c.preferredLanguageID, c.qualificationID, c.profileImageUrl,
+               c.createdAt, c.updatedAt,
+               ms.name as maritalStatusName,
+               pl.name as preferredLanguageName,
+               p.province_name as provinceName,
+               q.name as qualificationName
+        FROM customers c
+        LEFT JOIN maritalStatuses ms ON c.maritalStatusID = ms.id
+        LEFT JOIN preferredLanguages pl ON c.preferredLanguageID = pl.id
+        LEFT JOIN provinces p ON c.provinceID = p.id
+        LEFT JOIN qualifications q ON c.qualificationID = q.id
+        ORDER BY c.createdAt DESC
+      `);
+    } catch (error: any) {
+      if (error.number === 207 || error?.originalError?.info?.number === 207) { // Invalid column name error
+        // Fallback to old schema (name)
+        return await this.query(`
+          SELECT c.id, c.firstName, c.surname, c.identityNumber, c.mobileNumber, c.emailAddress,
+                 c.physicalAddress1, c.physicalAddress2, c.provinceID, c.postalCode,
+                 c.maritalStatusID, c.preferredLanguageID, c.qualificationID, c.profileImageUrl,
+                 c.createdAt, c.updatedAt,
+                 ms.name as maritalStatusName,
+                 pl.name as preferredLanguageName,
+                 p.name as provinceName,
+                 q.name as qualificationName
+          FROM customers c
+          LEFT JOIN maritalStatuses ms ON c.maritalStatusID = ms.id
+          LEFT JOIN preferredLanguages pl ON c.preferredLanguageID = pl.id
+          LEFT JOIN provinces p ON c.provinceID = p.id
+          LEFT JOIN qualifications q ON c.qualificationID = q.id
+          ORDER BY c.createdAt DESC
+        `);
+      }
+      throw error;
+    }
   }
 
   async createCustomer(customer: any): Promise<any> {

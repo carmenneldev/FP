@@ -424,21 +424,25 @@ app.post('/api/UserCredential', async (req, res) => {
 // Get all Provinces
 app.get('/api/Province', async (req, res) => {
   try {
-    const provinceList = await DatabaseService.getProvinces();
-    res.json(provinceList);
+    console.log('🌍 Fetching provinces list');
+    const provinces = await DatabaseService.getProvinces();
+    console.log(`✅ Found ${provinces.length} provinces`);
+    res.json(provinces);
   } catch (error) {
-    console.error('Error fetching provinces:', error);
+    console.error('❌ Error fetching provinces:', error);
     res.status(500).json({ error: 'Failed to fetch provinces' });
   }
 });
 
-// Create Province
+// Create Province (for data management)
 app.post('/api/Province', authenticateToken, async (req, res) => {
   try {
+    console.log('🌍 Creating new province:', req.body);
     const newProvince = await DatabaseService.createProvince(req.body);
+    console.log('✅ Province created successfully:', newProvince);
     res.status(201).json(newProvince);
   } catch (error) {
-    console.error('Error creating province:', error);
+    console.error('❌ Error creating province:', error);
     res.status(500).json({ error: 'Failed to create province' });
   }
 });

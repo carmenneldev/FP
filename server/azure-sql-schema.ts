@@ -45,6 +45,40 @@ CREATE TABLE provinces (
     country NVARCHAR(100) DEFAULT 'South Africa'
 );
 
+-- Insert South African provinces if table is empty (backward-compatible)
+IF NOT EXISTS (SELECT 1 FROM provinces)
+BEGIN
+    -- Check if new schema (province_name) or old schema (name) exists
+    IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'provinces' AND COLUMN_NAME = 'province_name')
+    BEGIN
+        -- New schema with province_name column
+        INSERT INTO provinces (province_name, code) VALUES
+        ('Eastern Cape', 'EC'),
+        ('Free State', 'FS'),
+        ('Gauteng', 'GP'),
+        ('KwaZulu-Natal', 'KZN'),
+        ('Limpopo', 'LP'),
+        ('Mpumalanga', 'MP'),
+        ('Northern Cape', 'NC'),
+        ('North West', 'NW'),
+        ('Western Cape', 'WC');
+    END
+    ELSE IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'provinces' AND COLUMN_NAME = 'name')
+    BEGIN
+        -- Legacy schema with name column
+        INSERT INTO provinces (name, code) VALUES
+        ('Eastern Cape', 'EC'),
+        ('Free State', 'FS'),
+        ('Gauteng', 'GP'),
+        ('KwaZulu-Natal', 'KZN'),
+        ('Limpopo', 'LP'),
+        ('Mpumalanga', 'MP'),
+        ('Northern Cape', 'NC'),
+        ('North West', 'NW'),
+        ('Western Cape', 'WC');
+    END
+END;
+
 -- Customers table
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='customers' AND xtype='U')
 CREATE TABLE customers (
@@ -164,20 +198,6 @@ CREATE TABLE bank_transactions (
     created_at DATETIME2 DEFAULT GETUTCDATE()
 );
 
--- Insert default provinces
-IF NOT EXISTS (SELECT * FROM provinces WHERE code = 'WC')
-BEGIN
-    INSERT INTO provinces (province_name, code) VALUES 
-    ('Western Cape', 'WC'),
-    ('Eastern Cape', 'EC'),
-    ('Northern Cape', 'NC'),
-    ('Free State', 'FS'),
-    ('KwaZulu-Natal', 'KZN'),
-    ('North West', 'NW'),
-    ('Gauteng', 'GP'),
-    ('Mpumalanga', 'MP'),
-    ('Limpopo', 'LP');
-END;
 
 -- Insert default marital statuses
 IF NOT EXISTS (SELECT * FROM marital_statuses WHERE status_name = 'Single')
@@ -264,11 +284,46 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_policies_customer')
     CREATE INDEX IX_policies_customer ON policies(customer_id);
 `;
 
-// Split DDL into individual statements for execution
+// Split DDL into individual statements for execution, preserving control flow blocks
 export function getSchemaStatements(): string[] {
-  return AZURE_SQL_SCHEMA_DDL
-    .split(';')
-    .map(stmt => stmt.trim())
-    .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'))
-    .map(stmt => stmt + ';');
+  // Split by GO statements or preserve control flow blocks
+  const statements: string[] = [];
+  const lines = AZURE_SQL_SCHEMA_DDL.split('\n');
+  let currentStatement = '';
+  let inControlBlock = false;
+  
+  for (const line of lines) {
+    const trimmedLine = line.trim();
+    
+    // Skip comments
+    if (trimmedLine.startsWith('--') || trimmedLine === '') {
+      continue;
+    }
+    
+    // Check for control flow keywords
+    if (trimmedLine.includes('IF NOT EXISTS') || trimmedLine.includes('BEGIN')) {
+      inControlBlock = true;
+    }
+    
+    currentStatement += line + '\n';
+    
+    // End of control block
+    if (inControlBlock && trimmedLine === 'END;') {
+      inControlBlock = false;
+      statements.push(currentStatement.trim());
+      currentStatement = '';
+    }
+    // Regular statement end (not in control block)
+    else if (!inControlBlock && trimmedLine.endsWith(';') && !trimmedLine.includes('VALUES')) {
+      statements.push(currentStatement.trim());
+      currentStatement = '';
+    }
+  }
+  
+  // Add any remaining statement
+  if (currentStatement.trim()) {
+    statements.push(currentStatement.trim());
+  }
+  
+  return statements.filter(stmt => stmt.length > 0);
 }

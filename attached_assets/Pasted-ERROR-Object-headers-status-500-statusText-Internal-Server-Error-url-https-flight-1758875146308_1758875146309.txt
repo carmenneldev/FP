@@ -1,0 +1,48 @@
+ERROR 
+Object { headers: {…}, status: 500, statusText: "Internal Server Error", url: "https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/Province", ok: false, type: undefined, name: "HttpErrorResponse", message: "Http failure response for https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/Province: 500 Internal Server Error", error: {…} }
+​
+error: Object { error: "Failed to fetch provinces" }
+​
+headers: Object { headers: undefined, normalizedNames: Map(0), lazyInit: lazyInit()
+, … }
+​
+message: "Http failure response for https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/Province: 500 Internal Server Error"
+​
+name: "HttpErrorResponse"
+​
+ok: false
+​
+status: 500
+​
+statusText: "Internal Server Error"
+​
+type: undefined
+​
+url: "https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/Province"
+​
+<prototype>: Object { … }
+chunk-73NJSR2Q.js:7:25642
+Advisor registration failed: 
+Object { headers: {…}, status: 500, statusText: "Internal Server Error", url: "https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/FinancialAdvisor", ok: false, type: undefined, name: "HttpErrorResponse", message: "Http failure response for https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/api/FinancialAdvisor: 500 Internal Server Error", error: {…} }
+chunk-WX3AJIGH.js:1:5389
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-WX3AJIGH.js:1
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    _error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    _error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    _error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    _error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    _error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    error https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:3
+    l https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-6XHS44L2.js:2
+    invokeTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    onInvokeTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/chunk-73NJSR2Q.js:7
+    invokeTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    runTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    invokeTask https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    L https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    H https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
+    z https://flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net/polyfills-B6TNHZQ6.js:1
