@@ -104,7 +104,7 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    // Only allow PDF if parsing is available
+    // Allow both CSV and PDF files for bank statement uploads (with fallback for Azure)
     const allowedMimes = pdfParse 
       ? ['text/csv', 'application/pdf']
       : ['text/csv'];
@@ -117,8 +117,8 @@ const upload = multer({
       cb(null, true);
     } else {
       const message = pdfParse 
-        ? 'Only CSV and PDF files are allowed'
-        : 'Only CSV files are allowed (PDF parsing unavailable)';
+        ? 'Only CSV and PDF files are allowed for bank statement uploads'
+        : 'Only CSV files are allowed (PDF parsing unavailable in this environment)';
       cb(new Error(message));
     }
   }
@@ -255,11 +255,43 @@ app.post('/api/UserCredential/login', async (req, res) => {
   return;
 });
 
+// ===== PROVINCE ENDPOINTS =====
+
+// Get all Provinces
+app.get('/api/Province', async (req, res) => {
+  try {
+    console.log('🌍 Fetching provinces list');
+    const provinces = await DatabaseService.getProvinces();
+    console.log(`✅ Found ${provinces.length} provinces`);
+    res.json(provinces);
+  } catch (error) {
+    console.error('❌ Error fetching provinces:', error);
+    res.status(500).json({ error: 'Failed to fetch provinces' });
+  }
+});
+
+// Create Province (for data management)
+app.post('/api/Province', authenticateToken, async (req, res) => {
+  try {
+    console.log('🌍 Creating new province:', req.body);
+    const newProvince = await DatabaseService.createProvince(req.body);
+    console.log('✅ Province created successfully:', newProvince);
+    res.status(201).json(newProvince);
+  } catch (error) {
+    console.error('❌ Error creating province:', error);
+    res.status(500).json({ error: 'Failed to create province' });
+  }
+});
+
 // ===== FINANCIAL ADVISOR ENDPOINTS =====
 
 // Create Financial Advisor
 app.post('/api/FinancialAdvisor', async (req, res) => {
   try {
+    console.log('📧 Financial Advisor registration request received');
+    console.log('📧 Request body:', JSON.stringify(req.body, null, 2));
+    console.log('📧 Database type:', dbConfig.type);
+    
     const { id, createdAt, updatedAt, ...clientData } = req.body;
     
     // Only include fields that should be set by client, let DB handle ID and timestamps
@@ -277,11 +309,32 @@ app.post('/api/FinancialAdvisor', async (req, res) => {
       // Let database handle id (auto-generated), createdAt/updatedAt (defaultNow)
     };
     
+    console.log('📧 Processed advisor data for database:', JSON.stringify(advisorData, null, 2));
+    
     const newAdvisor = await DatabaseService.createFinancialAdvisor(advisorData);
+    console.log('✅ Advisor created successfully:', JSON.stringify(newAdvisor, null, 2));
 
     res.status(201).json(newAdvisor);
   } catch (error) {
-    console.error('Error creating advisor:', error);
+    console.error('❌ Error creating advisor:', error);
+    
+    // Enhanced error details for Azure debugging
+    const errorDetails = {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      type: error instanceof Error ? error.constructor.name : 'Unknown',
+      stack: error instanceof Error ? error.stack : undefined,
+      sqlError: error && typeof error === 'object' && 'code' in error ? {
+        code: (error as any).code,
+        constraint: (error as any).constraint,
+        detail: (error as any).detail,
+        originalError: (error as any).originalError
+      } : null,
+      requestBody: req.body,
+      databaseType: dbConfig.type,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.error('❌ Full error details:', JSON.stringify(errorDetails, null, 2));
     
     // Check for unique constraint violations in DrizzleQueryError
     if (error && typeof error === 'object' && 'cause' in error) {
@@ -297,7 +350,21 @@ app.post('/api/FinancialAdvisor', async (req, res) => {
       }
     }
     
-    res.status(500).json({ error: 'Failed to create advisor' });
+    // Check for Azure SQL specific errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      const sqlError = error as any;
+      if (sqlError.code === 'EREQUEST') {
+        console.error('🔍 Azure SQL Request Error - likely schema or connection issue');
+      } else if (sqlError.code === 'ELOGIN') {
+        console.error('🔍 Azure SQL Login Error - authentication issue');
+      }
+    }
+    
+    res.status(500).json({ 
+      error: 'Failed to create advisor',
+      details: process.env['NODE_ENV'] === 'development' ? errorDetails.message : 'Internal server error',
+      timestamp: new Date().toISOString()
+    });
   }
   return;
 });
@@ -835,7 +902,7 @@ async function processStatementFile(statementId: number, filePath: string) {
     
     if (fileExtension === '.pdf') {
       if (!pdfParse) {
-        throw new Error('PDF parsing is not available. Please upload a CSV file instead.');
+        throw new Error('PDF parsing is not available in this environment. Please upload a CSV file instead.');
       }
       transactions = await parsePDFFile(filePath);
     } else {
@@ -942,7 +1009,7 @@ async function parseCSVFile(filePath: string): Promise<any[]> {
   });
 }
 
-// Parse PDF file function
+// Parse PDF file function (restored with Azure deployment safety)
 async function parsePDFFile(filePath: string): Promise<any[]> {
   if (!pdfParse) {
     throw new Error('PDF parsing is not available in this environment');
@@ -954,73 +1021,31 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
     const text = pdfData.text;
     
     console.log('PDF Text Length:', text.length);
-    console.log('PDF Text Preview (first 500 chars):', text.substring(0, 500));
+    console.log('PDF Text Preview (first 200 chars):', text.substring(0, 200));
     
     // Extract transaction lines using common bank statement patterns
     const lines = text.split('\n').map((line: string) => line.trim()).filter((line: string) => line.length > 0);
     console.log('Total lines found:', lines.length);
     
-    // Debug: Log first 50 lines to understand the structure
-    console.log('First 50 lines from PDF:');
-    lines.slice(0, 50).forEach((line: string, i: number) => {
-      console.log(`Line ${i}: "${line}"`);
-    });
-    
-    // Also log lines that might contain transactions (skip very short ones)
-    console.log('Lines with potential transaction data (length > 15):');
-    lines.filter((line: string) => line.length > 15).slice(0, 30).forEach((line: string, i: number) => {
-      console.log(`Potential transaction ${i}: "${line}"`);
-    });
     const transactions: any[] = [];
     
-    // Common patterns for different bank statement formats
+    // Simple patterns for common bank statement formats
     const transactionPatterns = [
-      // FNB Clean Pattern: "13 Jun FNB App Transfer From Tech 1,500.00 Cr 2,523.01 Cr"
-      // This matches the clean FNB format with proper spacing and Cr/Dr indicators
-      /(\d{1,2}\s+\w{3})\s+(.+?)\s+(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)\s+(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)$/,
+      // FNB Pattern: "13 Jun FNB App Transfer From Tech 1,500.00 Cr 2,523.01 Cr"
+      /(\d{1,2}\s+\w{3})\s+(.+?)\s+(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)?\s*(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)?/,
       
-      // FNB Clean Pattern 2: "13 Jun FNB App Prepaid Airtime 27682232699 100.00 2,423.01 Cr" 
-      // Amount without Cr/Dr, balance with Cr/Dr
-      /(\d{1,2}\s+\w{3})\s+(.+?)\s+(\d{1,3}(?:,\d{3})*\.\d{2})\s+(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)$/,
-      
-      // FNB Pattern 1: "14 Apr   FNB App PrepaidAirtime 27814339666135.001,832.01 Cr"
-      // This is the concatenated format - Description+Phone+Amount+Balance all concatenated
-      /(\d{1,2}\s+\w{3})\s+(.+?)(\d{1,3}(?:,\d{3})*\.\d{2})(\d{1,3}(?:,\d{3})*\.\d{2})\s*(Cr|Dr)?$/,
-      
-      // FNB Pattern 2: "30 Apr   Temp Loan Repay1,808.00754.99" (no spaces between elements)
-      /(\d{1,2}\s+\w{3})\s+(.+?)(\d{1,3}(?:,\d{3})*\.\d{2})(\d{1,3}(?:,\d{3})*\.\d{2})$/,
-      
-      // FNB Pattern 3: "30 Apr   FNB OB Pmt0001 Salary624863858286,978.00 Cr2,488.01 Cr"
-      // Salary with Cr indicators (concatenated version) - handle reference number concatenation
-      /(\d{1,2}\s+\w{3})\s+(.+?)(\d{8,12})(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)\s*(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)$/,
-      
-      // Standard Pattern 1: Date Description Amount Balance (e.g., "01 Jan 2024 GROCERY STORE -45.50 1,234.56")
-      /(\d{1,2}[\s\/\-]\w{3}[\s\/\-]\d{4}|\d{1,2}[\s\/\-]\d{1,2}[\s\/\-]\d{4})\s+(.+?)\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})?/,
-      
-      // Standard Pattern 2: Date Amount Description (e.g., "2024/01/01 -45.50 GROCERY STORE")
-      /(\d{4}[\s\/\-]\d{1,2}[\s\/\-]\d{1,2}|\d{1,2}[\s\/\-]\d{1,2}[\s\/\-]\d{4})\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})\s+(.+)/,
-      
-      // Standard Pattern 3: Description Date Amount (e.g., "GROCERY STORE 01-Jan-2024 -45.50")
-      /(.+?)\s+(\d{1,2}[\s\/\-]\w{3}[\s\/\-]\d{4}|\d{1,2}[\s\/\-]\d{1,2}[\s\/\-]\d{4})\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})/
+      // Standard Pattern: Date Description Amount Balance
+      /(\d{1,2}[\s\/\-]\w{3}[\s\/\-]\d{4}|\d{1,2}[\s\/\-]\d{1,2}[\s\/\-]\d{4})\s+(.+?)\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})?/
     ];
+
+    console.log(`Trying ${transactionPatterns.length} different parsing patterns...`);
     
     for (const line of lines) {
-      // Skip header lines, balance lines, and other non-transaction lines
+      // Skip header lines and other non-transaction lines
       if (line.toLowerCase().includes('statement') ||
           line.toLowerCase().includes('balance') ||
           line.toLowerCase().includes('account') ||
-          line.toLowerCase().includes('period') ||
-          line.toLowerCase().includes('opening') ||
-          line.toLowerCase().includes('closing') ||
-          line.toLowerCase().includes('total') ||
-          line.toLowerCase().includes('delivery method') ||
-          line.toLowerCase().includes('branch number') ||
-          line.toLowerCase().includes('date') && line.toLowerCase().includes('description') ||
-          line.toLowerCase().includes('charges') && line.toLowerCase().includes('rates') ||
-          line.includes('VAT Registration') ||
-          line.includes('Invoice/Statement Number') ||
-          line.includes('Copy Tax') ||
-          line.length < 15) { // Increased minimum length
+          line.length < 15) {
         continue;
       }
       
@@ -1028,151 +1053,25 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
       for (let i = 0; i < transactionPatterns.length; i++) {
         const pattern = transactionPatterns[i];
         const match = line.match(pattern);
+        
         if (match) {
           let date, description, amount, balance;
           
-          console.log(`Pattern ${i} matched line: "${line}"`);
-          console.log(`Match groups:`, match);
-          
           if (i === 0) {
-            // FNB Clean Pattern: "13 Jun FNB App Transfer From Tech 1,500.00 Cr 2,523.01 Cr"
+            // FNB Pattern
             const [, rawDate, desc, txnAmount, txnCrDr, balanceAmount, balanceCrDr] = match;
-            date = rawDate?.trim(); // e.g., "13 Jun"
+            date = rawDate?.trim();
             description = desc?.trim() || 'Transaction';
-            amount = txnAmount?.replace(/,/g, ''); // e.g., "1500.00"
+            amount = txnAmount?.replace(/,/g, '');
             balance = balanceAmount?.replace(/,/g, '');
             
-            // If transaction amount has Cr, it's incoming (positive)
+            // Apply direction based on Cr/Dr indicators
             if (txnCrDr !== 'Cr') {
               amount = `-${amount}`;
             }
-            console.log(`FNB Clean Pattern: date=${date}, desc=${description}, amount=${amount}, balance=${balance}, txnCrDr=${txnCrDr}`);
-          } else if (i === 1) {
-            // FNB Clean Pattern 2: "13 Jun FNB App Prepaid Airtime 27682232699 100.00 2,423.01 Cr"
-            const [, rawDate, desc, txnAmount, balanceAmount, balanceCrDr] = match;
-            date = rawDate?.trim(); // e.g., "13 Jun"
-            description = desc?.trim() || 'Transaction';
-            amount = txnAmount?.replace(/,/g, ''); // e.g., "100.00"
-            balance = balanceAmount?.replace(/,/g, '');
-            
-            // Most transactions without Cr/Dr indicators are outgoing
-            if (description.toLowerCase().includes('salary') || 
-                description.toLowerCase().includes('transfer from') ||
-                description.toLowerCase().includes('deposit')) {
-              // Keep positive for income
-            } else {
-              // Make negative for outgoing transactions
-              amount = `-${amount}`;
-            }
-            console.log(`FNB Clean Pattern 2: date=${date}, desc=${description}, amount=${amount}, balance=${balance}, balanceCrDr=${balanceCrDr}`);
-          } else if (i === 2) {
-            // FNB Pattern 1: "14 Apr   FNB App PrepaidAirtime 27814339666135.001,832.01 Cr"
-            const [, rawDate, desc, txnAmount, balanceAmount, crDr] = match;
-            date = rawDate?.trim(); // e.g., "14 Apr"
-            // Extract the actual amount from the concatenated string
-            // The description often has phone numbers concatenated with amounts
-            let cleanDesc = desc?.trim() || 'Transaction';
-            let cleanAmount = txnAmount?.replace(/,/g, '');
-            
-            // For transactions like "FNB App PrepaidAirtime 27814339666135.00" 
-            // We need to extract 135.00 from the end of the description
-            const amountMatch = cleanDesc.match(/(\d{1,4}\.\d{2})$/);
-            if (amountMatch) {
-              cleanAmount = amountMatch[1];
-              cleanDesc = cleanDesc.replace(/\d{1,4}\.\d{2}$/, '').trim();
-            }
-            
-            description = cleanDesc;
-            amount = cleanAmount;
-            balance = balanceAmount?.replace(/,/g, '');
-            
-            // Most transactions are outgoing unless it's salary/deposit
-            if (description.toLowerCase().includes('salary') || 
-                description.toLowerCase().includes('transfer from') ||
-                description.toLowerCase().includes('deposit') ||
-                description.toLowerCase().includes('pmt') && description.toLowerCase().includes('salary')) {
-              // Keep positive for income
-            } else {
-              // Make negative for outgoing transactions
-              amount = `-${amount}`;
-            }
-            console.log(`FNB Pattern 1: date=${date}, desc=${description}, amount=${amount}, balance=${balance}, crDr=${crDr}`);
-          } else if (i === 3) {
-            // FNB Pattern 2: "30 Apr   Temp Loan Repay1,808.00754.99" (no spaces)
-            const [, rawDate, desc, txnAmount, balanceAmount] = match;
-            date = rawDate?.trim(); // e.g., "30 Apr"
-            description = desc?.trim() || 'Transaction';
-            amount = `-${txnAmount?.replace(/,/g, '')}`; // Most are outgoing
-            balance = balanceAmount?.replace(/,/g, '');
-            console.log(`FNB Pattern 2: date=${date}, desc=${description}, amount=${amount}, balance=${balance}`);
-          } else if (i === 2) {
-            // FNB Pattern 3: "30 Apr   FNB OB Pmt0001 Salary624863858286,978.00 Cr2,488.01 Cr"
-            const [, rawDate, desc, txnAmount, txnCrDr, balanceAmount, balanceCrDr] = match;
-            date = rawDate?.trim(); // e.g., "30 Apr"
-            
-            // Clean up the description by removing reference numbers that get concatenated
-            let cleanDesc = desc?.trim() || 'Transaction';
-            let cleanAmount = txnAmount?.replace(/,/g, '');
-            
-            // For salary transactions, extract the actual amount from the concatenated string
-            // Pattern: "FNB OB Pmt0001 Salary624863858286,978.00" should become "FNB OB Pmt0001 Salary" + "6,978.00"
-            if (cleanDesc.toLowerCase().includes('salary')) {
-              const salaryMatch = cleanDesc.match(/^(.+?salary)(\d{8,12})(\d{1,3},?\d{3}\.\d{2})$/i);
-              if (salaryMatch) {
-                cleanDesc = salaryMatch[1]; // e.g., "FNB OB Pmt0001 Salary"
-                const refNumber = salaryMatch[2]; // e.g., "62486385828"
-                cleanAmount = salaryMatch[3].replace(/,/g, ''); // e.g., "6978.00"
-                console.log(`Salary parsing: desc="${cleanDesc}", ref="${refNumber}", amount="${cleanAmount}"`);
-              }
-            }
-            
-            description = cleanDesc;
-            amount = cleanAmount;
-            balance = balanceAmount?.replace(/,/g, '');
-            
-            // If transaction amount has Cr, it's incoming (positive)
-            if (txnCrDr !== 'Cr') {
-              amount = `-${amount}`;
-            }
-            console.log(`FNB Pattern 3: date=${date}, desc=${description}, amount=${amount}, balance=${balance}, txnCrDr=${txnCrDr}`);
-          } else if (i === 3) {
-            // FNB Pattern 4: "12 May #Service Fees 2.00 316.61 Cr"
-            const [, rawDate, desc, txnAmount, balanceAmount, crDr] = match;
-            date = rawDate?.trim(); // e.g., "12 May"
-            description = desc?.trim() || 'Transaction';
-            amount = `-${txnAmount?.replace(/,/g, '')}`; // Fees are always outgoing
-            balance = balanceAmount?.replace(/,/g, '');
-            console.log(`FNB Pattern 4: date=${date}, desc=${description}, amount=${amount}, balance=${balance}, crDr=${crDr}`);
-          } else if (i === 4) {
-            // FNB Pattern 3: "30 Apr   FNB OB Pmt0001 Salary624863858286,978.00 Cr2,488.01 Cr"
-            // Salary with Cr indicators (concatenated version) - now properly parsed with reference extraction
-            const [, rawDate, baseDesc, refNumber, txnAmount, txnCrDr, balanceAmount, balanceCrDr] = match;
-            date = rawDate?.trim(); // e.g., "30 Apr"
-            description = baseDesc?.trim() || 'Transaction'; // e.g., "FNB OB Pmt0001 Salary"
-            amount = txnAmount?.replace(/,/g, ''); // e.g., "6978.00" (now correct!)
-            balance = balanceAmount?.replace(/,/g, '');
-            
-            console.log(`Salary parsing: baseDesc="${description}", refNumber="${refNumber}", amount="${amount}"`);
-            
-            // For salary transactions, keep positive (it's income)
-            if (description.toLowerCase().includes('salary')) {
-              // Keep positive for salary
-            } else if (txnCrDr === 'Cr') {
-              // Other Cr transactions are usually income
-            } else {
-              // Make negative for outgoing transactions
-              amount = `-${amount}`;
-            }
-            console.log(`FNB Pattern 3 (Cr/Dr): date=${date}, desc=${description}, amount=${amount}, balance=${balance}, txnCrDr=${txnCrDr}`);
-          } else if (i === 5) {
-            // Standard Pattern 1: Date Description Amount Balance
+          } else {
+            // Standard Pattern
             [, date, description, amount, balance] = match;
-          } else if (i === 5) {
-            // Standard Pattern 2: Date Amount Description
-            [, date, amount, description] = match;
-          } else if (i === 6) {
-            // Standard Pattern 3: Description Date Amount
-            [, description, date, amount] = match;
           }
           
           // Clean and standardize the data
@@ -1184,7 +1083,7 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
             const parsedDate = parseFlexibleDate(date);
             
             transactions.push({
-              date: parsedDate.toISOString().split('T')[0], // YYYY-MM-DD format
+              date: parsedDate.toISOString().split('T')[0],
               description: description.trim(),
               amount: numAmount.toString(),
               merchant: extractMerchantFromDescription(description.trim()),
@@ -1198,7 +1097,7 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
     
     console.log(`Extracted ${transactions.length} transactions from PDF`);
     return transactions;
-    
+
   } catch (error) {
     console.error('Error parsing PDF:', error);
     throw new Error('Failed to parse PDF bank statement');
