@@ -1,0 +1,50 @@
+2025-09-26T10:23:12.2396803Z 🌍 Fetching provinces list
+2025-09-26T10:23:12.248352Z 🔍 Database type: azure-sql
+2025-09-26T10:23:12.3513582Z ❌ Error fetching provinces: Error: Database not connected
+2025-09-26T10:23:12.3514247Z     at AzureSQLAdapter.query (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:83:19)
+2025-09-26T10:23:12.3514298Z     at AzureSQLAdapter.getProvinces (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:222:31)
+2025-09-26T10:23:12.3514343Z     at DatabaseService.getProvinces (/home/site/wwwroot/dist/server/server/database-service.js:37:48)
+2025-09-26T10:23:12.3514372Z     at /home/site/wwwroot/dist/server/server/index.js:223:68
+2025-09-26T10:23:12.3514402Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T10:23:12.351443Z     at next (/node_modules/router/lib/route.js:157:13)
+2025-09-26T10:23:12.3514458Z     at Route.dispatch (/node_modules/router/lib/route.js:117:3)
+2025-09-26T10:23:12.3514486Z     at handle (/node_modules/router/index.js:435:11)
+2025-09-26T10:23:12.3514514Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T10:23:12.3514541Z     at /node_modules/router/index.js:295:15
+2025-09-26T10:23:12.3930711Z ❌ Full error details: {
+2025-09-26T10:23:12.3931258Z   message: 'Database not connected',
+2025-09-26T10:23:12.3931294Z   stack: 'Error: Database not connected\n' +
+2025-09-26T10:23:12.3931326Z     '    at AzureSQLAdapter.query (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:83:19)\n' +
+2025-09-26T10:23:12.3931361Z     '    at AzureSQLAdapter.getProvinces (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:222:31)\n' +
+2025-09-26T10:23:12.3931392Z     '    at DatabaseService.getProvinces (/home/site/wwwroot/dist/server/server/database-service.js:37:48)\n' +
+2025-09-26T10:23:12.3931421Z     '    at /home/site/wwwroot/dist/server/server/index.js:223:68\n' +
+2025-09-26T10:23:12.3931449Z     '    at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)\n' +
+2025-09-26T10:23:12.3931478Z     '    at next (/node_modules/router/lib/route.js:157:13)\n' +
+2025-09-26T10:23:12.3931516Z     '    at Route.dispatch (/node_modules/router/lib/route.js:117:3)\n' +
+2025-09-26T10:23:12.3931628Z     '    at handle (/node_modules/router/index.js:435:11)\n' +
+2025-09-26T10:23:12.3931663Z     '    at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)\n' +
+2025-09-26T10:23:12.3931691Z     '    at /node_modules/router/index.js:295:15',
+2025-09-26T10:23:12.3931718Z   name: 'Error',
+2025-09-26T10:23:12.3931745Z   code: undefined,
+2025-09-26T10:23:12.3931772Z   number: undefined,
+2025-09-26T10:23:12.39318Z   originalError: undefined
+2025-09-26T10:23:12.3931826Z }
+2025-09-26T10:23:12.5960546Z 🔐 Auth middleware called for: GET /api/FinancialAdvisor
+2025-09-26T10:23:12.5988468Z 📡 Authorization header: Missing
+2025-09-26T10:23:12.6058409Z ❌ No token found, returning 401
+2025-09-26T10:23:12.6554263Z 🌍 Fetching provinces list
+2025-09-26T10:23:12.6556694Z 🔍 Database type: azure-sql
+2025-09-26T10:23:12.6570207Z ❌ Error fetching provinces: Error: Database not connected
+2025-09-26T10:23:12.6570379Z     at AzureSQLAdapter.query (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:83:19)
+2025-09-26T10:23:12.6570468Z     at AzureSQLAdapter.getProvinces (/home/site/wwwroot/dist/server/server/azure-sql-adapter.js:222:31)
+2025-09-26T10:23:12.6570501Z     at DatabaseService.getProvinces (/home/site/wwwroot/dist/server/server/database-service.js:37:48)
+2025-09-26T10:23:12.6570532Z     at /home/site/wwwroot/dist/server/server/index.js:223:68
+2025-09-26T10:23:12.657056Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T10:23:12.6570589Z     at next (/node_modules/router/lib/route.js:157:13)
+2025-09-26T10:23:12.6570619Z     at Route.dispatch (/node_modules/router/lib/route.js:117:3)
+2025-09-26T10:23:12.6570647Z     at handle (/node_modules/router/index.js:435:11)
+2025-09-26T10:23:12.6570676Z     at Layer.handleRequest (/node_modules/router/lib/layer.js:152:17)
+2025-09-26T10:23:12.6570704Z     at /node_modules/router/index.js:295:15
+2025-09-26T10:23:12.6570733Z ❌ Full error details: {
+2025-09-26T10:23:12.657076Z   message: 'Database not connected',
+2025-09-26T10:23:12.6570813Z   stack: 'Error: Database not connected\n' +

@@ -68,8 +68,11 @@ async function initializeApp() {
   }
 }
 
+// Export the initialization promise for server.js to await
+export const initializationPromise = initializeApp();
+
 // Always initialize the application (both when imported and run directly)
-initializeApp();
+initializationPromise;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
