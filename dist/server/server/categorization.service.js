@@ -10,15 +10,27 @@ const openai = new openai_1.default({ apiKey: process.env['OPENAI_API_KEY'] });
 class CategorizationService {
     // Load categories into memory for faster processing
     static async initialize() {
-        if (!db_1.azureSqlAdapter) {
-            throw new Error('Azure SQL adapter not initialized');
+        // Check which database type is being used
+        const dbType = process.env['AZURE_SQL_SERVER'] ? 'azure-sql' : 'postgresql';
+        if (dbType === 'azure-sql') {
+            if (!db_1.azureSqlAdapter) {
+                throw new Error('Azure SQL adapter not initialized');
+            }
+            // TODO: Implement getTransactionCategories in Azure SQL adapter
+            this.categories = [];
         }
-        // TODO: Implement getTransactionCategories in Azure SQL adapter
-        this.categories = [];
+        else {
+            // PostgreSQL development mode - skip category loading for now
+            console.log('⚠️  Transaction categories not yet implemented for PostgreSQL mode');
+            this.categories = [];
+        }
         // Create default categories if none exist
         if (this.categories.length === 0) {
-            await this.createDefaultCategories();
-            // TODO: Load categories after creating them
+            // Only create categories in Azure SQL mode for now
+            if (dbType === 'azure-sql') {
+                await this.createDefaultCategories();
+                // TODO: Load categories after creating them
+            }
         }
     }
     static async createDefaultCategories() {

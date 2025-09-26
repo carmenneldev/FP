@@ -97,7 +97,7 @@
   <div class="grid-container">
     <div class="flex-container-row">
       <label for="maritalStatusID">Marital Status</label>
-      <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="status" optionValue="id"
+      <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="name" optionValue="id"
                   formControlName="maritalStatusID" placeholder="Select marital status"
                   [ngClass]="{'is-invalid': isInvalid('maritalStatusID')}">
       </p-dropdown>
@@ -105,7 +105,7 @@
 
     <div class="flex-container-row">
       <label for="preferredLanguageID">Preferred Language</label>
-      <p-dropdown id="preferredLanguageID" [options]="languages" optionLabel="languageName" optionValue="id"
+      <p-dropdown id="preferredLanguageID" [options]="languages" optionLabel="name" optionValue="id"
                   formControlName="preferredLanguageID" placeholder="Select language"
                   [ngClass]="{'is-invalid': isInvalid('preferredLanguageID')}">
       </p-dropdown>

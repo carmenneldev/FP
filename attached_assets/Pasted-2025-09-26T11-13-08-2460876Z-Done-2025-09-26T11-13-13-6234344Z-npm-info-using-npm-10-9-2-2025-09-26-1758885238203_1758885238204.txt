@@ -1,0 +1,32 @@
+2025-09-26T11:13:08.2460876Z Done.
+2025-09-26T11:13:13.6234344Z npm info using npm@10.9.2
+2025-09-26T11:13:13.6414995Z npm info using node@v20.19.3
+2025-09-26T11:13:13.6787703Z npm warn config production Use `--omit=dev` instead.
+2025-09-26T11:13:21.9311394Z
+2025-09-26T11:13:21.9312172Z > flight-plan@0.0.0 start
+2025-09-26T11:13:21.9312226Z > node server.js
+2025-09-26T11:13:21.9312262Z
+2025-09-26T11:13:26.9782916Z 🗄️  Database configuration: azure-sql (production)
+2025-09-26T11:13:26.9962122Z 🔄 Configuring Azure SQL Server database connection...
+2025-09-26T11:13:26.9962484Z ⏳ Azure SQL adapter created, will connect during server startup
+2025-09-26T11:13:26.9962536Z ✅ Azure SQL database configured with custom adapter
+2025-09-26T11:13:27.0166582Z ⚠️  PDF parsing module failed to load. PDF bank statement uploads will be disabled. Error parsing /home/site/wwwroot/node_modules/pdf-parse/package.json: Unexpected end of JSON input
+2025-09-26T11:13:27.3345088Z 🔄 Connecting to Azure SQL Database...
+2025-09-26T11:13:27.4142392Z ⏳ Waiting for server initialization to complete...
+2025-09-26T11:13:28.025406Z ✅ Azure SQL Database connection established
+2025-09-26T11:13:28.0325137Z 🔄 Initializing Azure SQL Database schema...
+2025-09-26T11:13:28.5276208Z ⚠️ Schema statement warning: Invalid column name 'name'.
+2025-09-26T11:13:28.6203233Z ✅ Azure SQL Database schema initialized successfully (1 tables processed)
+2025-09-26T11:13:28.6358813Z ✅ Azure SQL Database connected successfully
+2025-09-26T11:13:28.6359303Z ⚠️  Transaction categories not yet implemented for Azure SQL mode
+2025-09-26T11:13:28.6359358Z ✅ Categorization service initialized
+2025-09-26T11:13:28.6359401Z ✅ Server module initialized for production (database connected)
+2025-09-26T11:13:28.6359439Z ✅ Server initialization completed successfully
+2025-09-26T11:13:28.635948Z ✅ API routes loaded and mounted at root (routes have /api prefix)
+2025-09-26T11:13:28.63596Z 🚀 FlightPlan server running on port 8080
+2025-09-26T11:13:28.6359641Z 🌐 Environment: production
+2025-09-26T11:13:28.6359691Z 📁 Serving static files from: /home/site/wwwroot/dist/flight-plan
+2025-09-26T11:13:28.635973Z 🔗 App URL: flightplanapp-e4c6bqgcewbnhkgp.southafricanorth-01.azurewebsites.net
+2025-09-26T11:13:35.1639651Z 🌍 Fetching provinces list
+2025-09-26T11:13:35.1640309Z 🔍 Database type: azure-sql
+2025-09-26T11:13:35.1862562Z ✅ Found 9 provinces

@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { azureSqlAdapter } from './db';
+import { azureSqlAdapter, db } from './db';
 import { TransactionCategory, BankTransaction } from '../shared/schema';
 // No longer using Drizzle ORM - Azure SQL only
 
@@ -18,17 +18,28 @@ export class CategorizationService {
 
   // Load categories into memory for faster processing
   static async initialize() {
-    if (!azureSqlAdapter) {
-      throw new Error('Azure SQL adapter not initialized');
-    }
+    // Check which database type is being used
+    const dbType = process.env['AZURE_SQL_SERVER'] ? 'azure-sql' : 'postgresql';
     
-    // TODO: Implement getTransactionCategories in Azure SQL adapter
-    this.categories = [];
+    if (dbType === 'azure-sql') {
+      if (!azureSqlAdapter) {
+        throw new Error('Azure SQL adapter not initialized');
+      }
+      // TODO: Implement getTransactionCategories in Azure SQL adapter
+      this.categories = [];
+    } else {
+      // PostgreSQL development mode - skip category loading for now
+      console.log('⚠️  Transaction categories not yet implemented for PostgreSQL mode');
+      this.categories = [];
+    }
     
     // Create default categories if none exist
     if (this.categories.length === 0) {
-      await this.createDefaultCategories();
-      // TODO: Load categories after creating them
+      // Only create categories in Azure SQL mode for now
+      if (dbType === 'azure-sql') {
+        await this.createDefaultCategories();
+        // TODO: Load categories after creating them
+      }
     }
   }
 

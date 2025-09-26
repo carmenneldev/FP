@@ -10,14 +10,29 @@ import { createHash } from 'crypto';
 import Papa from 'papaparse';
 import { db, initializeAzureSQL, checkDatabaseHealth, dbConfig } from './db';
 
-// Conditional PDF parsing import with error handling for Azure deployment
-let pdfParse: any = null;
-try {
-  pdfParse = require('pdf-parse');
-  console.log('✅ PDF parsing module loaded successfully');
-} catch (error: any) {
-  console.warn('⚠️  PDF parsing module failed to load. PDF bank statement uploads will be disabled.', error?.message || 'Unknown error');
+// PDF parsing with Mozilla PDF.js - More reliable than pdf-parse for Azure deployment
+let pdfjsLib: any = null;
+
+async function initializePdfJs() {
+  try {
+    // Azure-hardened import with proper ESM fallback
+    try {
+      // Primary: CJS-safe path (works in most Azure environments)
+      pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+    } catch {
+      // Fallback: Dynamic import for ESM environments
+      const module = await import('pdfjs-dist/legacy/build/pdf.mjs');
+      pdfjsLib = module;
+    }
+    
+    console.log('✅ PDF parsing module loaded successfully (PDF.js legacy build)');
+  } catch (error: any) {
+    console.warn('⚠️  PDF parsing module failed to load. PDF bank statement uploads will be disabled.', error?.message || 'Unknown error');
+  }
 }
+
+// Initialize PDF.js immediately
+initializePdfJs();
 import { DatabaseService } from './database-service';
 import { 
   // Table definitions removed for Azure SQL mode - using types only
@@ -98,10 +113,10 @@ const upload = multer({
   },
   fileFilter: (req, file, cb) => {
     // Allow both CSV and PDF files for bank statement uploads (with fallback for Azure)
-    const allowedMimes = pdfParse 
+    const allowedMimes = pdfjsLib 
       ? ['text/csv', 'application/pdf']
       : ['text/csv'];
-    const allowedExtensions = pdfParse 
+    const allowedExtensions = pdfjsLib 
       ? ['.csv', '.pdf']
       : ['.csv'];
     
@@ -109,7 +124,7 @@ const upload = multer({
         allowedExtensions.some(ext => file.originalname.toLowerCase().endsWith(ext))) {
       cb(null, true);
     } else {
-      const message = pdfParse 
+      const message = pdfjsLib 
         ? 'Only CSV and PDF files are allowed for bank statement uploads'
         : 'Only CSV files are allowed (PDF parsing unavailable in this environment)';
       cb(new Error(message));
@@ -827,10 +842,23 @@ async function processStatementFile(statementId: number, filePath: string) {
     let transactions;
     
     if (fileExtension === '.pdf') {
-      if (!pdfParse) {
+      if (!pdfjsLib) {
         throw new Error('PDF parsing is not available in this environment. Please upload a CSV file instead.');
       }
-      transactions = await parsePDFFile(filePath);
+      try {
+        transactions = await parsePDFFile(filePath);
+      } catch (pdfError: any) {
+        // Handle specific PDF parsing errors with user-friendly messages
+        let errorMessage = 'Failed to parse PDF bank statement';
+        if (pdfError.message.includes('password') || pdfError.message.includes('encrypted')) {
+          errorMessage = 'PDF is password-protected. Please remove password protection and try again.';
+        } else if (pdfError.message.includes('Invalid PDF') || pdfError.message.includes('corrupt')) {
+          errorMessage = 'PDF file appears to be corrupted. Please try a different file.';
+        } else if (pdfError.message.includes('No text found') || pdfError.message.includes('empty')) {
+          errorMessage = 'No readable text found in PDF. Please ensure the file contains bank statement data.';
+        }
+        throw new Error(errorMessage);
+      }
     } else {
       transactions = await parseCSVFile(filePath);
     }
@@ -935,16 +963,42 @@ async function parseCSVFile(filePath: string): Promise<any[]> {
   });
 }
 
-// Parse PDF file function (restored with Azure deployment safety)
+// Parse PDF file function using Mozilla PDF.js (Azure compatible)
 async function parsePDFFile(filePath: string): Promise<any[]> {
-  if (!pdfParse) {
+  if (!pdfjsLib) {
     throw new Error('PDF parsing is not available in this environment');
   }
   
   try {
-    const dataBuffer = fs.readFileSync(filePath);
-    const pdfData = await pdfParse(dataBuffer);
-    const text = pdfData.text;
+    // Use async file reading to avoid blocking event loop
+    const dataBuffer = await fs.promises.readFile(filePath);
+    
+    // Load PDF document using PDF.js
+    const pdfDocument = await pdfjsLib.getDocument({
+      data: new Uint8Array(dataBuffer)
+    }).promise;
+    
+    console.log('PDF loaded, pages:', pdfDocument.numPages);
+    
+    // Extract text from all pages (with reasonable limit to prevent long-running parses)
+    const maxPages = Math.min(pdfDocument.numPages, 50); // Limit to 50 pages max
+    let text = '';
+    for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+      const page = await pdfDocument.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map((item: any) => item.str).join(' ');
+      text += pageText + '\n';
+      
+      // Clean up page resources
+      page.cleanup();
+    }
+    
+    // Properly cleanup document resources (destroy is more thorough than cleanup)
+    if (pdfDocument.destroy) {
+      pdfDocument.destroy();
+    } else {
+      pdfDocument.cleanup();
+    }
     
     console.log('PDF Text Length:', text.length);
     console.log('PDF Text Preview (first 200 chars):', text.substring(0, 200));
