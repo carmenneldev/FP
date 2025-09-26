@@ -1,0 +1,30 @@
+2025-09-26T13:41:28.4922453Z Error creating customer: RequestError: Validation failed for parameter 'policies'. Invalid string.
+2025-09-26T13:41:28.4923095Z     at /node_modules/mssql/lib/tedious/request.js:449:19
+2025-09-26T13:41:28.4923133Z     at Array.forEach (<anonymous>)
+2025-09-26T13:41:28.4923165Z     at Request.userCallback (/node_modules/mssql/lib/tedious/request.js:446:46)
+2025-09-26T13:41:28.4923194Z     at Request.callback (/node_modules/tedious/lib/request.js:239:14)
+2025-09-26T13:41:28.4923223Z     at /node_modules/tedious/lib/connection.js:1634:17
+2025-09-26T13:41:28.4923254Z     at process.processTicksAndRejections (node:internal/process/task_queues:77:11) {
+2025-09-26T13:41:28.4923281Z   code: 'EPARAM',
+2025-09-26T13:41:28.4923312Z   originalError: RequestError: Validation failed for parameter 'policies'. Invalid string.
+2025-09-26T13:41:28.4923342Z       at Request.validateParameters (/node_modules/tedious/lib/request.js:331:15)
+2025-09-26T13:41:28.4923371Z       at Connection.execSql (/node_modules/tedious/lib/connection.js:1629:15)
+2025-09-26T13:41:28.4923428Z       ... 2 lines matching cause stack trace ...
+2025-09-26T13:41:28.4923459Z       at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+2025-09-26T13:41:28.4923485Z     code: 'EPARAM',
+2025-09-26T13:41:28.4923513Z     [cause]: TypeError: Invalid string.
+2025-09-26T13:41:28.4923543Z         at Object.validate (/node_modules/tedious/lib/data-types/nvarchar.js:126:13)
+2025-09-26T13:41:28.4923573Z         at Request.validateParameters (/node_modules/tedious/lib/request.js:329:42)
+2025-09-26T13:41:28.4923602Z         at Connection.execSql (/node_modules/tedious/lib/connection.js:1629:15)
+2025-09-26T13:41:28.4923631Z         at /node_modules/mssql/lib/tedious/request.js:705:65
+2025-09-26T13:41:28.492366Z         at /node_modules/mssql/lib/base/connection-pool.js:371:41
+2025-09-26T13:41:28.4923689Z         at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-09-26T13:41:28.4923732Z   },
+2025-09-26T13:41:28.492376Z   number: 'EPARAM',
+2025-09-26T13:41:28.4923788Z   lineNumber: undefined,
+2025-09-26T13:41:28.4923815Z   state: undefined,
+2025-09-26T13:41:28.4923841Z   class: undefined,
+2025-09-26T13:41:28.4923868Z   serverName: undefined,
+2025-09-26T13:41:28.4923895Z   procName: undefined,
+2025-09-26T13:41:28.4923921Z   precedingErrors: []
+2025-09-26T13:41:28.4923947Z }

@@ -39,14 +39,8 @@ export class ClientFormHelper {
     provinceID: formValue.provinceID || 0,
     postalCode: formValue.postalCode || '',
     preferredLanguageID: formValue.preferredLanguageID || 0,
-    qualificationID: formValue.qualificationID || 0,
-    financialAdvisor: null,
-    province: null,
-    maritalStatus: null,
-    preferredLanguage: null,
-    qualification: null,
-    policies: [],
-    budgets: []
+    qualificationID: formValue.qualificationID || 0
+    // Removed navigation properties and arrays that don't belong in the database payload
   };
 }
 
