@@ -67,8 +67,8 @@ export class DatabaseService {
   }
 
   // Customers
-  static async getCustomers() {
-    return await this.ensureAzureSQL().getCustomers();
+  static async getCustomers(advisorId?: number) {
+    return await this.ensureAzureSQL().getCustomers(advisorId);
   }
 
   static async createCustomer(customer: any) {

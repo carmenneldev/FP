@@ -458,7 +458,17 @@ app.post('/api/UserCredential', async (req, res) => {
 // Get all Customers
 app.get('/api/Customer', authenticateToken, async (req, res) => {
   try {
-    const customerList = await DatabaseService.getCustomers();
+    // Get advisor ID from JWT token
+    const advisorId = (req as any).user?.userID;
+    console.log('🔍 Debug - JWT user object:', (req as any).user);
+    console.log('🔍 Debug - Extracted advisorId:', advisorId, 'type:', typeof advisorId);
+    
+    const customerList = await DatabaseService.getCustomers(advisorId);
+    console.log('🔍 Debug - Total customers found:', customerList.length);
+    if (customerList.length > 0) {
+      console.log('🔍 Debug - Sample customer data:', customerList[0]);
+    }
+    
     res.json(customerList);
   } catch (error) {
     console.error('Error fetching customers:', error);

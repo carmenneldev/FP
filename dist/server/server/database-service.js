@@ -55,8 +55,8 @@ class DatabaseService {
         return await this.ensureAzureSQL().createProvince(province);
     }
     // Customers
-    static async getCustomers() {
-        return await this.ensureAzureSQL().getCustomers();
+    static async getCustomers(advisorId) {
+        return await this.ensureAzureSQL().getCustomers(advisorId);
     }
     static async createCustomer(customer) {
         return await this.ensureAzureSQL().createCustomer(customer);

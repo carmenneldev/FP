@@ -262,15 +262,19 @@ class AzureSQLAdapter {
         }
     }
     // Customers
-    async getCustomers() {
-        // Try/fallback query for backward compatibility with province column names
+    async getCustomers(advisorId) {
+        // Only filter by advisor ID if a valid number is provided
+        const whereClause = (typeof advisorId === 'number') ? 'WHERE c.financial_advisor_id = @advisorId' : '';
+        const params = (typeof advisorId === 'number') ? { advisorId } : {};
+        console.log('🔍 Azure SQL Debug - advisorId:', advisorId, 'type:', typeof advisorId);
+        console.log('🔍 Azure SQL Debug - whereClause:', whereClause);
         try {
             // Try new schema first (province_name)
-            return await this.query(`
+            const result = await this.query(`
         SELECT c.id, c.firstName, c.surname, c.identityNumber, c.mobileNumber, c.emailAddress,
                c.physicalAddress1, c.physicalAddress2, c.provinceID, c.postalCode,
                c.maritalStatusID, c.preferredLanguageID, c.qualificationID, c.profileImageUrl,
-               c.createdAt, c.updatedAt,
+               c.financial_advisor_id, c.createdAt, c.updatedAt,
                ms.name as maritalStatusName,
                pl.name as preferredLanguageName,
                p.province_name as provinceName,
@@ -280,17 +284,20 @@ class AzureSQLAdapter {
         LEFT JOIN preferredLanguages pl ON c.preferredLanguageID = pl.id
         LEFT JOIN provinces p ON c.provinceID = p.id
         LEFT JOIN qualifications q ON c.qualificationID = q.id
+        ${whereClause}
         ORDER BY c.createdAt DESC
-      `);
+      `, params);
+            console.log('🔍 Azure SQL Debug - Query returned:', result.length, 'customers');
+            return result;
         }
         catch (error) {
             if (error.number === 207 || error?.originalError?.info?.number === 207) { // Invalid column name error
                 // Fallback to old schema (name)
-                return await this.query(`
+                const result = await this.query(`
           SELECT c.id, c.firstName, c.surname, c.identityNumber, c.mobileNumber, c.emailAddress,
                  c.physicalAddress1, c.physicalAddress2, c.provinceID, c.postalCode,
                  c.maritalStatusID, c.preferredLanguageID, c.qualificationID, c.profileImageUrl,
-                 c.createdAt, c.updatedAt,
+                 c.financial_advisor_id, c.createdAt, c.updatedAt,
                  ms.name as maritalStatusName,
                  pl.name as preferredLanguageName,
                  p.name as provinceName,
@@ -300,8 +307,11 @@ class AzureSQLAdapter {
           LEFT JOIN preferredLanguages pl ON c.preferredLanguageID = pl.id
           LEFT JOIN provinces p ON c.provinceID = p.id
           LEFT JOIN qualifications q ON c.qualificationID = q.id
+          ${whereClause}
           ORDER BY c.createdAt DESC
-        `);
+        `, params);
+                console.log('🔍 Azure SQL Debug - Fallback query returned:', result.length, 'customers');
+                return result;
             }
             throw error;
         }
