@@ -440,9 +440,9 @@ class AzureSQLAdapter {
              uploadStatus, error, transactionCount, totalIn, totalOut, netAmount,
              uploadedAt, processedAt
       FROM bankStatements 
-      WHERE customerID = @customerID
+      WHERE customer_id = @customer_id
       ORDER BY uploadedAt DESC
-    `, { customerID });
+    `, { customer_id: customerID });
     }
     async getBankStatementById(id) {
         const result = await this.query(`
@@ -467,8 +467,8 @@ class AzureSQLAdapter {
             return;
         for (const txn of transactions) {
             await this.query(`
-        INSERT INTO bank_transactions (statementID, customerID, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
-        VALUES (@statementID, @customerID, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
+        INSERT INTO bank_transactions (statementID, customer_id, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
+        VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
       `, txn);
         }
     }
@@ -495,8 +495,8 @@ class AzureSQLAdapter {
     }
     // Bank Transactions
     async getTransactionSummary(customerID, fromDate, toDate) {
-        let whereClause = 'WHERE customerID = @customerID';
-        let params = { customerID };
+        let whereClause = 'WHERE customer_id = @customer_id';
+        let params = { customer_id: customerID };
         if (fromDate) {
             whereClause += ' AND txnDate >= @fromDate';
             params.fromDate = fromDate;
@@ -516,8 +516,8 @@ class AzureSQLAdapter {
         return result[0] || { totalIn: 0, totalOut: 0, totalTransactions: 0 };
     }
     async getTransactionsByCategory(customerID, fromDate, toDate) {
-        let whereClause = 'WHERE bt.customerID = @customerID';
-        let params = { customerID };
+        let whereClause = 'WHERE bt.customer_id = @customer_id';
+        let params = { customer_id: customerID };
         if (fromDate) {
             whereClause += ' AND bt.txnDate >= @fromDate';
             params.fromDate = fromDate;

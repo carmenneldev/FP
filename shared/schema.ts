@@ -140,7 +140,7 @@ export interface BankStatement {
 export interface BankTransaction {
   id?: number;
   statementID: number;
-  customerID: number;
+  customer_id: number;
   txnDate: Date;
   description: string;
   merchant?: string;

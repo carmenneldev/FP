@@ -891,7 +891,7 @@ async function processStatementFile(statementId: number, filePath: string) {
 
       processedTransactions.push({
         statementID: statementId,
-        customerID: statement.customerID,
+        customer_id: statement.customerID,
         txnDate: new Date(txn.date),
         description: txn.description,
         merchant: txn.merchant,
@@ -1006,8 +1006,24 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
     console.log('PDF Text Preview (first 200 chars):', text.substring(0, 200));
     
     // Extract transaction lines using common bank statement patterns
-    const lines = text.split('\n').map((line: string) => line.trim()).filter((line: string) => line.length > 0);
+    // First try normal line splitting
+    let lines = text.split('\n').map((line: string) => line.trim()).filter((line: string) => line.length > 0);
     console.log('Total lines found:', lines.length);
+    console.log('First few lines:', lines.slice(0, 5));
+    
+    // If we have very few lines, the PDF might be one long line - try alternative splitting
+    if (lines.length < 5) {
+      // Try splitting on common transaction markers or amounts
+      const alternativeLines = text.split(/(?=\b(?:\d{1,2}\s+\w{3}|\w+\s+R\d+))|(?<=R\d+\.?\d*\s+(?:Cr|Dr))/)
+        .map((line: string) => line.trim())
+        .filter((line: string) => line.length > 10);
+      
+      if (alternativeLines.length > lines.length) {
+        lines = alternativeLines;
+        console.log('Using alternative splitting, new line count:', lines.length);
+        console.log('Alternative lines preview:', alternativeLines.slice(0, 5));
+      }
+    }
     
     const transactions: any[] = [];
     
@@ -1053,6 +1069,8 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
         const match = line.match(pattern);
         
         if (match) {
+          console.log(`✓ Pattern ${i} matched line: "${line.substring(0, 100)}..."`);
+          console.log('Match groups:', match.slice(1, 6)); // Show first 5 groups
           let date, description, amount, balance;
           
           if (i === 0) {

@@ -483,9 +483,9 @@ export class AzureSQLAdapter {
              uploadStatus, error, transactionCount, totalIn, totalOut, netAmount,
              uploadedAt, processedAt
       FROM bankStatements 
-      WHERE customerID = @customerID
+      WHERE customer_id = @customer_id
       ORDER BY uploadedAt DESC
-    `, { customerID });
+    `, { customer_id: customerID });
   }
 
   async getBankStatementById(id: number): Promise<any> {
@@ -513,8 +513,8 @@ export class AzureSQLAdapter {
     
     for (const txn of transactions) {
       await this.query(`
-        INSERT INTO bank_transactions (statementID, customerID, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
-        VALUES (@statementID, @customerID, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
+        INSERT INTO bank_transactions (statementID, customer_id, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
+        VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
       `, txn);
     }
   }
@@ -544,8 +544,8 @@ export class AzureSQLAdapter {
 
   // Bank Transactions
   async getTransactionSummary(customerID: number, fromDate?: string, toDate?: string): Promise<any> {
-    let whereClause = 'WHERE customerID = @customerID';
-    let params: any = { customerID };
+    let whereClause = 'WHERE customer_id = @customer_id';
+    let params: any = { customer_id: customerID };
 
     if (fromDate) {
       whereClause += ' AND txnDate >= @fromDate';
@@ -569,8 +569,8 @@ export class AzureSQLAdapter {
   }
 
   async getTransactionsByCategory(customerID: number, fromDate?: string, toDate?: string): Promise<any[]> {
-    let whereClause = 'WHERE bt.customerID = @customerID';
-    let params: any = { customerID };
+    let whereClause = 'WHERE bt.customer_id = @customer_id';
+    let params: any = { customer_id: customerID };
 
     if (fromDate) {
       whereClause += ' AND bt.txnDate >= @fromDate';
