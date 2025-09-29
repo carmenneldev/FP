@@ -1,0 +1,35 @@
+<p-dialog
+  header="Contact Us"
+  [(visible)]="display" 
+  [modal]="true"
+  [style]="{ width: '30vw' }"
+  (onHide)="close()"
+  draggable="false"
+>
+  <form [formGroup]="contactForm" (ngSubmit)="submit()">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label>Name</label>
+        <input pInputText formControlName="name" />
+      </div>
+      <div class="p-field">
+        <label>Email</label>
+        <input pInputText type="email" formControlName="email" />
+      </div>
+      <div class="p-field">
+        <label>Message</label>
+        <textarea pInputTextarea rows="4" formControlName="message" placeholder="Type your message here. Send to client."></textarea>
+      </div>
+    </div>
+    <div class="button-container">
+    <button
+      pButton
+      type="submit"
+      label="Send"
+      [disabled]="contactForm.invalid"
+    ></button>
+  </div>
+  </form>
+</p-dialog>
+
+

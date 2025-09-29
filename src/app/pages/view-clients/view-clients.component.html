@@ -1,0 +1,935 @@
+<div class="clients-wrapper-container">
+  <!-- Header: Client Count & Add Button -->
+  <div class="client-flex-container">
+    <div class="clients-counter-container">
+      <div class="clients-wrapper">All Clients</div>
+      <div class="Clients-counter">{{ customers.length || 0 }}</div>
+    </div>
+    
+    <div (click)="showClientForm = true" class="add-client-button">
+      <img [src]="addIcon" alt="" class="add-Icon">
+      <div>New Client</div> 
+    </div>
+  </div>
+
+  <span class="horizontal-line"></span>
+
+  <!-- Search & Sort -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <div class="search-input-wrapper">
+        <div class="searchIcon-container">
+          <img [src]="searchIcon" alt="" class="searchIcon">
+        </div>
+        <input type="text"
+               pInputText
+               [(ngModel)]="searchText"
+               (ngModelChange)="onSearch()"
+               class="search-input"
+               placeholder="Search By Name or ID">
+      </div>
+
+      <div class="sort-container">
+        <p-button
+          label="Sort"
+          icon="pi"
+          iconPos="right"
+          (click)="toggleDropdown()"
+          [icon]="isDropdownOpen ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+          class="p-button-sm custom-bg"
+          
+        ></p-button>
+
+        <div class="dropdown-menu"  *ngIf="isDropdownOpen">
+          <button pButton type="button" style="width: 100%; margin-bottom: 0.5rem;" label="Asc" class="p-button-text" (click)="sortAsc()"></button>
+          <button pButton type="button" style="width:100%" label="Desc" class="p-button-text" (click)="sortDesc()"></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Table (Scrollable) -->
+  <div class="card client-table-wrapper">
+    <p-table
+      [value]="filteredList.length ? filteredList : customers"
+      [(selection)]="selectedCustomer"
+      (selectionChange)="onSelectionChange($event)"
+      selectionMode="multiple"
+      dataKey="id"
+      [paginator]="(filteredList.length ? filteredList.length : customers.length) >= 5"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr  class="table-header-row">
+          <th style="width: 3rem">
+            <!-- <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+          </th>
+          <th>First Name</th>
+          <th>Surname</th>
+          <th>#ID</th>
+          <th>Gender</th>
+          <th>Date Of Birth</th>
+          <th>Marital Status</th>
+          <th>Status</th>
+          <th>Worth / NAV</th>
+          <th style="width: 4rem;">Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-client>
+        <tr>
+          <!-- Checkbox column only -->
+          <td style="width: 3rem;">
+            <p-tableCheckbox style="border-color: #275368;"></p-tableCheckbox>
+          </td>
+
+          <!-- Regular Data Columns -->
+          <td>
+            <a
+              [routerLink]="['/home/clientOverview', client.id]"
+              class="client-link"
+              (click)="$event.stopPropagation()"
+            >
+              {{ client.firstName }}
+            </a>
+          </td>
+
+          <td>{{ client.surname }}</td>
+          <td>{{ client.identityNumber }}</td>
+          <td>{{ getGenderFromId(client.identityNumber) }}</td>
+          <td>{{ getDateOfBirthFromId(client.identityNumber) }}</td>
+          <td>
+            {{ client.maritalStatus?.statusName || 'Not specified' }}
+          </td>
+         <td>
+            <span [ngClass]="getStatusClass(client.isActive)">
+              {{ client.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+
+
+          <!-- ProgressBar column -->
+          <td>
+            <p-progressBar [value]="(client.netWorth || 0) / 10000" [showValue]="false" styleClass="progress-custom"></p-progressBar>
+          </td>
+
+          <!-- Action column -->
+          <td class="action-cell" style="position: relative; overflow: visible;">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-ellipsis-v"
+              class="transparent-button"
+              (click)="toggleClientMenu($event, client)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+      
+    </p-table>
+  </div>
+
+
+  <!-- Client Action Menu - positioned outside table -->
+  <div *ngIf="openMenuClientId !== null" 
+       class="client-action-menu" 
+       [style.left.px]="menuPosition.x" 
+       [style.top.px]="menuPosition.y"
+       style="position: fixed; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 9999; min-width: 150px;">
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onEditClient(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-pencil" style="margin-right: 8px;"></i>
+      Edit
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onPolicyManagement(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-book" style="margin-right: 8px;"></i>
+      Policy Management
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onUploadStatement(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-upload" style="margin-right: 8px;"></i>
+      Upload Statement
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;"
+         (click)="onViewStatements(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-chart-line" style="margin-right: 8px;"></i>
+      Client Dashboard
+    </div>
+    <div class="menu-item" 
+         style="padding: 8px 12px; cursor: pointer;"
+         (click)="onChangeStatus(selectedClient!); openMenuClientId = null"
+         onmouseover="this.style.backgroundColor='#f5f5f5'"
+         onmouseout="this.style.backgroundColor='white'">
+      <i class="pi pi-info" style="margin-right: 8px;"></i>
+      Status
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <!-- <div class="footer-container">
+  <div class="clients-counter-containter">
+    Showing {{ startRecord + 1 }} - {{ endRecord }} of {{ filteredList.length || customers.length }}
+  </div>
+
+  <div class="navigation">
+    <div class="lessThan" (click)="changePage(currentPage - 1)">
+      <img [src]="lessThanIcon" alt="" class="lessIcon">
+    </div>
+
+    <div class="pagesContainer">
+      <span
+        class="pageNumber"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="i + 1 === currentPage"
+        (click)="changePage(i + 1)">
+        {{ i + 1 }}
+      </span>
+    </div>
+
+    <div class="greaterThan" (click)="changePage(currentPage + 1)">
+      <img [src]="greateThanIcon" alt="" class="greaterIcon">
+    </div>
+  </div>
+</div> -->
+
+
+  <!-- Add Client Modal -->
+  <app-add-client-form *ngIf="showClientForm" (close)="showClientForm = false"></app-add-client-form>
+
+  <!-- Bank Statement Upload Dialog -->
+  <p-dialog
+    header="Upload Bank Statement"
+    [(visible)]="displayUploadDialog"
+    [modal]="true"
+    [closable]="true"
+    [style]="{ width: '600px' }"
+    [baseZIndex]="10000"
+    (onHide)="onUploadDialogClose()"
+  >
+    <div class="upload-content" style="padding: 1rem;">
+      <div class="mb-3" *ngIf="selectedClient">
+        <h6 class="mb-2" style="color: #495057;">Client: {{ selectedClient.firstName }} {{ selectedClient.surname }}</h6>
+      </div>
+      
+      <div class="mb-4">
+        <p>Upload a bank statement for automated transaction categorization and analysis.</p>
+        <small class="text-muted">Supported formats: CSV and PDF files up to 10MB</small>
+      </div>
+
+      <!-- File Selection Area -->
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-4">
+        <input 
+          type="file" 
+          #fileInput 
+          accept=".csv,.pdf"
+          (change)="onFileSelected($event)"
+          style="display: none;"
+        >
+        
+        <div *ngIf="!selectedFile && !uploadInProgress">
+          <i class="pi pi-cloud-upload text-4xl text-gray-400 mb-3 block"></i>
+          <p class="mb-2">Drop your CSV or PDF file here or</p>
+          <p-button 
+            label="Browse Files" 
+            icon="pi pi-file"
+            [outlined]="true"
+            (onClick)="fileInput.click()"
+          ></p-button>
+        </div>
+
+        <div *ngIf="selectedFile && !uploadInProgress" class="flex items-center justify-between p-3 bg-gray-50 rounded">
+          <div class="flex items-center gap-3">
+            <i class="pi pi-file-excel text-2xl text-green-600"></i>
+            <div class="text-left">
+              <div class="font-semibold">{{ selectedFile.name }}</div>
+              <div class="text-sm text-gray-600">{{ formatBytes(selectedFile.size) }}</div>
+            </div>
+          </div>
+          <p-button 
+            icon="pi pi-times" 
+            severity="danger"
+            [text]="true"
+            (onClick)="clearSelectedFile()"
+          ></p-button>
+        </div>
+
+        <div *ngIf="uploadInProgress" class="flex items-center justify-center gap-3">
+          <i class="pi pi-spin pi-spinner text-2xl text-blue-600"></i>
+          <span>{{ uploadStatus || 'Uploading...' }}</span>
+        </div>
+
+        <!-- Processing Loading Screen -->
+        <div *ngIf="processingInProgress" class="processing-container">
+          <div class="text-center mb-4">
+            <i class="pi pi-cog pi-spin text-4xl text-blue-600 mb-3 block"></i>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Processing Bank Statement</h4>
+            <p class="text-gray-600">{{ processingStatus }}</p>
+          </div>
+
+          <!-- Processing Steps -->
+          <div class="processing-steps">
+            <div *ngFor="let step of processingSteps; let i = index" 
+                 class="step-item" 
+                 [class.completed]="step.completed"
+                 [class.current]="step.current">
+              <div class="step-icon">
+                <i *ngIf="step.completed" class="pi pi-check text-green-600"></i>
+                <i *ngIf="step.current" class="pi pi-spin pi-spinner text-blue-600"></i>
+                <span *ngIf="!step.completed && !step.current" class="step-number">{{ i + 1 }}</span>
+              </div>
+              <div class="step-content">
+                <span class="step-label" [class.text-green-600]="step.completed" [class.text-blue-600]="step.current">
+                  {{ step.label }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <small class="text-gray-500">This may take a few moments...</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div *ngIf="uploadError" class="p-3 mb-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-center gap-2 text-red-700">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ uploadError }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="uploadResult && !uploadError && !processingInProgress" class="p-3 mb-4 bg-green-50 border border-green-200 rounded-lg">
+        <div class="flex items-center gap-2 text-green-700">
+          <i class="pi pi-check-circle"></i>
+          <span>Statement processed successfully! {{ uploadResult.transactionCount || 'Transactions' }} extracted and categorized.</span>
+        </div>
+      </div>
+
+      <div *ngIf="uploadStatus && !uploadResult && !uploadError" class="text-center mb-4">
+        <span [class]="getStatusClass(uploadStatus)" class="font-semibold">{{ uploadStatus }}</span>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-between">
+        <p-button 
+          label="Cancel" 
+          icon="pi pi-times" 
+          [outlined]="true"
+          (onClick)="displayUploadDialog = false"
+          [disabled]="uploadInProgress || processingInProgress"
+        ></p-button>
+        <div class="flex gap-2">
+          <p-button 
+            *ngIf="selectedFile && !uploadInProgress && !uploadResult && !processingInProgress"
+            label="Upload Statement" 
+            icon="pi pi-upload"
+            (onClick)="uploadSelectedFile()"
+          ></p-button>
+          <p-button 
+            *ngIf="uploadResult && !processingInProgress"
+            label="View Statements" 
+            icon="pi pi-chart-line"
+            (onClick)="onViewStatements(selectedClient!); displayUploadDialog = false"
+          ></p-button>
+        </div>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+
+<!-- Policy List Table -->
+<p-dialog
+  header="Client Policies"
+  [(visible)]="showPoliciesForClient"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '80vw' }"
+  [baseZIndex]="10000"
+>
+  <p-table [value]="clientPolicies" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Policy Name</th>
+        <th>Underwritten</th>
+        <th>Type</th>
+        <th>Customer</th>
+        <th>Value</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-policy>
+      <tr>
+        <td>{{ policy.policyName }}</td>
+        <td>{{ policy.underwritten }}</td>
+        <td>{{ policy.policyType?.name || policy.policyTypeID }}</td>
+        <td>{{ policy.customer?.fullName || policy.customerID }}</td>
+        <td>{{ policy.value | currency }}</td>
+        <td>{{ policy.policyInitiationDate | date:'shortDate' }}</td>
+        <td>{{ policy.policyExpirationDate | date:'shortDate' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+
+
+<p-dialog header="Update Status"
+    [(visible)]="statusDialogVisible"
+    [modal]="true"
+    [style]="{ width: '350px' }"
+    [draggable]="false" [closable]="true">
+
+  <div class="p-fluid form-section">
+    <!-- <label for="status">Select Status</label> -->
+    <p-dropdown
+      [options]="statusOptions"
+      [(ngModel)]="selectedStatus"
+      optionLabel="description"
+      optionValue="id"
+      placeholder="Select a status"
+      optionLabel=""
+      [style]="{ width: '100%' }">
+    </p-dropdown>
+  </div>
+
+  <div class="p-dialog-footer" style="display: flex; flex-direction: column; gap: 10px;">
+    <button 
+      pButton 
+      icon="pi pi-check" 
+      (click)="confirmStatusUpdate()"
+      class="btn-primary"
+      style="width: 100%;">
+      Update
+    </button>
+  
+    <button 
+      pButton 
+      icon="pi pi-times" 
+      (click)="statusDialogVisible = false" 
+      class="btn-secondary"
+      style="width: 100%;">
+      Cancel
+    </button>
+  </div>
+
+</p-dialog>
+
+<p-dialog 
+  header="Edit Client" 
+  [(visible)]="editClientDialogVisible" 
+  [modal]="true"
+  [draggable]="false" 
+  [style]="{width: '600px'}"
+  [closable]="true">
+  
+   <form [formGroup]="clientForm" (ngSubmit)="saveClientEdits()" class="registrationContainer">
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="firstName" formControlName="firstName" autocomplete="off" />
+            <label for="firstName">First Name</label>
+          </p-floatlabel>
+          @if (isInvalid('firstName')) {
+            <p-message severity="error" size="small" variant="simple">First name is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="surname" formControlName="surname" autocomplete="off" />
+            <label for="surname">Surname</label>
+          </p-floatlabel>
+          @if (isInvalid('surname')) {
+            <p-message severity="error" size="small" variant="simple">Surname is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="identityNumber" formControlName="identityNumber" autocomplete="off" />
+            <label for="identityNumber">ID Number</label>
+          </p-floatlabel>
+          @if (isInvalid('identityNumber')) {
+            @if (clientForm.get('identityNumber')?.errors?.['required']) {
+              <p-message severity="error" size="small" variant="simple">Identity number is required.</p-message>
+            }
+            @if (clientForm.get('identityNumber')?.errors?.['invalidIdFormat']) {
+              <p-message severity="error" size="small" variant="simple">ID must be 13 digits.</p-message>
+            }
+            @if (clientForm.get('identityNumber')?.errors?.['invalidIdChecksum']) {
+              <p-message severity="error" size="small" variant="simple">ID number is not valid.</p-message>
+            }
+        }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="employer" formControlName="employer" autocomplete="off" />
+            <label for="employer">Employer</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="mobileNumber" formControlName="mobileNumber" autocomplete="off" />
+            <label for="mobileNumber">Mobile Number</label>
+          </p-floatlabel>
+          @if (isInvalid('mobileNumber')) {
+            <p-message severity="error" size="small" variant="simple">Mobile number is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="emailAddress" formControlName="emailAddress" autocomplete="off" />
+            <label for="emailAddress">Email Address</label>
+          </p-floatlabel>
+          @if (isInvalid('emailAddress')) {
+            <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="physicalAddress1" formControlName="physicalAddress1" autocomplete="off" />
+            <label for="physicalAddress1">Address Line 1</label>
+          </p-floatlabel>
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="physicalAddress2" formControlName="physicalAddress2" autocomplete="off" />
+            <label for="physicalAddress2">Address Line 2</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <input pInputText id="postalCode" formControlName="postalCode" autocomplete="off" />
+            <label for="postalCode">Postal Code</label>
+          </p-floatlabel>
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="provinceID" [options]="provinces" optionLabel="name" optionValue="id"
+                        formControlName="provinceID"></p-dropdown>
+            <label for="provinceID">Province</label>
+          </p-floatlabel>
+          @if (isInvalid('provinceID')) {
+            <p-message severity="error" size="small" variant="simple">Province is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="maritalStatusID" [options]="maritalStatuses" optionLabel="name" optionValue="id"
+                        formControlName="maritalStatusID"></p-dropdown>
+            <label for="maritalStatusID">Marital Status</label>
+          </p-floatlabel>
+          @if (isInvalid('maritalStatusID')) {
+            <p-message severity="error" size="small" variant="simple">Marital status is required.</p-message>
+          }
+        </div>
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="preferredLanguageID" [options]="languages" optionLabel="name" optionValue="id"
+                        formControlName="preferredLanguageID"></p-dropdown>
+            <label for="preferredLanguageID">Preferred Language</label>
+          </p-floatlabel>
+          @if (isInvalid('preferredLanguageID')) {
+            <p-message severity="error" size="small" variant="simple">Preferred language is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="flex-container-row">
+          <p-floatlabel variant="on">
+            <p-dropdown id="qualificationID" [options]="qualifications" optionLabel="description" optionValue="id"
+                        formControlName="qualificationID"></p-dropdown>
+            <label for="qualificationID">Qualification</label>
+          </p-floatlabel>
+          @if (isInvalid('qualificationID')) {
+            <p-message severity="error" size="small" variant="simple">Qualification is required.</p-message>
+          }
+        </div>
+      </div>
+
+      <div class="flex-container-column btn-mg-top" style=" min-height: 100px; gap: 10px;">
+        <button 
+          pButton 
+          type="submit" 
+          class="btnRegistor btn-primary" 
+          label="Save" 
+          [disabled]="clientForm.invalid || isSaving" 
+          [loading]="isSaving"
+          style="width: 100%;">
+        </button>
+        <button 
+          pButton 
+          type="button" 
+          label="Cancel" 
+          (click)="editClientDialogVisible = false" 
+          class="btnCancel"
+          style="width: 100%;">
+        </button>
+      </div>
+    </form>
+
+  <!-- <ng-template pTemplate="footer">
+     line to close
+    [disabled]="clientForm.invalid || isSaving"
+    <button pButton  icon="pi pi-check" (click)="saveClientEdits()">Save</button>
+    <button pButton  icon="pi pi-times" class="p-button-text" (click)="editClientDialogVisible = false">Cancel</button>
+  </ng-template> -->
+</p-dialog>
+
+
+
+
+<p-dialog
+  header="Policy Management"
+  [(visible)]="policyDialogVisible"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [closable]="true"
+>
+  <form [formGroup]="policyForm" (ngSubmit)="savePolicy()">
+    <div class="form-grid">
+
+      <!-- Policy Name -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText id="policyName" formControlName="policyName" class="full-width" />
+          <label for="policyName">Policy Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Policy Number -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText id="policyNumber" formControlName="policyNumber" class="full-width" />
+          <label for="policyNumber">Policy Number</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Underwritten By -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText id="underwritten" formControlName="underwritten" class="full-width" />
+          <label for="underwritten">Underwritten</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Policy Type -->
+      <div class="form-group">
+       
+        <p-dropdown
+          [options]="policyTypes"
+          optionLabel="description"
+          optionValue="id"
+          formControlName="policyTypeID"
+          placeholder="Select Policy Type"
+          class="full-width"
+        ></p-dropdown>
+      </div>
+
+      <!-- Customer -->
+      <!-- <div class="form-group">
+        
+        <p-dropdown
+          [options]="customers"
+          optionLabel="fullName"
+          optionValue="id"
+          formControlName="customerID"
+          placeholder="Select Customer"
+          class="full-width"
+        ></p-dropdown>
+      </div> -->
+
+      <!-- Policy Value -->
+      <div class="form-group">
+        <p-floatLabel variant="on">
+          <input pInputText type="number" id="value" formControlName="value" class="full-width" />
+          <label for="value">Policy Value</label>
+        </p-floatLabel>
+      </div>
+
+      <div class="form-group">
+        <p-floatlabel variant="on">
+          <p-datepicker formControlName="policyInitiationDate" inputId="initDate" showIcon iconDisplay="input" class="full-width" />
+          <label for="initDate">Initiation Date</label>
+        </p-floatlabel>
+      </div>
+
+      <div class="form-group">
+        <p-floatlabel variant="on">
+          <p-datepicker formControlName="policyExpirationDate" inputId="expDate" showIcon iconDisplay="input" class="full-width" />
+          <label for="expDate">Expiration Date</label>
+        </p-floatlabel>
+      </div>
+    </div>
+
+    <div class="dialog-footer" style="display: flex; flex-direction: column; gap: 10px;">
+      <button 
+        pButton 
+        label="Save" 
+        icon="pi pi-check" 
+        [disabled]="policyForm.invalid" 
+        type="submit"
+        class="btn-primary"
+        style="width: 100%;">
+      </button>
+      <button 
+        pButton 
+        label="Cancel" 
+        class="btn-secondary"
+        type="button" 
+        (click)="policyDialogVisible = false"
+        style="width: 100%;">
+      </button>
+    </div>
+  </form>
+
+
+  <h3 class="mt-5">Policies</h3>
+  <p-table [value]="policies" *ngIf="policies.length > 0" [paginator]="true" [rows]="5" [responsive]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Policy Name</th>
+        <th>Underwritten</th>
+        <th>Type</th>
+        <th>Customer</th>
+        <th>Value</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-policy>
+      <tr>
+        <td>{{ policy.policyName }}</td>
+        <td>{{ policy.underwritten }}</td>
+        <td>{{ policy.policyType?.name || policy.policyTypeID }}</td>
+        <td>{{ policy.customer?.fullName || policy.customerID }}</td>
+        <td>{{ policy.value | currency }}</td>
+        <td>{{ policy.policyInitiationDate | date:'shortDate' }}</td>
+        <td>{{ policy.policyExpirationDate | date:'shortDate' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+
+
+
+
+
+
+
+
+<!-- Client Dashboard Modal -->
+<p-dialog 
+  header="Client Dashboard - {{statementDashboardClient?.firstName}} {{statementDashboardClient?.surname}}" 
+  [(visible)]="showStatementDashboard" 
+  [modal]="true" 
+  [responsive]="true"
+  [maximizable]="true"
+  [style]="{width: '95vw', height: '90vh'}"
+  (onHide)="onStatementDashboardClose()">
+  
+  <div class="statement-dashboard-content">
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingStatementData" class="loading-container" style="text-align: center; padding: 2rem;">
+      <p-progressSpinner strokeWidth="4" animationDuration="1s" [style]="{'width': '60px', 'height': '60px'}"></p-progressSpinner>
+      <p style="margin-top: 1rem; color: #666;">Loading statement data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="statementDataError && !isLoadingStatementData" class="error-container" style="text-align: center; padding: 2rem;">
+      <p style="color: #f44336; font-weight: 500;">{{statementDataError}}</p>
+      <button type="button" pButton label="Try Again" (click)="loadStatementData(statementDashboardClient!.id)" class="p-button-sm"></button>
+    </div>
+
+    <!-- Data Content -->
+    <div *ngIf="!isLoadingStatementData && !statementDataError">
+      
+      <!-- Dashboard Grid Layout -->
+      <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        
+        <!-- Pie Chart Section -->
+        <div class="chart-section">
+          <h3 class="section-title">Spending Breakdown</h3>
+          <div *ngIf="categorySummary.length === 0" class="no-data-message" style="text-align: center; padding: 2rem; color: #666;">
+            <p>No transaction data available.</p>
+          </div>
+          <div *ngIf="categorySummary.length > 0" style="height: 600px; min-height: 600px; width: 100%; min-width: 500px;">
+            <p-chart type="doughnut" 
+                     [data]="pieChartData" 
+                     [options]="pieChartOptions"
+                     width="500"
+                     height="500"
+                     style="display: block; width: 500px !important; height: 500px !important;">
+            </p-chart>
+          </div>
+        </div>
+
+        <!-- Category Summary Table -->
+        <div class="category-section">
+          <h3 class="section-title">Category Summary</h3>
+          <div *ngIf="categorySummary.length === 0" class="no-data-message" style="text-align: center; padding: 2rem; color: #666;">
+            <p>No transaction data available.</p>
+          </div>
+          <p-table *ngIf="categorySummary.length > 0" [value]="categorySummary" [scrollable]="true" scrollHeight="350px">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 60px">#</th>
+                <th style="width: 200px">Category</th>
+                <th style="width: 120px">Total (R)</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-category let-i="rowIndex">
+              <tr>
+                <td>{{i + 1}}</td>
+                <td>
+                  <span class="category-tag" [style]="{'background-color': category.color, 'color': 'white', 'padding': '2px 8px', 'border-radius': '4px', 'font-size': '12px'}">
+                    {{category.name}}
+                  </span>
+                </td>
+                <td class="category-total" style="font-weight: 500;">R {{category.total.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2})}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+
+      <!-- Extracted Transactions Section (Future Enhancement) -->
+      <div class="transactions-section" *ngIf="extractedTransactions.length > 0">
+        <h3 class="section-title">Individual Transactions ({{extractedTransactions.length}} total)</h3>
+        <p-table [value]="extractedTransactions" [scrollable]="true" scrollHeight="400px">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 60px">#</th>
+              <th style="width: 120px">Date</th>
+              <th style="width: 300px">Description</th>
+              <th style="width: 120px">Amount (R)</th>
+              <th style="width: 150px">Category</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-transaction let-i="rowIndex">
+            <tr>
+              <td>{{i + 1}}</td>
+              <td>{{transaction.date | date:'yyyy-MM-dd'}}</td>
+              <td>{{transaction.description}}</td>
+              <td [class]="transaction.amount >= 0 ? 'positive-amount' : 'negative-amount'">
+                {{transaction.amount >= 0 ? '' : '-'}}R {{Math.abs(transaction.amount).toFixed(2)}}
+              </td>
+              <td>
+                <span class="category-tag" [style]="{'background-color': transaction.categoryColor}">
+                  {{transaction.category}}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Client Policies Section -->
+    <div class="client-policies-section" style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+      <h3 class="section-title" style="margin-bottom: 1rem; color: #275368; font-weight: 600; display: flex; align-items: center;">
+        <i class="pi pi-book" style="margin-right: 8px; color: #275368;"></i>
+        Client Policies ({{ clientPolicies.length }} total)
+      </h3>
+      
+      <div *ngIf="clientPolicies.length === 0" class="no-data-message" style="text-align: center; padding: 2rem; color: #666;">
+        <p>No policies found for this client.</p>
+        <p style="font-size: 0.9em; margin-top: 0.5rem;">Use "Policy Management" from the client menu to add policies.</p>
+      </div>
+
+      <p-table *ngIf="clientPolicies.length > 0" [value]="clientPolicies" [paginator]="true" [rows]="5" [responsive]="true" 
+               [scrollable]="true" scrollHeight="300px" 
+               styleClass="p-datatable-striped p-datatable-gridlines">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 150px">Policy Number</th>
+            <th style="width: 200px">Policy Name</th>
+            <th style="width: 120px">Type</th>
+            <th style="width: 150px">Premium</th>
+            <th style="width: 150px">Coverage</th>
+            <th style="width: 120px">Start Date</th>
+            <th style="width: 120px">End Date</th>
+            <th style="width: 120px">Underwritten</th>
+            <th style="width: 100px">Status</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-policy>
+          <tr>
+            <td>
+              <span style="font-weight: 600; color: #275368;">{{ policy.policyNumber }}</span>
+            </td>
+            <td>{{ policy.policyName || 'N/A' }}</td>
+            <td>
+              <span class="policy-type-badge" 
+                    style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                {{ getPolicyTypeName(policy.policyTypeID) }}
+              </span>
+            </td>
+            <td style="font-weight: 500;">
+              <span *ngIf="policy.premiumAmount">R {{ formatCurrency(policy.premiumAmount) }}</span>
+              <span *ngIf="!policy.premiumAmount" style="color: #666;">-</span>
+            </td>
+            <td style="font-weight: 500;">
+              <span *ngIf="policy.coverageAmount">R {{ formatCurrency(policy.coverageAmount) }}</span>
+              <span *ngIf="!policy.coverageAmount" style="color: #666;">-</span>
+            </td>
+            <td>
+              <span *ngIf="policy.startDate">{{ policy.startDate | date:'yyyy-MM-dd' }}</span>
+              <span *ngIf="!policy.startDate" style="color: #666;">-</span>
+            </td>
+            <td>
+              <span *ngIf="policy.endDate">{{ policy.endDate | date:'yyyy-MM-dd' }}</span>
+              <span *ngIf="!policy.endDate" style="color: #666;">-</span>
+            </td>
+            <td>{{ policy.underwritten || '-' }}</td>
+            <td>
+              <span [class]="policy.isActive ? 'status-active' : 'status-inactive'"
+                    style="padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 500;">
+                {{ policy.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+  </div>
+</p-dialog>

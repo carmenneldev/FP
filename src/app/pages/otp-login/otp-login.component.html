@@ -1,0 +1,85 @@
+<div class="grid-container">
+  <div class="left-container">
+    <div class="logo-conatiner">
+      <img [src]="imagePath" alt="flightPlan-logo" class="logo" />
+    </div>
+    <div class="form-container">
+      <form action="" class="login-form-wrapper">
+        <div class="auth-type-grid">
+          <div class="choice-type-container">
+            <input
+              type="radio"
+              id="choice-type"
+              name="choice"
+              class="radio-button"
+            />
+            <label for="choice-type" class="label-text">Password</label>
+          </div>
+          <div class="choice-type-container">
+            <input
+              type="radio"
+              id="choice-type"
+              name="choice"
+              class="radio-button"
+            />
+            <label for="choice-type" class="label-text">OTP</label>
+          </div>
+        </div>
+        <div class="user-alert-container">
+          <h2 class="user-alert">Log in to your account.</h2>
+          <p class="user-prompt">Enter your phone number to receive an OTP.</p>
+        </div>
+        <div class="input-fields">
+          <div class="flex-container">
+            <div class="phone-icon-container">
+              <div><img src="" alt="" /></div>
+              <div class="country-code">
+                <select name="" id="" class="country-code-select">
+                  <option value="+27">+27</option>
+                  <option value="+91">+91</option>
+                  <option value="+44">+44</option>
+                  <option value="+61">+61</option>
+                </select>
+              </div>
+            </div>
+            <div class="phone-input-container">
+              <input
+                type="phone"
+                placeholder="Enter mobile number"
+                class="phoneInputBox"
+              />
+            </div>
+          </div>
+
+          <button type="button" class="submitButton" (click)="sendOPT()">
+            Send OTP
+          </button>
+          @if(otpComponent){
+          <p>percival</p>
+          }
+          <div class="or-container">
+            <span>or</span>
+          </div>
+          <div class="social-login-container">
+            <p class="social-login-text">
+              Don’t you have an account?
+              <a class="signup" href="#" class="sign-up-link">Sign Up</a>
+            </p>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="right-container">
+    <div class="feature-card bg-container">
+      <div class="image-box">image of the platform</div>
+      <div class="vector-image">
+        <img [src]="vaectorImagePath" alt="" class="vector-image-icon" />
+      </div>
+      <span class="feature-text"> NEW FEATURES</span>
+      <div class="graph-box">graph</div>
+      <p class="main-text">The easiest way to manage your portfolio.</p>
+      <p class="sub-text">Join the FlightPlan community now!</p>
+    </div>
+  </div>
+</div>

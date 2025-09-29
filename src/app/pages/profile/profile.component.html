@@ -1,0 +1,226 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h2>My Profile</h2>
+    <p>Manage your account information and preferences</p>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="successMessage" class="success-message">
+    <p-message severity="success" [text]="successMessage"></p-message>
+  </div>
+  
+  <div *ngIf="errorMessage" class="error-message">
+    <p-message severity="error" [text]="errorMessage"></p-message>
+  </div>
+
+  <div class="profile-content">
+    <!-- Profile Picture Section -->
+    <p-card class="profile-picture-card">
+      <ng-template pTemplate="header">
+        <div class="profile-picture-header">
+          <h3>Profile Picture</h3>
+        </div>
+      </ng-template>
+      
+      <div class="profile-picture-section">
+        <div class="current-picture">
+          <img 
+            [src]="profileImageUrl" 
+            alt="Profile Picture" 
+            class="profile-image-preview"
+          />
+        </div>
+        
+        <div class="picture-actions">
+          <p-fileUpload
+            #fileUpload
+            mode="basic"
+            chooseLabel="Choose Picture"
+            accept="image/*"
+            [maxFileSize]="5000000"
+            (onSelect)="onFileSelect($event)"
+            [auto]="false"
+            chooseIcon="pi pi-upload">
+          </p-fileUpload>
+          
+          <div class="picture-buttons" *ngIf="selectedFile">
+            <p-button 
+              label="Upload" 
+              icon="pi pi-check"
+              [loading]="uploadInProgress"
+              (onClick)="onUploadProfilePicture()"
+              styleClass="p-button-success">
+            </p-button>
+            
+            <p-button 
+              label="Cancel" 
+              icon="pi pi-times"
+              (onClick)="profileImageUrl = previousImageUrl; selectedFile = null; fileUpload.clear(); errorMessage = ''"
+              styleClass="p-button-secondary">
+            </p-button>
+          </div>
+          
+          <p-button 
+            label="Remove Picture" 
+            icon="pi pi-trash"
+            (onClick)="onRemoveProfilePicture()"
+            styleClass="p-button-danger p-button-outlined">
+          </p-button>
+        </div>
+      </div>
+    </p-card>
+
+    <p-divider></p-divider>
+
+    <!-- Profile Information Section -->
+    <p-card class="profile-info-card">
+      <ng-template pTemplate="header">
+        <div class="profile-info-header">
+          <h3>Personal Information</h3>
+        </div>
+      </ng-template>
+      
+      <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+        <div class="form-grid">
+          <!-- First Row -->
+          <div class="form-row">
+            <div class="form-field">
+              <label for="firstName">First Name <span class="required">*</span></label>
+              <input 
+                pInputText 
+                id="firstName" 
+                formControlName="firstName"
+                placeholder="Enter your first name"
+                [class.ng-invalid]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+              />
+              <small 
+                class="error-text" 
+                *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
+                First name is required
+              </small>
+            </div>
+            
+            <div class="form-field">
+              <label for="lastName">Last Name <span class="required">*</span></label>
+              <input 
+                pInputText 
+                id="lastName" 
+                formControlName="lastName"
+                placeholder="Enter your last name"
+                [class.ng-invalid]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+              />
+              <small 
+                class="error-text" 
+                *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
+                Last name is required
+              </small>
+            </div>
+          </div>
+
+          <!-- Second Row -->
+          <div class="form-row">
+            <div class="form-field">
+              <label for="email">Email Address <span class="required">*</span></label>
+              <input 
+                pInputText 
+                id="email" 
+                formControlName="email"
+                placeholder="Enter your email address"
+                [class.ng-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+              />
+              <small 
+                class="error-text" 
+                *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                Please enter a valid email address
+              </small>
+            </div>
+            
+            <div class="form-field">
+              <label for="mobileNumber">Mobile Number <span class="required">*</span></label>
+              <input 
+                pInputText 
+                id="mobileNumber" 
+                formControlName="mobileNumber"
+                placeholder="Enter your mobile number"
+                [class.ng-invalid]="profileForm.get('mobileNumber')?.invalid && profileForm.get('mobileNumber')?.touched"
+              />
+              <small 
+                class="error-text" 
+                *ngIf="profileForm.get('mobileNumber')?.invalid && profileForm.get('mobileNumber')?.touched">
+                Mobile number is required
+              </small>
+            </div>
+          </div>
+
+          <!-- Third Row -->
+          <div class="form-row">
+            <div class="form-field full-width">
+              <label for="identityNumber">Identity Number</label>
+              <input 
+                pInputText 
+                id="identityNumber" 
+                formControlName="identityNumber"
+                placeholder="Enter your identity number"
+              />
+            </div>
+          </div>
+
+          <!-- Fourth Row -->
+          <div class="form-row">
+            <div class="form-field">
+              <label for="physicalAddress1">Physical Address Line 1</label>
+              <input 
+                pInputText 
+                id="physicalAddress1" 
+                formControlName="physicalAddress1"
+                placeholder="Enter your street address"
+              />
+            </div>
+            
+            <div class="form-field">
+              <label for="physicalAddress2">Physical Address Line 2</label>
+              <input 
+                pInputText 
+                id="physicalAddress2" 
+                formControlName="physicalAddress2"
+                placeholder="Apartment, suite, unit, etc. (optional)"
+              />
+            </div>
+          </div>
+
+          <!-- Fifth Row -->
+          <div class="form-row">
+            <div class="form-field">
+              <label for="postalCode">Postal Code</label>
+              <input 
+                pInputText 
+                id="postalCode" 
+                formControlName="postalCode"
+                placeholder="Enter your postal code"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <p-button 
+            type="submit"
+            label="Save Profile" 
+            icon="pi pi-save"
+            [loading]="saveInProgress"
+            styleClass="p-button-primary">
+          </p-button>
+          
+          <p-button 
+            type="button"
+            label="Cancel" 
+            icon="pi pi-times"
+            routerLink="/home"
+            styleClass="p-button-secondary">
+          </p-button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>

@@ -1,0 +1,184 @@
+<div class="main-wrapper">
+    <div class="grid-wrapper">
+        <div class="flex-wrap">
+            <div class="text-color">{{username.toUpperCase()}}</div>
+            <div class="text-color text-size">Reserved Funds:<span class="duration">1 month</span> </div>
+        </div>
+        <div class="Contact-container">
+           <div class="contact-btn" (click)="openContactForm()">Contact</div>
+        </div>
+    </div>
+    <div class="line-Container">
+        <span class="horizontalLine"></span>
+    </div>
+    <div class="grid-context-container">
+        <div class="left-section">
+           <div class="btn-Container">
+                <div class="btn" (click)="openPolicy('short')">Short Term</div>
+                <div class="btn" (click)="openPolicy('long')">Long Term</div>
+           </div>
+           <div class="data-container">
+                <div class="header-txt">Protecting My legacy</div>
+                <div class="header-txt font-s">Death</div>
+                <div class="amount-wrapper">
+                    <div class="flex-elements">
+                        <div class="title">My Cashflow Needs</div>
+                        <div class="money">R 2,500,000.00</div>
+                    </div>
+                    <div class="flex-elements">
+                        <div class="title">Current Income</div>
+                        <div class="money">R 92,044.41</div>
+                    </div>
+                    <div class="flex-elements">
+                        <div class="title">Shortfall/Surplus</div>
+                        <div class="money">R 2,407,955.59</div>
+                    </div>
+                </div>
+                <div class="padding">
+                     <span class="horizontalLine"></span>
+                </div>
+                <div class="header-txt font-s">Temporary Disability/Sickness</div>
+                <div class="amount-wrapper">
+                    <div class="flex-elements">
+                        <div class="title">My Cashflow Needs</div>
+                        <div class="money">R 2,500,000.00</div>
+                    </div>
+                    <div class="flex-elements">
+                        <div class="title">Current Income</div>
+                        <div class="money">R 92,044.41</div>
+                    </div>
+                    <div class="flex-elements">
+                        <div class="title">Shortfall/Surplus</div>
+                        <div class="money">R 2,407,955.59</div>
+                    </div>
+                </div>
+                <div class="padding">
+                     <span class="horizontalLine"></span>
+                </div>
+                <div class="header-txt font-s">Severe Illiness</div>
+                <div class="amount-wrapper">
+                    <div class="flex-elements">
+                        <div class="title">My Cashflow Needs</div>
+                        <div class="money">R 2,500,000.00</div>
+                    </div>
+                    <div class="flex-elements">
+                        <div class="title">Current Income</div>
+                        <div class="money">R 92,044.41</div>
+                    </div>
+                    <div class="flex-elements">
+                        <div class="title">Shortfall/Surplus</div>
+                        <div class="money">R 2,407,955.59</div>
+                    </div>
+                </div>
+           </div>
+        </div>
+        <div class="right-section">
+
+            <div class="dashboard-Policies">
+            <div *ngIf="selectedPolicyType === 'short'">
+                <!-- Replace this with your actual short-term data or table
+                 
+                  [paginator]="true" [rows]="5"
+                -->
+                <p-table [value]="shortTermPolicies"  *ngIf="shortTermPolicies.length > 0" [responsive]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                    <th>Policy Name</th>
+                    <th>Underwritten</th>
+                    <th>Type</th>
+                    <th>Customer</th>
+                    <th>Value</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-policy>
+                    <tr>
+                    <td>{{ policy.policyName }}</td>
+                    <td>{{ policy.underwritten }}</td>
+                    <td>{{ policy.policyType?.name || policy.policyTypeID }}</td>
+                    <td>{{ policy.customer?.fullName || policy.customerID }}</td>
+                    <td>{{ policy.value | currency }}</td>
+                    <td>{{ policy.policyInitiationDate | date:'shortDate' }}</td>
+                    <td>{{ policy.policyExpirationDate | date:'shortDate' }}</td>
+                    </tr>
+                </ng-template>
+                </p-table>
+            </div>
+
+            <div *ngIf="selectedPolicyType === 'long'">
+                <!-- Replace this with your actual long-term data or table 
+                 
+                [value]="longTermPolicies" *ngIf="longTermPolicies.length > 0" [paginator]="true"
+                -->
+                <p-table [value]="longTermPolicies" *ngIf="longTermPolicies.length > 0" [rows]="5" [responsive]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                    <th>Policy Name</th>
+                    <th>Underwritten</th>
+                    <th>Type</th>
+                    <th>Customer</th>
+                    <th>Value</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-policy>
+                    <tr>
+                    <td>{{ policy.policyName }}</td>
+                    <td>{{ policy.underwritten }}</td>
+                    <td>{{ policy.policyType?.name || policy.policyTypeID }}</td>
+                    <td>{{ policy.customer?.fullName || policy.customerID }}</td>
+                    <td>{{ policy.value | currency }}</td>
+                    <td>{{ policy.policyInitiationDate | date:'shortDate' }}</td>
+                    <td>{{ policy.policyExpirationDate | date:'shortDate' }}</td>
+                    </tr>
+                </ng-template>
+                </p-table>
+            </div>
+            </div>
+
+            
+            <div class="client-worth-container padding-spaces">
+                <div class="header-txt">What I am worth</div>
+
+                <div class="amount-wrapper">
+                    <!-- What I Have -->
+                    <div class="flex-elements right-section-style">
+                    <div class="title bold-title">What I have</div>
+                    <div class="money font-s-14">R 2,500,000.00</div>
+                    </div>
+
+                    <span class="horizontalLine margin"></span>
+
+                    <!-- What I Owe -->
+                    <div class="flex-elements right-section-style">
+                    <div class="title bold-title">What I owe</div>
+                    <div class="money font-s-14">R 1,200,000.00</div>
+                    </div>
+
+                    <span class="horizontalLine"></span>
+
+                    <!-- Net Worth -->
+                    <div class="flex-elements right-section-style">
+                    <div class="title bold-title">What I'm worth</div>
+                    <div class="money font-size">R 1,300,000.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="client-worth-container-graphs">
+                <div class="money-heading">
+                    <span class="space-span">Money In & Out</span>
+                </div>
+                <app-statement-graph
+                    class="graph-fill"
+                    [selectedPeriod]="selectedPeriod"
+                    [showMoneyInOut]="false"
+                ></app-statement-graph>
+            </div>
+        </div>
+    </div>
+</div>
+<app-contact-form [(display)]="displayContactForm"></app-contact-form>
+
