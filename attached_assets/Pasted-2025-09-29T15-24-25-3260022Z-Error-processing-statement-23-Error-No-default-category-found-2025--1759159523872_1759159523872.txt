@@ -1,0 +1,58 @@
+2025-09-29T15:24:25.3260022Z ❌ Error processing statement 23: Error: No default category found
+2025-09-29T15:24:25.3260138Z     at CategorizationService.categorizeTransaction (/home/site/wwwroot/dist/server/server/categorization.service.js:172:23)
+2025-09-29T15:24:25.3260159Z     at async processStatementFile (/home/site/wwwroot/dist/server/server/index.js:799:36)
+2025-09-29T15:24:26.5399214Z 🔐 Auth middleware called for: GET /api/Statements/23/status
+2025-09-29T15:24:26.5465604Z 📡 Authorization header: Present
+2025-09-29T15:24:26.5469435Z 🎟️ Token found, verifying...
+2025-09-29T15:24:26.5492829Z ✅ Token verified for user: carmen.nel@live.com
+2025-09-29T15:24:57.5390928Z 🔐 Auth middleware called for: GET /api/Customer/4/TransactionSummary
+2025-09-29T15:24:57.5391373Z 📡 Authorization header: Present
+2025-09-29T15:24:57.5391402Z 🎟️ Token found, verifying...
+2025-09-29T15:24:57.5409107Z ✅ Token verified for user: carmen.nel@live.com
+2025-09-29T15:24:57.5594431Z 🔐 Auth middleware called for: GET /api/Policy
+2025-09-29T15:24:57.5594705Z 📡 Authorization header: Present
+2025-09-29T15:24:57.5594729Z 🎟️ Token found, verifying...
+2025-09-29T15:24:57.5605129Z ✅ Token verified for user: carmen.nel@live.com
+2025-09-29T15:24:57.740156Z Error fetching transaction summary: RequestError: Invalid column name 'customer_id'.
+2025-09-29T15:24:57.7402009Z     at handleError (/node_modules/mssql/lib/tedious/request.js:384:15)
+2025-09-29T15:24:57.7402033Z     at Connection.emit (node:events:524:28)
+2025-09-29T15:24:57.740205Z     at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T15:24:57.740207Z     at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T15:24:57.7402088Z     at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T15:24:57.7402104Z     at Readable.emit (node:events:524:28)
+2025-09-29T15:24:57.740212Z     at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T15:24:57.7402136Z     at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T15:24:57.7402154Z     at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T15:24:57.7402169Z     at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T15:24:57.7402205Z   code: 'EREQUEST',
+2025-09-29T15:24:57.7402224Z   originalError: Error: Invalid column name 'customer_id'.
+2025-09-29T15:24:57.740224Z       at handleError (/node_modules/mssql/lib/tedious/request.js:382:19)
+2025-09-29T15:24:57.7402257Z       at Connection.emit (node:events:524:28)
+2025-09-29T15:24:57.7402274Z       at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T15:24:57.7402292Z       at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T15:24:57.7402311Z       at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T15:24:57.7402327Z       at Readable.emit (node:events:524:28)
+2025-09-29T15:24:57.7402343Z       at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T15:24:57.7402361Z       at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T15:24:57.7402393Z       at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T15:24:57.7402411Z       at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T15:24:57.7402426Z     info: ErrorMessageToken {
+2025-09-29T15:24:57.7402441Z       name: 'ERROR',
+2025-09-29T15:24:57.7402456Z       handlerName: 'onErrorMessage',
+2025-09-29T15:24:57.7402471Z       number: 207,
+2025-09-29T15:24:57.7402485Z       state: 1,
+2025-09-29T15:24:57.7402501Z       class: 16,
+2025-09-29T15:24:57.7402517Z       message: "Invalid column name 'customer_id'.",
+2025-09-29T15:24:57.7402533Z       serverName: 'flightplan',
+2025-09-29T15:24:57.7402548Z       procName: '',
+2025-09-29T15:24:57.7402562Z       lineNumber: 7
+2025-09-29T15:24:57.7402595Z     }
+2025-09-29T15:24:57.7402609Z   },
+2025-09-29T15:24:57.7402624Z   number: 207,
+2025-09-29T15:24:57.7402639Z   lineNumber: 7,
+2025-09-29T15:24:57.7402654Z   state: 1,
+2025-09-29T15:24:57.7402669Z   class: 16,
+2025-09-29T15:24:57.7402684Z   serverName: 'flightplan',
+2025-09-29T15:24:57.7402698Z   procName: '',
+2025-09-29T15:24:57.7402713Z   precedingErrors: []
+2025-09-29T15:24:57.7402727Z }

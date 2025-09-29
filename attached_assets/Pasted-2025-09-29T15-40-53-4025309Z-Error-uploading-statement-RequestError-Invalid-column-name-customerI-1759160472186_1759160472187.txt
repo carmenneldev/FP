@@ -1,0 +1,43 @@
+2025-09-29T15:40:53.4025309Z Error uploading statement: RequestError: Invalid column name 'customerID'.
+2025-09-29T15:40:53.4025798Z     at handleError (/node_modules/mssql/lib/tedious/request.js:384:15)
+2025-09-29T15:40:53.4025822Z     at Connection.emit (node:events:524:28)
+2025-09-29T15:40:53.4025839Z     at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T15:40:53.4025857Z     at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T15:40:53.4025875Z     at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T15:40:53.402589Z     at Readable.emit (node:events:524:28)
+2025-09-29T15:40:53.4025907Z     at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T15:40:53.4025924Z     at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T15:40:53.402594Z     at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T15:40:53.4025957Z     at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T15:40:53.4025995Z   code: 'EREQUEST',
+2025-09-29T15:40:53.4026011Z   originalError: Error: Invalid column name 'customerID'.
+2025-09-29T15:40:53.4026029Z       at handleError (/node_modules/mssql/lib/tedious/request.js:382:19)
+2025-09-29T15:40:53.4026044Z       at Connection.emit (node:events:524:28)
+2025-09-29T15:40:53.4026063Z       at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T15:40:53.402608Z       at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T15:40:53.4026099Z       at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T15:40:53.4026115Z       at Readable.emit (node:events:524:28)
+2025-09-29T15:40:53.4026131Z       at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T15:40:53.4026148Z       at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T15:40:53.4026186Z       at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T15:40:53.4026203Z       at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T15:40:53.4026217Z     info: ErrorMessageToken {
+2025-09-29T15:40:53.4026231Z       name: 'ERROR',
+2025-09-29T15:40:53.4026247Z       handlerName: 'onErrorMessage',
+2025-09-29T15:40:53.4026261Z       number: 207,
+2025-09-29T15:40:53.4026275Z       state: 1,
+2025-09-29T15:40:53.402629Z       class: 16,
+2025-09-29T15:40:53.4026306Z       message: "Invalid column name 'customerID'.",
+2025-09-29T15:40:53.4026321Z       serverName: 'flightplan',
+2025-09-29T15:40:53.4026335Z       procName: '',
+2025-09-29T15:40:53.4026348Z       lineNumber: 2
+2025-09-29T15:40:53.4026379Z     }
+2025-09-29T15:40:53.4026394Z   },
+2025-09-29T15:40:53.4026407Z   number: 207,
+2025-09-29T15:40:53.4026421Z   lineNumber: 2,
+2025-09-29T15:40:53.4026435Z   state: 1,
+2025-09-29T15:40:53.4026449Z   class: 16,
+2025-09-29T15:40:53.4026464Z   serverName: 'flightplan',
+2025-09-29T15:40:53.4026478Z   procName: '',
+2025-09-29T15:40:53.4026491Z   precedingErrors: []
+2025-09-29T15:40:53.4026507Z }

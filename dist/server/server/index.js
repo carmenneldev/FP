@@ -808,7 +808,7 @@ async function processStatementFile(statementId, filePath) {
                 balance: txn.balance ? parseFloat(txn.balance).toFixed(2) : undefined,
                 categoryID: categorization.categoryId,
                 confidence: categorization.confidence.toFixed(4),
-                rawData: txn
+                rawData: JSON.stringify(txn)
             });
         }
         // Insert all transactions
