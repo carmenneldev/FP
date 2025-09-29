@@ -513,8 +513,8 @@ export class AzureSQLAdapter {
     
     for (const txn of transactions) {
       await this.query(`
-        INSERT INTO bank_transactions (statement_id, customer_id, txn_date, description, merchant, amount, direction, balance, category_id, raw_data)
-        VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @rawData)
+        INSERT INTO bank_transactions (statement_id, customer_id, txn_date, description, merchant, amount, direction, balance, category_id, confidence, raw_data)
+        VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
       `, txn);
     }
   }

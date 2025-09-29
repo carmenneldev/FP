@@ -1,0 +1,65 @@
+2025-09-29T16:09:00.4883293Z Could not parse date: 87-575-9406, using current date
+2025-09-29T16:09:00.5379286Z ❌ Error processing statement 7: RequestError: Invalid column name 'raw_data'.
+2025-09-29T16:09:00.5379591Z     at handleError (/node_modules/mssql/lib/tedious/request.js:384:15)
+2025-09-29T16:09:00.5379612Z     at Connection.emit (node:events:524:28)
+2025-09-29T16:09:00.5379632Z     at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T16:09:00.537965Z     at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T16:09:00.5379675Z     at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T16:09:00.5379693Z     at Readable.emit (node:events:524:28)
+2025-09-29T16:09:00.5379752Z     at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T16:09:00.5379775Z     at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T16:09:00.5379791Z     at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T16:09:00.5379806Z     at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T16:09:00.5379821Z   code: 'EREQUEST',
+2025-09-29T16:09:00.5379837Z   originalError: Error: Invalid column name 'raw_data'.
+2025-09-29T16:09:00.5379855Z       at handleError (/node_modules/mssql/lib/tedious/request.js:382:19)
+2025-09-29T16:09:00.5379871Z       at Connection.emit (node:events:524:28)
+2025-09-29T16:09:00.5379887Z       at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T16:09:00.5379906Z       at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T16:09:00.5379924Z       at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T16:09:00.5379958Z       at Readable.emit (node:events:524:28)
+2025-09-29T16:09:00.5379976Z       at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T16:09:00.5379992Z       at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T16:09:00.5380009Z       at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T16:09:00.5380025Z       at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T16:09:00.5380039Z     info: ErrorMessageToken {
+2025-09-29T16:09:00.5380055Z       name: 'ERROR',
+2025-09-29T16:09:00.5380071Z       handlerName: 'onErrorMessage',
+2025-09-29T16:09:00.5380085Z       number: 207,
+2025-09-29T16:09:00.53801Z       state: 1,
+2025-09-29T16:09:00.5380115Z       class: 16,
+2025-09-29T16:09:00.5380149Z       message: "Invalid column name 'raw_data'.",
+2025-09-29T16:09:00.5380165Z       serverName: 'flightplan',
+2025-09-29T16:09:00.5380179Z       procName: '',
+2025-09-29T16:09:00.5380195Z       lineNumber: 2
+2025-09-29T16:09:00.5380208Z     }
+2025-09-29T16:09:00.5380223Z   },
+2025-09-29T16:09:00.5380237Z   number: 207,
+2025-09-29T16:09:00.5380251Z   lineNumber: 2,
+2025-09-29T16:09:00.5380265Z   state: 1,
+2025-09-29T16:09:00.5380279Z   class: 16,
+2025-09-29T16:09:00.5380294Z   serverName: 'flightplan',
+2025-09-29T16:09:00.5380309Z   procName: '',
+2025-09-29T16:09:00.5380341Z   precedingErrors: [
+2025-09-29T16:09:00.5380357Z     RequestError: Invalid column name 'customer_id'.
+2025-09-29T16:09:00.5380375Z         at handleError (/node_modules/mssql/lib/tedious/request.js:384:15)
+2025-09-29T16:09:00.538039Z         at Connection.emit (node:events:524:28)
+2025-09-29T16:09:00.5380407Z         at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T16:09:00.5380425Z         at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T16:09:00.5380443Z         at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T16:09:00.5380463Z         at Readable.emit (node:events:524:28)
+2025-09-29T16:09:00.538048Z         at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T16:09:00.5380496Z         at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T16:09:00.538053Z         at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T16:09:00.5380548Z         at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T16:09:00.5380562Z       code: 'EREQUEST',
+2025-09-29T16:09:00.5380577Z       originalError: [Error],
+2025-09-29T16:09:00.5380592Z       number: 207,
+2025-09-29T16:09:00.5380607Z       lineNumber: 2,
+2025-09-29T16:09:00.5380621Z       state: 1,
+2025-09-29T16:09:00.5380635Z       class: 16,
+2025-09-29T16:09:00.538065Z       serverName: 'flightplan',
+2025-09-29T16:09:00.5380664Z       procName: ''
+2025-09-29T16:09:00.5380678Z     }
+2025-09-29T16:09:00.5380692Z   ]
+2025-09-29T16:09:00.5380722Z }
