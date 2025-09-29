@@ -513,8 +513,8 @@ export class AzureSQLAdapter {
     
     for (const txn of transactions) {
       await this.query(`
-        INSERT INTO bank_transactions (statementID, customer_id, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
-        VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
+        INSERT INTO bank_transactions (statement_id, customer_id, txn_date, description, merchant, amount, direction, balance, category_id, raw_data)
+        VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @rawData)
       `, txn);
     }
   }
@@ -583,14 +583,14 @@ export class AzureSQLAdapter {
 
     return await this.query(`
       SELECT 
-        bt.categoryID,
+        bt.category_id,
         tc.name as categoryName,
         SUM(bt.amount) as total,
         COUNT(*) as count
       FROM bank_transactions bt
-      LEFT JOIN transactionCategories tc ON bt.categoryID = tc.id
+      LEFT JOIN transaction_categories tc ON bt.category_id = tc.id
       ${whereClause}
-      GROUP BY bt.categoryID, tc.name
+      GROUP BY bt.category_id, tc.name
       ORDER BY total DESC
     `, params);
   }
@@ -655,6 +655,32 @@ export class AzureSQLAdapter {
       OUTPUT INSERTED.*
       WHERE id = @userID
     `, { ...filteredData, userID });
+    return result[0];
+  }
+
+  // Transaction Categories
+  async getTransactionCategories(): Promise<any[]> {
+    const result = await this.query(`
+      SELECT id, name, direction_constraint as directionConstraint, regex_patterns as regexPatterns, 
+             color, is_system as isSystem, created_at as createdAt
+      FROM transaction_categories 
+      ORDER BY name ASC
+    `);
+    return result;
+  }
+
+  async createTransactionCategory(category: any): Promise<any> {
+    const result = await this.query(`
+      INSERT INTO transaction_categories (name, direction_constraint, regex_patterns, color, is_system)
+      OUTPUT INSERTED.id
+      VALUES (@name, @directionConstraint, @regexPatterns, @color, @isSystem)
+    `, {
+      name: category.name,
+      directionConstraint: category.directionConstraint || null,
+      regexPatterns: category.regexPatterns ? JSON.stringify(category.regexPatterns) : null,
+      color: category.color,
+      isSystem: category.isSystem || false
+    });
     return result[0];
   }
 }

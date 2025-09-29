@@ -16,8 +16,8 @@ class CategorizationService {
             if (!db_1.azureSqlAdapter) {
                 throw new Error('Azure SQL adapter not initialized');
             }
-            // TODO: Implement getTransactionCategories in Azure SQL adapter
-            this.categories = [];
+            this.categories = await db_1.azureSqlAdapter.getTransactionCategories();
+            console.log(`✅ Loaded ${this.categories.length} transaction categories from Azure SQL`);
         }
         else {
             // PostgreSQL development mode - skip category loading for now
@@ -29,11 +29,16 @@ class CategorizationService {
             // Only create categories in Azure SQL mode for now
             if (dbType === 'azure-sql') {
                 await this.createDefaultCategories();
-                // TODO: Load categories after creating them
+                // Reload categories after creating them
+                this.categories = await db_1.azureSqlAdapter.getTransactionCategories();
+                console.log(`✅ Created and loaded ${this.categories.length} default transaction categories`);
             }
         }
     }
     static async createDefaultCategories() {
+        if (!db_1.azureSqlAdapter) {
+            throw new Error('Azure SQL adapter not initialized');
+        }
         const defaultCategories = [
             // Income categories
             { name: 'Salary/Wages', directionConstraint: 'in', regexPatterns: ['salary', 'wage', 'payroll', 'income'], color: '#22c55e', isSystem: true },
@@ -54,8 +59,19 @@ class CategorizationService {
             { name: 'Debt/Loans', directionConstraint: 'out', regexPatterns: ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt'], color: '#dc2626', isSystem: true },
             { name: 'Other Expenses', directionConstraint: 'out', regexPatterns: [], color: '#6b7280', isSystem: true },
         ];
-        // TODO: Implement createTransactionCategory in Azure SQL adapter
-        console.log('⚠️  Transaction categories not yet implemented for Azure SQL mode');
+        // Create each category in the database (only if they don't exist)
+        for (const category of defaultCategories) {
+            try {
+                await db_1.azureSqlAdapter.createTransactionCategory(category);
+                console.log(`✅ Created default category: ${category.name}`);
+            }
+            catch (error) {
+                // If category already exists, that's fine - skip the error
+                if (!error.message.includes('duplicate') && !error.message.includes('constraint')) {
+                    console.warn(`⚠️  Failed to create category ${category.name}:`, error.message);
+                }
+            }
+        }
     }
     // Rule-based categorization using regex patterns
     static async categorizeByRules(description, amount) {

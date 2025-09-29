@@ -1,0 +1,109 @@
+2025-09-29T13:41:40.1373609Z Processing statement 20...
+2025-09-29T13:41:42.2742243Z PDF loaded, pages: 2
+2025-09-29T13:41:43.0140808Z Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+2025-09-29T13:41:43.5954264Z Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+2025-09-29T13:41:43.7440024Z Warning: UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.
+2025-09-29T13:41:44.6886241Z PDF Text Length: 4316
+2025-09-29T13:41:44.7091535Z PDF Text Preview (first 200 chars): 2001 Your transactional account terms and conditions have been amended. You may access the updated terms and conditions on our website. Bank Charges   R16.40   Opening Balance   R1,967.01 Cr   Credit
+2025-09-29T13:41:44.7091926Z Total lines found: 2
+2025-09-29T13:41:44.7092548Z First few lines: [
+2025-09-29T13:41:44.800349Z   '2001 Your transactional account terms and conditions have been amended. You may access the updated terms and conditions on our website. Bank Charges   R16.40   Opening Balance   R1,967.01 Cr   Credit Rate   0.00% Closing Balance   R316.61 Cr   Debit Rate   0.00% Copy Tax Invoice/Statement Number : 22 Bank VAT Registration Number : 4210102051 Statement Period : 11 April 2020 to 12 May 2020  Page 1 of 2 Easy Account : 62768267653  Branch Number   Account Number   Date   DDA 13/SH/94/KM/KM/PA/P6/B2/LE/Y   FNGEN 8091   62768267653   20/05/12   Easy Account Delivery Method F1 R09 NS/12/NV/DDA 13 8091 BBST22 121333 095546  CSFZFN0:62768267653  9  Updated Terms and Conditions Bank Charges   Statement Balances   Interest Rates Date   Description   Amount   Balance Accrued Bank Charges Statement Date : 12 May 2020  8  MR SEAN B MTHEMBU 130 FRANCES ST JOHANNESBURG 14 Apr   FNB App Prepaid   Airtime 27814339666   135.00   1,832.01 Cr 14 Apr   FNB App Prepaid   Airtime 27814339666   20.00   1,812.01 Cr 14 Apr   POS Purchase Chq Card   Pay At Zapper   457896*9119 09 Apr   399.00   1,413.01 Cr 18 Apr   FNB App Prepaid   Airtime 27682232699   30.00   1,383.01 Cr 20 Apr   FNB App Prepaid   Airtime 27814339666   135.00   1,248.01 Cr 20 Apr   FNB App Prepaid   Airtime 27682232699   30.00   1,218.01 Cr 23 Apr   FNB App Prepaid   Airtime 27814339666   135.00   1,083.01 Cr 28 Apr   FNB App Prepaid   Airtime 27814339666   20.00   1,063.01 Cr 28 Apr   FNB App Prepaid   Airtime 27814339666   10.00   1,053.01 Cr 30 Apr   Notification - Email   Email Sending Fee   Pearson Institute   0.00   1,053.01 Cr   0.95 30 Apr   Temp Loan Repay   1,808.00   754.99 30 Apr   Internet Airtime Topup   Airtime 27814339666   135.00   889.99 30 Apr   FNB App Payment To   8zx4fsxd8   1,600.00   2,489.99   1.00 30 Apr   FNB App Payment To   Bhekani   2,000.00   4,489.99   1.00 30 Apr   FNB OB Pmt   0001   Salary   62486385828   6,978.00 Cr   2,488.01 Cr 02 May FNB App Prepaid   Airtime 27812673892   59.00   2,429.01 Cr 04 May FNB App Prepaid   Airtime 27682232699   30.00   2,399.01 Cr 06 May FNB App Prepaid   Airtime 27814339666   135.00   2,264.01 Cr 06 May POS International Purchase Chq   165.00 Udemy Online   457896*9119 04 May   165.00   2,099.01 Cr 07 May Payment To Investment   Datareserve   890.00   1,209.01 Cr 08 May FNB App Transfer From   Bills   600.00 Cr   1,809.01 Cr 08 May POS Purchase Chq Card   President Hyper Vaa   457896*9119 07 May   756.21   1,052.80 Cr 09 May #Debit Card POS Unsuccessful F   #Fee   Declined Purch Tran 4578965063509119   8.50   1,044.30 Cr 09 May Bank Your Change Debit   62768357347   0.79   1,043.51 Cr 11 May FNB App Prepaid   Airtime 27814339666   135.00   908.51 Cr 11 May FNB App Prepaid   Airtime 27682232699   30.00   878.51 Cr Remote Accounting Opening P O Box 61530 Johannesburg 2000 210835 087-575-9406 087-575-9404 Not Provided info@fnb.co.za fnb.co.za  Branch Code Lost Cards Account Enquiries Customer VAT Registration Number Account Transactions Opening Balance   1,967.01 Cr  1',
+2025-09-29T13:41:44.8004661Z Could not parse date: 2025-09-29, using current date
+2025-09-29T13:41:44.8004816Z Could not parse date: 2025-09-29, using current date
+2025-09-29T13:41:44.8201158Z   '# Inclusive of VAT @ 15.00%   = R 2.14 Dr Total VAT Charged :   R 2.14 Dr First National Bank - a division of FirstRand Bank Limited. Registration Number 1929/001225/06. An Authorised Financial Services and Credit Provider (NCRCP20).  Page 2 of 2  Branch Number   Account Number   Date   DDA 13/SH/94/KM/KM/PA/P6/B2/LE/Y   FNGEN 8091   62768267653   20/05/12   Easy Account Delivery Method F1 R09 NS/12/NV/DDA 13 8091 121334  Please contact us within 30 days from your statement date, should you wish to query an entry on this statement (incl. card transactions done during this statement period, but not yet reflecting). Should we not hear from you, we will assume that you have received the statement and that it is correct. On 15 April 2020, the Prime Lending Rate changed to 7.75%. This may impact the rate on any of your credit facilities . Date   Description   Amount   Balance Accrued Bank Charges  11 May POS Purchase Chq Card   Pay At Zapper   457896*9119 07 May   399.00   479.51 Cr 12 May POS Purchase Chq Card   Mrp Price E-commerc   457896*9119 08 May   155.00   324.51 Cr 12 May #Monthly Account Fee   4.95   319.56 Cr 12 May #Value Added Serv Fees   0.95   318.61 Cr 12 May #Service Fees   2.00   316.61 Cr  Account Transactions: 62768267653 Closing Balance   316.61 Cr'
+2025-09-29T13:41:44.8201447Z ]
+2025-09-29T13:41:44.8201489Z Using alternative splitting, new line count: 67
+2025-09-29T13:41:44.8201517Z Alternative lines preview: [
+2025-09-29T13:41:44.8201552Z   '2001 Your transactional account terms and conditions have been amended. You may access the updated terms and conditions on our website. Bank',
+2025-09-29T13:41:44.820158Z   'Charges   R16.',
+2025-09-29T13:41:44.8206875Z   '40   Opening',
+2025-09-29T13:41:44.829012Z   'Balance   R1,967.01 Cr   Credit Rate   0.00% Closing',
+2025-09-29T13:41:44.8290331Z   'Balance   R316.61 Cr'
+2025-09-29T13:41:44.8290364Z ]
+2025-09-29T13:41:44.8290394Z Trying 6 different parsing patterns...
+2025-09-29T13:41:44.8290429Z ✓ Pattern 4 matched line: "Charges   R16...."
+2025-09-29T13:41:44.8290458Z Match groups: [ 'Charges', '16.', undefined ]
+2025-09-29T13:41:44.8290489Z ✓ Pattern 4 matched line: "Balance   R316.61 Cr..."
+2025-09-29T13:41:44.8290519Z Match groups: [ 'Balance', '316.61', 'Cr' ]
+2025-09-29T13:41:44.8290549Z ✓ Pattern 5 matched line: "12 May 2020  Page 1 of..."
+2025-09-29T13:41:44.8290578Z Match groups: [ '12 May 2020', 'Page', '1', undefined ]
+2025-09-29T13:41:44.8290611Z ✓ Pattern 5 matched line: "12 May 2020  8  MR SEAN B MTHEMBU 130 FRANCES ST JOHANNESBURG..."
+2025-09-29T13:41:44.8686395Z Could not parse date: 87-575-9406, using current date
+2025-09-29T13:41:44.8709185Z Match groups: [ '12 May 2020', '8  MR SEAN B MTHEMBU', '130', undefined ]
+2025-09-29T13:41:44.8709452Z ✓ Pattern 2 matched line: "14 Apr   FNB App Prepaid   Airtime 27814339666   135.00   1,832.01 Cr..."
+2025-09-29T13:41:44.8709484Z Match groups: [
+2025-09-29T13:41:44.8709534Z   '14 Apr',
+2025-09-29T13:41:44.8709565Z   'FNB App Prepaid   Airtime 27814339666',
+2025-09-29T13:41:44.8709592Z   '135.00',
+2025-09-29T13:41:44.870962Z   undefined,
+2025-09-29T13:41:44.8709646Z   '1,832.01'
+2025-09-29T13:41:44.8709672Z ]
+2025-09-29T13:41:44.8796021Z ✓ Pattern 2 matched line: "14 Apr   FNB App Prepaid   Airtime 27814339666   20.00   1,812.01 Cr..."
+2025-09-29T13:41:44.8796691Z Match groups: [
+2025-09-29T13:41:44.879673Z   '14 Apr',
+2025-09-29T13:41:44.8796762Z   'FNB App Prepaid   Airtime 27814339666',
+2025-09-29T13:41:44.8796789Z   '20.00',
+2025-09-29T13:41:44.8796816Z   undefined,
+2025-09-29T13:41:44.8796842Z   '1,812.01'
+2025-09-29T13:41:44.8796869Z ]
+2025-09-29T13:41:44.8796902Z ✓ Pattern 2 matched line: "09 Apr   399.00   1,413.01 Cr..."
+2025-09-29T13:41:44.8796932Z Match groups: [ '09 Apr', ' ', '399.00', undefined, '1,413.01' ]
+2025-09-29T13:41:44.8796966Z ✓ Pattern 2 matched line: "18 Apr   FNB App Prepaid   Airtime 27682232699   30.00   1,383.01 Cr..."
+2025-09-29T13:41:44.9110008Z Match groups: [
+2025-09-29T13:41:44.9110241Z   '18 Apr',
+2025-09-29T13:41:44.9110279Z   'FNB App Prepaid   Airtime 27682232699',
+2025-09-29T13:41:44.911031Z   '30.00',
+2025-09-29T13:41:44.9110339Z   undefined,
+2025-09-29T13:41:44.9110365Z   '1,383.01'
+2025-09-29T13:41:44.9110391Z ]
+2025-09-29T13:41:44.9110433Z ✓ Pattern 2 matched line: "20 Apr   FNB App Prepaid   Airtime 27814339666   135.00   1,248.01 Cr..."
+2025-09-29T13:41:44.911046Z Match groups: [
+2025-09-29T13:41:44.9110487Z   '20 Apr',
+2025-09-29T13:41:44.9110515Z   'FNB App Prepaid   Airtime 27814339666',
+2025-09-29T13:41:44.9110541Z   '135.00',
+2025-09-29T13:41:44.9612903Z   undefined,
+2025-09-29T13:41:44.9613088Z   '1,248.01'
+2025-09-29T13:41:44.9613118Z ]
+2025-09-29T13:41:44.9613181Z ✓ Pattern 2 matched line: "20 Apr   FNB App Prepaid   Airtime 27682232699   30.00   1,218.01 Cr..."
+2025-09-29T13:41:44.9613211Z Match groups: [
+2025-09-29T13:41:44.9613239Z   '20 Apr',
+2025-09-29T13:41:44.9613269Z   'FNB App Prepaid   Airtime 27682232699',
+2025-09-29T13:41:44.9613296Z   '30.00',
+2025-09-29T13:41:44.9613324Z   undefined,
+2025-09-29T13:41:44.9683562Z   '1,218.01'
+2025-09-29T13:41:44.9683654Z ]
+2025-09-29T13:41:44.9683693Z ✓ Pattern 2 matched line: "23 Apr   FNB App Prepaid   Airtime 27814339666   135.00   1,083.01 Cr..."
+2025-09-29T13:41:44.9683734Z Match groups: [
+2025-09-29T13:41:44.9683761Z   '23 Apr',
+2025-09-29T13:41:44.9683791Z   'FNB App Prepaid   Airtime 27814339666',
+2025-09-29T13:41:44.9683905Z   '135.00',
+2025-09-29T13:41:44.9683934Z   undefined,
+2025-09-29T13:41:44.9683961Z   '1,083.01'
+2025-09-29T13:41:44.9683987Z ]
+2025-09-29T13:41:44.9897048Z ✓ Pattern 2 matched line: "28 Apr   FNB App Prepaid   Airtime 27814339666   20.00   1,063.01 Cr..."
+2025-09-29T13:41:44.9897228Z Match groups: [
+2025-09-29T13:41:44.9897259Z   '28 Apr',
+2025-09-29T13:41:44.9897289Z   'FNB App Prepaid   Airtime 27814339666',
+2025-09-29T13:41:44.9897317Z   '20.00',
+2025-09-29T13:41:44.9897344Z   undefined,
+2025-09-29T13:41:44.9897373Z   '1,063.01'
+2025-09-29T13:41:44.9897399Z ]
+2025-09-29T13:41:44.9897432Z ✓ Pattern 2 matched line: "28 Apr   FNB App Prepaid   Airtime 27814339666   10.00   1,053.01 Cr..."
+2025-09-29T13:41:44.989746Z Match groups: [
+2025-09-29T13:41:44.9897487Z   '28 Apr',
+2025-09-29T13:41:45.0513413Z   'FNB App Prepaid   Airtime 27814339666',
+2025-09-29T13:41:45.051378Z   '10.00',
+2025-09-29T13:41:45.0513815Z   undefined,
+2025-09-29T13:41:45.0513842Z   '1,053.01'
+2025-09-29T13:41:45.0513869Z ]
+2025-09-29T13:41:45.0513908Z ✓ Pattern 2 matched line: "30 Apr   Notification - Email   Email Sending Fee   Pearson Institute   0.00   1,053.01 Cr   0.95..."
+2025-09-29T13:41:45.0513936Z Match groups: [
+2025-09-29T13:41:45.0513963Z   '30 Apr',
+2025-09-29T13:41:45.0513992Z   'Notification - Email   Email Sending Fee   Pearson Institute',
+2025-09-29T13:41:45.051402Z   '0.00',
+2025-09-29T13:41:45.0514046Z   undefined,
+2025-09-29T13:41:45.0514073Z   '1,053.01'
+2025-09-29T13:41:45.0691633Z ]
+2025-09-29T13:41:45.0691859Z ✓ Pattern 2 matched line: "30 Apr   FNB App Payment To   8zx4fsxd8   1,600.00   2,489.99   1.00..."
+2025-09-29T13:41:45.0691891Z Match groups: [
+2025-09-29T13:41:45.0691918Z   '30 Apr',
