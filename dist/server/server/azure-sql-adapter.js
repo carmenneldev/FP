@@ -436,7 +436,7 @@ class AzureSQLAdapter {
     // Bank Statements
     async getBankStatements(customerID) {
         return await this.query(`
-      SELECT id, customerID, originalFileName, displayName, storagePath, mimeType, fileHash,
+      SELECT id, customerID, fileName, displayName, storagePath, mimeType, fileHash,
              uploadStatus, error, transactionCount, totalIn, totalOut, netAmount,
              uploadedAt, processedAt
       FROM bankStatements 
@@ -446,7 +446,7 @@ class AzureSQLAdapter {
     }
     async getBankStatementById(id) {
         const result = await this.query(`
-      SELECT id, customerID, originalFileName, displayName, storagePath, mimeType, fileHash,
+      SELECT id, customerID, fileName, displayName, storagePath, mimeType, fileHash,
              uploadStatus, error, transactionCount, totalIn, totalOut, netAmount,
              uploadedAt, processedAt
       FROM bankStatements 
@@ -456,7 +456,7 @@ class AzureSQLAdapter {
     }
     async createBankStatement(statement) {
         const result = await this.query(`
-      INSERT INTO bankStatements (customerID, originalFileName, displayName, storagePath, mimeType, fileHash, uploadStatus)
+      INSERT INTO bankStatements (customerID, fileName, displayName, storagePath, mimeType, fileHash, uploadStatus)
       OUTPUT INSERTED.*
       VALUES (@customerID, @fileName, @displayName, @storagePath, @mimeType, @fileHash, @uploadStatus)
     `, statement);
