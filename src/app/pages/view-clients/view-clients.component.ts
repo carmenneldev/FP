@@ -268,12 +268,38 @@ export class ViewClientsComponent implements OnInit {
     this.clientService.getAll().subscribe({
       next: (response) => {
         const customers = this.dataCleanerHelper.stripReferenceProps(response);
-        const advisorId = parseInt(localStorage.getItem('advisorId') || '0', 10);
-        this.customers = customers.filter((client: { financialAdvisorID: number; }) => client.financialAdvisorID === advisorId);
+        const advisorIdFromStorage = localStorage.getItem('advisorId');
+        const advisorId = parseInt(advisorIdFromStorage || '0', 10);
+        
+        console.log('🔧 Frontend Filter Debug:');
+        console.log('- Raw advisorId from localStorage:', advisorIdFromStorage);
+        console.log('- Parsed advisorId:', advisorId, 'Type:', typeof advisorId);
+        console.log('- Total customers received:', customers.length);
+        
+        if (customers.length > 0) {
+          customers.forEach((client: any, index: number) => {
+            const clientAdvisorId1 = client.financialAdvisorID;
+            const clientAdvisorId2 = client.financial_advisor_id;
+            console.log(`- Customer ${index}:`, {
+              name: client.firstName,
+              financialAdvisorID: clientAdvisorId1,
+              financial_advisor_id: clientAdvisorId2,
+              matchesFilter: (clientAdvisorId1 || clientAdvisorId2) === advisorId
+            });
+          });
+        }
+        
+        // TEMPORARILY SHOW ALL CUSTOMERS - Remove this filter to see all clients
+        // this.customers = customers; // <-- Enable this line to show all customers
+        
+        // Handle both camelCase and snake_case property names
+        this.customers = customers.filter((client: any) => {
+          const clientAdvisorId = client.financialAdvisorID || client.financial_advisor_id;
+          return clientAdvisorId === advisorId;
+        });
+        
+        console.log('- Customers after filtering:', this.customers.length);
         this.filteredList = this.customers;
-        console.log(`Filtered Customer`, this.filteredList);
-        console.log(`Customers`, customers)
-
       },
       error: (error) => console.error('Error fetching clients:', error),
     });

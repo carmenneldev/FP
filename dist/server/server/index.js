@@ -407,18 +407,41 @@ app.post('/api/UserCredential', async (req, res) => {
         }
     }
 });
+// ===== DIAGNOSTIC ENDPOINTS =====
+// Temporary diagnostic endpoint - remove after debugging
+app.get('/api/debug/customers', authenticateToken, async (req, res) => {
+    try {
+        const advisorId = req.user?.userID;
+        const allCustomers = await database_service_1.DatabaseService.getCustomers(); // Get ALL customers
+        res.json({
+            jwtUser: req.user,
+            advisorId,
+            advisorIdType: typeof advisorId,
+            totalCustomers: allCustomers.length,
+            sampleCustomer: allCustomers[0] || null,
+            customersForAdvisor: allCustomers.filter(c => (c.financial_advisor_id || c.financialAdvisorID) === advisorId).length
+        });
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 // ===== CUSTOMER ENDPOINTS =====
 // Get all Customers
 app.get('/api/Customer', authenticateToken, async (req, res) => {
     try {
         // Get advisor ID from JWT token
         const advisorId = req.user?.userID;
-        console.log('🔍 Debug - JWT user object:', req.user);
-        console.log('🔍 Debug - Extracted advisorId:', advisorId, 'type:', typeof advisorId);
+        // Production-safe debug logging
+        console.log('Customer API called - Advisor ID:', advisorId, 'Type:', typeof advisorId);
         const customerList = await database_service_1.DatabaseService.getCustomers(advisorId);
-        console.log('🔍 Debug - Total customers found:', customerList.length);
+        console.log('Query returned', customerList.length, 'customers');
         if (customerList.length > 0) {
-            console.log('🔍 Debug - Sample customer data:', customerList[0]);
+            console.log('Sample customer:', {
+                id: customerList[0].id,
+                name: customerList[0].firstName,
+                advisorId: customerList[0].financial_advisor_id || customerList[0].financialAdvisorID
+            });
         }
         res.json(customerList);
     }
