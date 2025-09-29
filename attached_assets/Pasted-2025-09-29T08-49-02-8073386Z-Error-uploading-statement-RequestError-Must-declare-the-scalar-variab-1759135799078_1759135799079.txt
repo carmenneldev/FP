@@ -1,0 +1,43 @@
+2025-09-29T08:49:02.8073386Z Error uploading statement: RequestError: Must declare the scalar variable "@originalFileName".
+2025-09-29T08:49:02.8073976Z     at handleError (/node_modules/mssql/lib/tedious/request.js:384:15)
+2025-09-29T08:49:02.8074015Z     at Connection.emit (node:events:524:28)
+2025-09-29T08:49:02.8074047Z     at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T08:49:02.8074078Z     at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T08:49:02.8074108Z     at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T08:49:02.8074136Z     at Readable.emit (node:events:524:28)
+2025-09-29T08:49:02.8074166Z     at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T08:49:02.8074195Z     at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T08:49:02.8074225Z     at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T08:49:02.8074257Z     at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T08:49:02.8074317Z   code: 'EREQUEST',
+2025-09-29T08:49:02.8074348Z   originalError: Error: Must declare the scalar variable "@originalFileName".
+2025-09-29T08:49:02.8074378Z       at handleError (/node_modules/mssql/lib/tedious/request.js:382:19)
+2025-09-29T08:49:02.8074406Z       at Connection.emit (node:events:524:28)
+2025-09-29T08:49:02.8074436Z       at Connection.emit (/node_modules/tedious/lib/connection.js:970:18)
+2025-09-29T08:49:02.8074467Z       at RequestTokenHandler.onErrorMessage (/node_modules/tedious/lib/token/handler.js:284:21)
+2025-09-29T08:49:02.8074498Z       at Readable.<anonymous> (/node_modules/tedious/lib/token/token-stream-parser.js:19:33)
+2025-09-29T08:49:02.8074528Z       at Readable.emit (node:events:524:28)
+2025-09-29T08:49:02.8074557Z       at addChunk (node:internal/streams/readable:561:12)
+2025-09-29T08:49:02.8074587Z       at readableAddChunkPushObjectMode (node:internal/streams/readable:538:3)
+2025-09-29T08:49:02.8074646Z       at Readable.push (node:internal/streams/readable:393:5)
+2025-09-29T08:49:02.8074677Z       at nextAsync (node:internal/streams/from:194:22) {
+2025-09-29T08:49:02.8074705Z     info: ErrorMessageToken {
+2025-09-29T08:49:02.8074733Z       name: 'ERROR',
+2025-09-29T08:49:02.8074761Z       handlerName: 'onErrorMessage',
+2025-09-29T08:49:02.8074791Z       number: 137,
+2025-09-29T08:49:02.8074818Z       state: 2,
+2025-09-29T08:49:02.8074847Z       class: 15,
+2025-09-29T08:49:02.8074877Z       message: 'Must declare the scalar variable "@originalFileName".',
+2025-09-29T08:49:02.8074905Z       serverName: 'flightplan',
+2025-09-29T08:49:02.8074932Z       procName: '',
+2025-09-29T08:49:02.8074959Z       lineNumber: 4
+2025-09-29T08:49:02.8075011Z     }
+2025-09-29T08:49:02.807504Z   },
+2025-09-29T08:49:02.8075067Z   number: 137,
+2025-09-29T08:49:02.8075094Z   lineNumber: 4,
+2025-09-29T08:49:02.8075121Z   state: 2,
+2025-09-29T08:49:02.8075148Z   class: 15,
+2025-09-29T08:49:02.8075176Z   serverName: 'flightplan',
+2025-09-29T08:49:02.8075202Z   procName: '',
+2025-09-29T08:49:02.8075231Z   precedingErrors: []
+2025-09-29T08:49:02.807526Z }

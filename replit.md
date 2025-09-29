@@ -10,6 +10,30 @@ FlightPlan is a comprehensive Angular application for managing clients, policies
 - **Backend**: Express.js API with Azure SQL Database integration only
 
 ## Recent Changes
+### Bank Statement Upload Fix (Sept 29, 2025)
+- **PDF UPLOAD ERROR RESOLVED**: Fixed critical SQL parameter mismatch in bank statement upload
+  - Error: "Must declare the scalar variable @originalFileName" when uploading PDF files
+  - Root Cause: SQL query expected @originalFileName but server code used fileName property
+  - Solution: Updated Azure SQL adapter query to use @fileName parameter to match interface
+  - Result: PDF and CSV bank statement uploads now work correctly in production
+- **VERIFIED WORKING**: Bank statement processing pipeline fully functional
+  - File upload with duplicate detection and smart versioning
+  - ML-powered transaction categorization using OpenAI
+  - Both PDF and CSV formats supported and processing correctly
+
+### Client List Display Fix (Sept 29, 2025)
+- **CRITICAL CLIENT LIST FIX**: Resolved issue where clients were not displaying in production
+  - Fixed advisor ID filtering logic in frontend to handle both camelCase and snake_case property names
+  - Updated Azure SQL adapter to return properly structured data matching frontend expectations
+  - Fixed marital status display by returning nested `maritalStatus.statusName` structure
+  - Added `isActive` boolean field for proper status display (Active/Inactive)
+  - Added progress bar data with `netWorth` field for client value visualization
+- **PRODUCTION READY**: Application now displays clients correctly with proper data relationships
+  - Marital status shows actual status names instead of "Not specified"
+  - Status field shows "Active" instead of hardcoded "Inactive"
+  - All debug code removed for clean production deployment
+  - Advisor-specific filtering working correctly
+
 ### Azure SQL-Only Conversion (Sept 26, 2025)
 - **COMPLETE POSTGRESQL REMOVAL**: Eliminated all PostgreSQL dependencies and packages per user requirement
   - Removed postgresql, pg, drizzle-orm, and all related packages from package.json
