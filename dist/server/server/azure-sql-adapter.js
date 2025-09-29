@@ -462,6 +462,37 @@ class AzureSQLAdapter {
     `, statement);
         return result[0];
     }
+    async insertBankTransactions(transactions) {
+        if (transactions.length === 0)
+            return;
+        for (const txn of transactions) {
+            await this.query(`
+        INSERT INTO bankTransactions (statementID, customerID, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
+        VALUES (@statementID, @customerID, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
+      `, txn);
+        }
+    }
+    async updateBankStatementCompletion(statementId, totalIn, totalOut, netAmount, transactionCount) {
+        await this.query(`
+      UPDATE bankStatements 
+      SET uploadStatus = 'processed', 
+          totalIn = @totalIn, 
+          totalOut = @totalOut, 
+          netAmount = @netAmount,
+          transactionCount = @transactionCount,
+          processedAt = GETDATE()
+      WHERE id = @statementId
+    `, { statementId, totalIn, totalOut, netAmount, transactionCount });
+    }
+    async updateBankStatementError(statementId, errorMessage) {
+        await this.query(`
+      UPDATE bankStatements 
+      SET uploadStatus = 'error', 
+          error = @errorMessage,
+          processedAt = GETDATE()
+      WHERE id = @statementId
+    `, { statementId, errorMessage });
+    }
     // Bank Transactions
     async getTransactionSummary(customerID, fromDate, toDate) {
         let whereClause = 'WHERE customerID = @customerID';

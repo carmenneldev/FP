@@ -141,16 +141,13 @@ class DatabaseService {
         return await this.ensureAzureSQL().getTransactionSummary(customerID, fromDate, toDate);
     }
     static async insertBankTransactions(transactions) {
-        // TODO: Implement batch insert for bank transactions in Azure SQL adapter
-        return { success: true, count: transactions.length };
+        return await this.ensureAzureSQL().insertBankTransactions(transactions);
     }
     static async updateBankStatementCompletion(statementId, totalIn, totalOut, netAmount, transactionCount) {
-        // TODO: Implement update bank statement completion in Azure SQL adapter
-        return { success: true };
+        return await this.ensureAzureSQL().updateBankStatementCompletion(statementId, totalIn, totalOut, netAmount, transactionCount);
     }
     static async updateBankStatementError(statementId, errorMessage) {
-        // TODO: Implement update bank statement error in Azure SQL adapter
-        return { success: true };
+        return await this.ensureAzureSQL().updateBankStatementError(statementId, errorMessage);
     }
     // Profile Management
     static async updateAdvisorProfile(userID, updateData) {

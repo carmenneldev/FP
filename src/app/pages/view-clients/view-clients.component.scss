@@ -389,6 +389,85 @@ text-align: left;
   cursor: pointer;
 }
 
+/* Processing Steps Styles */
+.processing-container {
+  text-align: center;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.processing-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.step-item.completed {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.step-item.current {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.step-item.completed .step-icon {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.step-item.current .step-icon {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.step-number {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 .edit-upload-container input[type="text"] {
   padding: 0.5rem;
   border: 1px solid #dcdcdc;

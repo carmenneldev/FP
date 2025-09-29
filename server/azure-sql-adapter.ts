@@ -508,6 +508,40 @@ export class AzureSQLAdapter {
     return result[0];
   }
 
+  async insertBankTransactions(transactions: any[]): Promise<void> {
+    if (transactions.length === 0) return;
+    
+    for (const txn of transactions) {
+      await this.query(`
+        INSERT INTO bankTransactions (statementID, customerID, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
+        VALUES (@statementID, @customerID, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
+      `, txn);
+    }
+  }
+
+  async updateBankStatementCompletion(statementId: number, totalIn: string, totalOut: string, netAmount: string, transactionCount: number): Promise<void> {
+    await this.query(`
+      UPDATE bankStatements 
+      SET uploadStatus = 'processed', 
+          totalIn = @totalIn, 
+          totalOut = @totalOut, 
+          netAmount = @netAmount,
+          transactionCount = @transactionCount,
+          processedAt = GETDATE()
+      WHERE id = @statementId
+    `, { statementId, totalIn, totalOut, netAmount, transactionCount });
+  }
+
+  async updateBankStatementError(statementId: number, errorMessage: string): Promise<void> {
+    await this.query(`
+      UPDATE bankStatements 
+      SET uploadStatus = 'error', 
+          error = @errorMessage,
+          processedAt = GETDATE()
+      WHERE id = @statementId
+    `, { statementId, errorMessage });
+  }
+
   // Bank Transactions
   async getTransactionSummary(customerID: number, fromDate?: string, toDate?: string): Promise<any> {
     let whereClause = 'WHERE customerID = @customerID';

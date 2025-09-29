@@ -126,10 +126,21 @@ export class ViewClientsComponent implements OnInit {
   
   // Bank statement upload properties
   uploadInProgress = false;
+  processingInProgress = false;
   uploadStatus: string | null = null;
+  processingStatus: string | null = null;
   uploadResult: any = null;
   uploadError: string | null = null;
   files: File[] = [];
+  
+  // Processing progress tracking
+  processingSteps = [
+    { label: 'Extracting transactions from file', completed: false, current: false },
+    { label: 'Analyzing transaction patterns', completed: false, current: false },
+    { label: 'Categorizing transactions with AI', completed: false, current: false },
+    { label: 'Saving to database', completed: false, current: false }
+  ];
+  currentProcessingStep = 0;
   selectedFile: File | null = null;
   
   // Policy dialog properties
@@ -1113,15 +1124,27 @@ isInvalid(controlName: string): boolean {
       this.http.get(`${environment.apiUrl}/Statements/${statementId}/status`, options)
         .subscribe({
           next: (status: any) => {
-            if (status.status === 'completed') {
-              this.uploadStatus = 'Completed';
+            if (status.status === 'processed' || status.status === 'completed') {
+              // Complete all steps
+              this.processingSteps.forEach(step => {
+                step.completed = true;
+                step.current = false;
+              });
+              this.processingInProgress = false;
+              this.processingStatus = 'Processing completed successfully!';
+              this.uploadResult = { ...this.uploadResult, ...status };
               clearInterval(pollInterval);
-            } else if (status.status === 'failed') {
-              this.uploadStatus = null;
-              this.uploadError = status.error || 'Processing failed';
+            } else if (status.status === 'error' || status.status === 'failed') {
+              this.processingInProgress = false;
+              this.processingStatus = null;
+              this.uploadError = status.error || 'Transaction processing failed';
+              this.resetProcessingSteps();
               clearInterval(pollInterval);
             } else {
-              this.uploadStatus = 'Processing...';
+              // Still processing - the steps animation will continue
+              if (!this.processingInProgress) {
+                this.processingInProgress = true;
+              }
             }
           },
           error: (error) => {
@@ -1169,6 +1192,56 @@ isInvalid(controlName: string): boolean {
     this.uploadError = null;
     this.uploadResult = null;
     this.uploadStatus = null;
+    this.processingStatus = null;
+    this.processingInProgress = false;
+    this.resetProcessingSteps();
+  }
+
+  resetProcessingSteps() {
+    this.currentProcessingStep = 0;
+    this.processingSteps.forEach(step => {
+      step.completed = false;
+      step.current = false;
+    });
+  }
+
+  startProcessingSteps() {
+    // Simulate processing steps for better UX
+    const stepDuration = 3000; // 3 seconds per step
+    
+    this.processingSteps[0].current = true;
+    this.processingStatus = this.processingSteps[0].label;
+    
+    setTimeout(() => {
+      this.processingSteps[0].completed = true;
+      this.processingSteps[0].current = false;
+      this.currentProcessingStep = 1;
+      
+      if (this.processingInProgress) {
+        this.processingSteps[1].current = true;
+        this.processingStatus = this.processingSteps[1].label;
+      }
+    }, stepDuration);
+    
+    setTimeout(() => {
+      if (this.processingInProgress) {
+        this.processingSteps[1].completed = true;
+        this.processingSteps[1].current = false;
+        this.currentProcessingStep = 2;
+        this.processingSteps[2].current = true;
+        this.processingStatus = this.processingSteps[2].label;
+      }
+    }, stepDuration * 2);
+    
+    setTimeout(() => {
+      if (this.processingInProgress) {
+        this.processingSteps[2].completed = true;
+        this.processingSteps[2].current = false;
+        this.currentProcessingStep = 3;
+        this.processingSteps[3].current = true;
+        this.processingStatus = this.processingSteps[3].label;
+      }
+    }, stepDuration * 3);
   }
 
   uploadSelectedFile() {
@@ -1207,8 +1280,13 @@ isInvalid(controlName: string): boolean {
       next: (response: any) => {
         console.log('Upload successful:', response);
         this.uploadInProgress = false;
-        this.uploadStatus = response.displayName ? `Uploaded as: ${response.displayName}` : 'Processing...';
+        this.processingInProgress = true;
+        this.uploadStatus = `Uploaded as: ${response.displayName || response.fileName}`;
+        this.processingStatus = 'Starting transaction processing...';
         this.uploadResult = response;
+        
+        // Start processing steps animation
+        this.startProcessingSteps();
         
         // Poll for processing status
         this.pollProcessingStatus(response.statementId);
@@ -1216,7 +1294,10 @@ isInvalid(controlName: string): boolean {
       error: (error) => {
         console.error('Upload failed:', error);
         this.uploadInProgress = false;
+        this.processingInProgress = false;
         this.uploadStatus = null;
+        this.processingStatus = null;
+        this.resetProcessingSteps();
         
         // Handle duplicate file (409) vs other errors
         if (error.status === 409) {

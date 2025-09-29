@@ -271,7 +271,39 @@
 
         <div *ngIf="uploadInProgress" class="flex items-center justify-center gap-3">
           <i class="pi pi-spin pi-spinner text-2xl text-blue-600"></i>
-          <span>{{ uploadStatus || 'Processing...' }}</span>
+          <span>{{ uploadStatus || 'Uploading...' }}</span>
+        </div>
+
+        <!-- Processing Loading Screen -->
+        <div *ngIf="processingInProgress" class="processing-container">
+          <div class="text-center mb-4">
+            <i class="pi pi-cog pi-spin text-4xl text-blue-600 mb-3 block"></i>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Processing Bank Statement</h4>
+            <p class="text-gray-600">{{ processingStatus }}</p>
+          </div>
+
+          <!-- Processing Steps -->
+          <div class="processing-steps">
+            <div *ngFor="let step of processingSteps; let i = index" 
+                 class="step-item" 
+                 [class.completed]="step.completed"
+                 [class.current]="step.current">
+              <div class="step-icon">
+                <i *ngIf="step.completed" class="pi pi-check text-green-600"></i>
+                <i *ngIf="step.current" class="pi pi-spin pi-spinner text-blue-600"></i>
+                <span *ngIf="!step.completed && !step.current" class="step-number">{{ i + 1 }}</span>
+              </div>
+              <div class="step-content">
+                <span class="step-label" [class.text-green-600]="step.completed" [class.text-blue-600]="step.current">
+                  {{ step.label }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <small class="text-gray-500">This may take a few moments...</small>
+          </div>
         </div>
       </div>
 
@@ -283,10 +315,10 @@
         </div>
       </div>
 
-      <div *ngIf="uploadResult && !uploadError" class="p-3 mb-4 bg-green-50 border border-green-200 rounded-lg">
+      <div *ngIf="uploadResult && !uploadError && !processingInProgress" class="p-3 mb-4 bg-green-50 border border-green-200 rounded-lg">
         <div class="flex items-center gap-2 text-green-700">
           <i class="pi pi-check-circle"></i>
-          <span>Statement uploaded successfully! Processing {{ uploadResult.transactionCount }} transactions.</span>
+          <span>Statement processed successfully! {{ uploadResult.transactionCount || 'Transactions' }} extracted and categorized.</span>
         </div>
       </div>
 
@@ -302,17 +334,17 @@
           icon="pi pi-times" 
           [outlined]="true"
           (onClick)="displayUploadDialog = false"
-          [disabled]="uploadInProgress"
+          [disabled]="uploadInProgress || processingInProgress"
         ></p-button>
         <div class="flex gap-2">
           <p-button 
-            *ngIf="selectedFile && !uploadInProgress && !uploadResult"
+            *ngIf="selectedFile && !uploadInProgress && !uploadResult && !processingInProgress"
             label="Upload Statement" 
             icon="pi pi-upload"
             (onClick)="uploadSelectedFile()"
           ></p-button>
           <p-button 
-            *ngIf="uploadResult"
+            *ngIf="uploadResult && !processingInProgress"
             label="View Statements" 
             icon="pi pi-chart-line"
             (onClick)="onViewStatements(selectedClient!); displayUploadDialog = false"
