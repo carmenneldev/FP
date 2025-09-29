@@ -513,7 +513,7 @@ export class AzureSQLAdapter {
     
     for (const txn of transactions) {
       await this.query(`
-        INSERT INTO bankTransactions (statementID, customerID, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
+        INSERT INTO bank_transactions (statementID, customerID, txnDate, description, merchant, amount, direction, balance, categoryID, confidence, rawData)
         VALUES (@statementID, @customerID, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
       `, txn);
     }
@@ -561,7 +561,7 @@ export class AzureSQLAdapter {
         SUM(CASE WHEN direction = 'in' THEN amount ELSE 0 END) as totalIn,
         SUM(CASE WHEN direction = 'out' THEN amount ELSE 0 END) as totalOut,
         COUNT(*) as totalTransactions
-      FROM bankTransactions 
+      FROM bank_transactions 
       ${whereClause}
     `, params);
 
@@ -587,7 +587,7 @@ export class AzureSQLAdapter {
         tc.name as categoryName,
         SUM(bt.amount) as total,
         COUNT(*) as count
-      FROM bankTransactions bt
+      FROM bank_transactions bt
       LEFT JOIN transactionCategories tc ON bt.categoryID = tc.id
       ${whereClause}
       GROUP BY bt.categoryID, tc.name

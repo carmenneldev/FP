@@ -898,20 +898,32 @@ async function parsePDFFile(filePath) {
         const lines = text.split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
         console.log('Total lines found:', lines.length);
         const transactions = [];
-        // Simple patterns for common bank statement formats
+        // Enhanced patterns for various bank statement formats
         const transactionPatterns = [
+            // South African Pattern with R currency: "Bank Charges   R16.40   Opening Balance   R1,967.01 Cr"
+            /(.+?)\s+R([\d,]+\.?\d*)\s+.+?\s+R([\d,]+\.?\d*)\s+(Cr|Dr)/i,
+            // Alternative SA Pattern: "12 Jul Transfer R1,500.00 Dr R2,523.01 Cr"
+            /(\d{1,2}\s+\w{3})\s+(.+?)\s+R([\d,]+\.?\d*)\s+(Cr|Dr)?\s*R?([\d,]+\.?\d*)\s+(Cr|Dr)?/i,
             // FNB Pattern: "13 Jun FNB App Transfer From Tech 1,500.00 Cr 2,523.01 Cr"
             /(\d{1,2}\s+\w{3})\s+(.+?)\s+(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)?\s*(\d{1,3}(?:,\d{3})*\.\d{2})\s+(Cr|Dr)?/,
+            // Multi-column SA Pattern: "Date   Description   Debit   Credit   Balance"
+            /(\d{1,2}[\s\/\-]\w{3}[\s\/\-]\d{2,4})\s+(.+?)\s+(?:R?([\d,]+\.?\d*))?\s*(?:R?([\d,]+\.?\d*))?\s+R?([\d,]+\.?\d*)/i,
+            // Simple Amount Pattern: "Description R123.45" (for single-line transactions)
+            /^(.+?)\s+R([\d,]+\.?\d*)(?:\s+(Cr|Dr))?\s*$/i,
             // Standard Pattern: Date Description Amount Balance
             /(\d{1,2}[\s\/\-]\w{3}[\s\/\-]\d{4}|\d{1,2}[\s\/\-]\d{1,2}[\s\/\-]\d{4})\s+(.+?)\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})\s+([\-\+]?\d{1,3}(?:,\d{3})*\.?\d{0,2})?/
         ];
         console.log(`Trying ${transactionPatterns.length} different parsing patterns...`);
         for (const line of lines) {
-            // Skip header lines and other non-transaction lines
-            if (line.toLowerCase().includes('statement') ||
-                line.toLowerCase().includes('balance') ||
-                line.toLowerCase().includes('account') ||
-                line.length < 15) {
+            // Skip header lines and other non-transaction lines (but allow lines with "balance" that are actual transactions)
+            if (line.toLowerCase().includes('statement period') ||
+                line.toLowerCase().includes('account number') ||
+                line.toLowerCase().includes('terms and conditions') ||
+                line.toLowerCase().startsWith('page ') ||
+                line.length < 8 ||
+                /^\s*\d+\s*$/.test(line) || // Just numbers
+                /^[A-Za-z\s]+$/.test(line.replace(/[^\w\s]/g, '')) // Just words, no amounts
+            ) {
                 continue;
             }
             // Try each pattern to extract transaction data
@@ -921,6 +933,30 @@ async function parsePDFFile(filePath) {
                 if (match) {
                     let date, description, amount, balance;
                     if (i === 0) {
+                        // South African Pattern: "Description R16.40 ... R1,967.01 Cr"
+                        const [, desc, txnAmount, balanceAmount, balanceCrDr] = match;
+                        date = new Date().toISOString().split('T')[0]; // Use current date if not specified
+                        description = desc?.trim() || 'Transaction';
+                        amount = txnAmount?.replace(/,/g, '');
+                        balance = balanceAmount?.replace(/,/g, '');
+                        // Apply direction - assume debit unless specified as Credit
+                        if (balanceCrDr?.toLowerCase() !== 'cr') {
+                            amount = `-${amount}`;
+                        }
+                    }
+                    else if (i === 1) {
+                        // Alternative SA Pattern: "12 Jul Transfer R1,500.00 Dr R2,523.01 Cr"
+                        const [, rawDate, desc, txnAmount, txnCrDr, balanceAmount, balanceCrDr] = match;
+                        date = rawDate?.trim();
+                        description = desc?.trim() || 'Transaction';
+                        amount = txnAmount?.replace(/,/g, '');
+                        balance = balanceAmount?.replace(/,/g, '');
+                        // Apply direction based on Cr/Dr indicators
+                        if (txnCrDr !== 'Cr') {
+                            amount = `-${amount}`;
+                        }
+                    }
+                    else if (i === 2) {
                         // FNB Pattern
                         const [, rawDate, desc, txnAmount, txnCrDr, balanceAmount, balanceCrDr] = match;
                         date = rawDate?.trim();
@@ -929,6 +965,31 @@ async function parsePDFFile(filePath) {
                         balance = balanceAmount?.replace(/,/g, '');
                         // Apply direction based on Cr/Dr indicators
                         if (txnCrDr !== 'Cr') {
+                            amount = `-${amount}`;
+                        }
+                    }
+                    else if (i === 3) {
+                        // Multi-column SA Pattern
+                        const [, rawDate, desc, debit, credit, bal] = match;
+                        date = rawDate?.trim();
+                        description = desc?.trim() || 'Transaction';
+                        // Use credit if available, otherwise use debit as negative
+                        if (credit && parseFloat(credit.replace(/,/g, '')) > 0) {
+                            amount = credit.replace(/,/g, '');
+                        }
+                        else if (debit && parseFloat(debit.replace(/,/g, '')) > 0) {
+                            amount = `-${debit.replace(/,/g, '')}`;
+                        }
+                        balance = bal?.replace(/,/g, '');
+                    }
+                    else if (i === 4) {
+                        // Simple Amount Pattern
+                        const [, desc, txnAmount, crDr] = match;
+                        date = new Date().toISOString().split('T')[0]; // Use current date if not specified
+                        description = desc?.trim() || 'Transaction';
+                        amount = txnAmount?.replace(/,/g, '');
+                        // Apply direction based on Cr/Dr indicators
+                        if (crDr !== 'Cr') {
                             amount = `-${amount}`;
                         }
                     }
