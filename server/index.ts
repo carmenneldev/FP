@@ -1073,6 +1073,19 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
           console.log('Match groups:', match.slice(1, 6)); // Show first 5 groups
           let date, description, amount, balance;
           
+          // Helper function to determine if transaction is an expense based on description
+          const isExpenseTransaction = (desc: string): boolean => {
+            const description = desc.toLowerCase();
+            const expenseKeywords = [
+              'fnb app prepaid', 'prepaid airtime', 'payment to', 'transfer to',
+              'debicheck', 'magtape debit', 'send money', 'byc debit',
+              'bank charges', 'service fee', 'fee', 'charges',
+              'instlmt', 'installment', 'loan', 'bond', 'insurance',
+              'debit order', 'stop order', 'eft', 'purchase'
+            ];
+            return expenseKeywords.some(keyword => description.includes(keyword));
+          };
+
           if (i === 0) {
             // South African Pattern: "Description R16.40 ... R1,967.01 Cr"
             const [, desc, txnAmount, balanceAmount, balanceCrDr] = match;
@@ -1081,8 +1094,8 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
             amount = txnAmount?.replace(/,/g, '');
             balance = balanceAmount?.replace(/,/g, '');
             
-            // Apply direction - assume debit unless specified as Credit
-            if (balanceCrDr?.toLowerCase() !== 'cr') {
+            // Apply direction based on transaction type
+            if (isExpenseTransaction(description)) {
               amount = `-${amount}`;
             }
           } else if (i === 1) {
@@ -1093,20 +1106,20 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
             amount = txnAmount?.replace(/,/g, '');
             balance = balanceAmount?.replace(/,/g, '');
             
-            // Apply direction based on Cr/Dr indicators
-            if (txnCrDr !== 'Cr') {
+            // Apply direction: check explicit Dr/Cr first, then keywords
+            if (txnCrDr === 'Dr' || (!txnCrDr && isExpenseTransaction(description))) {
               amount = `-${amount}`;
             }
           } else if (i === 2) {
-            // FNB Pattern
+            // FNB Pattern - Most common for your transactions
             const [, rawDate, desc, txnAmount, txnCrDr, balanceAmount, balanceCrDr] = match;
             date = rawDate?.trim();
             description = desc?.trim() || 'Transaction';
             amount = txnAmount?.replace(/,/g, '');
             balance = balanceAmount?.replace(/,/g, '');
             
-            // Apply direction based on Cr/Dr indicators
-            if (txnCrDr !== 'Cr') {
+            // Apply direction: check explicit Dr/Cr first, then keywords
+            if (txnCrDr === 'Dr' || (!txnCrDr && isExpenseTransaction(description))) {
               amount = `-${amount}`;
             }
           } else if (i === 3) {
@@ -1128,8 +1141,8 @@ async function parsePDFFile(filePath: string): Promise<any[]> {
             description = desc?.trim() || 'Transaction';
             amount = txnAmount?.replace(/,/g, '');
             
-            // Apply direction based on Cr/Dr indicators
-            if (crDr !== 'Cr') {
+            // Apply direction: check explicit Dr/Cr first, then keywords
+            if (crDr === 'Dr' || (!crDr && isExpenseTransaction(description))) {
               amount = `-${amount}`;
             }
           } else {
