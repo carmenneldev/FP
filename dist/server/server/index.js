@@ -1173,6 +1173,67 @@ function extractMerchantFromDescription(description) {
     const parts = merchant.split(/[\-\#\*\s]{2,}/);
     return parts[0].trim() || merchant;
 }
+// ===== ML TRAINING ENDPOINTS =====
+// Get transaction categories
+app.get('/api/TransactionCategory', authenticateToken, async (req, res) => {
+    try {
+        const categories = await database_service_1.DatabaseService.getTransactionCategories();
+        res.json(categories);
+    }
+    catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
+// Get uncategorized or low-confidence transactions
+app.get('/api/BankTransaction/uncategorized', authenticateToken, async (req, res) => {
+    try {
+        const user = req.user;
+        const confidenceThreshold = parseFloat(req.query['confidenceThreshold']) || 0.5;
+        const transactions = await db_1.db.query(`
+      SELECT 
+        bt.id, bt.txnDate, bt.description, bt.amount, bt.categoryId, 
+        bt.confidence, tc.name as categoryName
+      FROM bankTransactions bt
+      LEFT JOIN transactionCategories tc ON bt.categoryId = tc.id
+      WHERE bt.customer_id IN (
+        SELECT c.id FROM customers c 
+        WHERE c.financialAdvisorID = @advisorId
+      )
+      AND (bt.confidence IS NULL OR bt.confidence < @threshold)
+      ORDER BY bt.txnDate DESC
+    `, {
+            advisorId: user.userID,
+            threshold: confidenceThreshold
+        });
+        res.json(transactions);
+    }
+    catch (error) {
+        console.error('Error fetching uncategorized transactions:', error);
+        res.status(500).json({ error: 'Failed to fetch transactions' });
+    }
+});
+// Update transaction category
+app.put('/api/BankTransaction/:id/category', authenticateToken, async (req, res) => {
+    try {
+        const transactionId = parseInt(req.params['id']);
+        const { categoryId, confidence } = req.body;
+        await db_1.db.query(`
+      UPDATE bankTransactions 
+      SET categoryId = @categoryId, confidence = @confidence
+      WHERE id = @id
+    `, {
+            id: transactionId,
+            categoryId: categoryId,
+            confidence: confidence || 1.0
+        });
+        res.json({ success: true, message: 'Transaction categorized successfully' });
+    }
+    catch (error) {
+        console.error('Error updating transaction category:', error);
+        res.status(500).json({ error: 'Failed to update category' });
+    }
+});
 // ===== PROFILE MANAGEMENT ENDPOINTS =====
 // Get current user's profile data
 app.get('/api/Profile', authenticateToken, async (req, res) => {

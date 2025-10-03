@@ -72,12 +72,9 @@ export class CategorizationService {
     let fixed = 0;
     for (const category of this.categories) {
       const patterns = patternMap[category.name];
-      if (patterns && (!category.regexPatterns || category.regexPatterns.length === 0)) {
+      if (patterns && (!category.regexPatterns || category.regexPatterns.length === 0) && category.id) {
         try {
-          await azureSqlAdapter!.pool!.request()
-            .input('id', category.id)
-            .input('patterns', JSON.stringify(patterns))
-            .query('UPDATE transactionCategories SET regexPatterns = @patterns WHERE id = @id');
+          await azureSqlAdapter!.updateCategoryPatterns(category.id, patterns);
           console.log(`🔧 Fixed NULL patterns for category: ${category.name}`);
           fixed++;
         } catch (error: any) {

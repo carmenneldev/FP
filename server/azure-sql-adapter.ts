@@ -688,4 +688,15 @@ export class AzureSQLAdapter {
     });
     return result[0];
   }
+
+  async updateCategoryPatterns(categoryId: number, patterns: string[]): Promise<void> {
+    await this.query(`
+      UPDATE transactionCategories 
+      SET regexPatterns = @patterns 
+      WHERE id = @id
+    `, {
+      id: categoryId,
+      patterns: JSON.stringify(patterns)
+    });
+  }
 }

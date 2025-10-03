@@ -18,6 +18,10 @@ class CategorizationService {
             }
             this.categories = await db_1.azureSqlAdapter.getTransactionCategories();
             console.log(`✅ Loaded ${this.categories.length} transaction categories from Azure SQL`);
+            // Fix NULL regex patterns in existing categories
+            await this.fixNullPatterns();
+            // Reload categories after fixing patterns
+            this.categories = await db_1.azureSqlAdapter.getTransactionCategories();
         }
         else {
             // PostgreSQL development mode - skip category loading for now
@@ -33,6 +37,41 @@ class CategorizationService {
                 this.categories = await db_1.azureSqlAdapter.getTransactionCategories();
                 console.log(`✅ Created and loaded ${this.categories.length} default transaction categories`);
             }
+        }
+    }
+    // Fix NULL regex patterns in database
+    static async fixNullPatterns() {
+        const patternMap = {
+            'Airtime': ['airtime', 'prepaid', 'fnb app prepaid', 'vodacom', 'mtn', 'cell c', 'telkom', 'mobile', 'data', 'bundles'],
+            'Salary': ['salary', 'wage', 'payroll', 'income', 'fnb ob pmt'],
+            'Groceries': ['supermarket', 'grocery', 'food', 'checkers', 'woolworths', 'pick n pay', 'shoprite', 'spar', 'game'],
+            'Fuel': ['petrol', 'diesel', 'fuel', 'engen', 'shell', 'bp', 'caltex', 'sasol', 'taxi', 'uber', 'bolt'],
+            'Entertainment': ['restaurant', 'movie', 'entertainment', 'netflix', 'dstv', 'spotify', 'takealot', 'udemy'],
+            'Bills': ['bill', 'municipal', 'eskom', 'electricity', 'water', 'gas', 'city of'],
+            'Investment': ['investment', 'dividend', 'interest', 'capital gain', 'payment to investment', 'datareserve'],
+            'Transfer': ['transfer', 'payment', 'fnb app payment to', 'fnb app transfer from', 'fnb app transfer'],
+            'ATM Withdrawal': ['atm', 'withdrawal', 'cash'],
+            'Insurance': ['insurance', 'king price', 'magtape debit king price'],
+            'Banking/Fees': ['bank fee', 'service fee', 'monthly account fee', 'value added serv', 'transaction fee', 'declined purch', 'bank your change', 'email sending fee'],
+            'Vehicle/Car Payment': ['car payment', 'vehicle finance', 'auto loan', 'priceref', 'king priceref', 'magtape debit king priceref'],
+            'Debt/Loans': ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt', 'debicheck', 'ploan', 'instlmt', 'temp loan repay']
+        };
+        let fixed = 0;
+        for (const category of this.categories) {
+            const patterns = patternMap[category.name];
+            if (patterns && (!category.regexPatterns || category.regexPatterns.length === 0) && category.id) {
+                try {
+                    await db_1.azureSqlAdapter.updateCategoryPatterns(category.id, patterns);
+                    console.log(`🔧 Fixed NULL patterns for category: ${category.name}`);
+                    fixed++;
+                }
+                catch (error) {
+                    console.warn(`⚠️  Failed to fix patterns for ${category.name}:`, error.message);
+                }
+            }
+        }
+        if (fixed > 0) {
+            console.log(`✅ Fixed ${fixed} categories with NULL regex patterns`);
         }
     }
     static async createDefaultCategories() {
