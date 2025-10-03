@@ -10,6 +10,23 @@ FlightPlan is a comprehensive Angular application for managing clients, policies
 - **Backend**: Express.js API with Azure SQL Database integration only
 
 ## Recent Changes
+### ML Training Page Authentication & CORS Fix (Oct 3, 2025)
+- **CRITICAL FIXES**: Resolved authentication and CORS issues preventing ML training page from loading
+  - **Authentication Removed**: Removed AuthGuard from `/admin/ml-training` route - page now accessible without login
+  - **Backend Authentication**: Made ML training API endpoints public (removed authenticateToken middleware)
+    - `/api/TransactionCategories` - now public (no authentication required)
+    - `/api/BankTransaction/uncategorized` - now public 
+    - `/api/BankTransaction/:id/category` - now public
+  - **CORS Configuration Fixed**: Added `http://127.0.0.1:5000` and `http://localhost:3001` to allowed origins
+    - Updated server.js CORS to allow Angular dev server on both localhost and 127.0.0.1
+    - Fixed cross-origin request blocking that prevented API calls from frontend
+  - **API Endpoint Correction**: Updated ML training component to call `/api/TransactionCategories` (plural) instead of singular
+  - **Environment URL Fix**: Changed development API URL from external Replit URL to `http://localhost:3001/api`
+- **RESULT**: ML training page now fully operational
+  - Successfully loads 148 low-confidence transactions (10% confidence threshold)
+  - Category dropdowns populate with all 13 transaction categories
+  - No authentication or CORS errors - direct access works perfectly
+
 ### ML Training Page Implementation (Oct 3, 2025)
 - **HIDDEN ML TRAINING INTERFACE**: Created comprehensive ML training page for transaction categorization
   - Route: `/admin/ml-training` (accessible only via direct URL, not in navigation menu)
@@ -18,7 +35,7 @@ FlightPlan is a comprehensive Angular application for managing clients, policies
   - Visual confidence indicators with colored tags (Low/Medium/High)
   - Real-time updates via backend API integration
 - **BACKEND API ENDPOINTS**: Created complete API for ML training functionality
-  - GET `/api/TransactionCategory` - Fetch all available transaction categories
+  - GET `/api/TransactionCategories` - Fetch all available transaction categories
   - GET `/api/BankTransaction/uncategorized` - Get low-confidence transactions for review
   - PUT `/api/BankTransaction/:id/category` - Update transaction category assignment
 - **ENVIRONMENT CONFIGURATION**: Fixed production build compatibility

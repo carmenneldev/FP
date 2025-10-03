@@ -13,7 +13,7 @@ const cors = require('cors');
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [process.env.FRONTEND_URL, process.env.AZURE_APP_URL]
-    : ['http://localhost:4200', 'http://localhost:5000'],
+    : ['http://localhost:4200', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3001'],
   credentials: true
 }));
 

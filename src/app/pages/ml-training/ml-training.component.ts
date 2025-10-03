@@ -71,7 +71,7 @@ export class MlTrainingComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.http.get<Category[]>(`${environment.apiUrl}/TransactionCategory`)
+    this.http.get<Category[]>(`${environment.apiUrl}/TransactionCategories`)
       .subscribe({
         next: (categories) => {
           this.categories = categories.map(cat => ({

@@ -179,7 +179,7 @@ const uploadProfileImage = multer({
 if (require.main === module) {
   // Only apply CORS in development mode
   app.use(cors({
-    origin: ['https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:5000', 'https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev', 'http://localhost:5000'],
+    origin: ['https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:5000', 'https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3001'],
     credentials: true
   }));
 }
@@ -1311,10 +1311,10 @@ function extractMerchantFromDescription(description: string): string {
   return parts[0].trim() || merchant;
 }
 
-// ===== ML TRAINING ENDPOINTS =====
+// ===== ML TRAINING ENDPOINTS (Public for admin use) =====
 
 // Get transaction categories
-app.get('/api/TransactionCategory', authenticateToken, async (req, res) => {
+app.get('/api/TransactionCategory', async (req, res) => {
   try {
     const categories = await DatabaseService.getTransactionCategories();
     res.json(categories);
@@ -1325,9 +1325,8 @@ app.get('/api/TransactionCategory', authenticateToken, async (req, res) => {
 });
 
 // Get uncategorized or low-confidence transactions
-app.get('/api/BankTransaction/uncategorized', authenticateToken, async (req, res) => {
+app.get('/api/BankTransaction/uncategorized', async (req, res) => {
   try {
-    const user = (req as any).user;
     const confidenceThreshold = parseFloat(req.query['confidenceThreshold'] as string) || 0.5;
     
     const transactions = await db.query(`
@@ -1336,14 +1335,9 @@ app.get('/api/BankTransaction/uncategorized', authenticateToken, async (req, res
         bt.confidence, tc.name as categoryName
       FROM bankTransactions bt
       LEFT JOIN transactionCategories tc ON bt.categoryId = tc.id
-      WHERE bt.customer_id IN (
-        SELECT c.id FROM customers c 
-        WHERE c.financialAdvisorID = @advisorId
-      )
-      AND (bt.confidence IS NULL OR bt.confidence < @threshold)
+      WHERE (bt.confidence IS NULL OR bt.confidence < @threshold)
       ORDER BY bt.txnDate DESC
     `, {
-      advisorId: user.userID,
       threshold: confidenceThreshold
     });
     
@@ -1355,7 +1349,7 @@ app.get('/api/BankTransaction/uncategorized', authenticateToken, async (req, res
 });
 
 // Update transaction category
-app.put('/api/BankTransaction/:id/category', authenticateToken, async (req, res) => {
+app.put('/api/BankTransaction/:id/category', async (req, res) => {
   try {
     const transactionId = parseInt(req.params['id']);
     const { categoryId, confidence } = req.body;

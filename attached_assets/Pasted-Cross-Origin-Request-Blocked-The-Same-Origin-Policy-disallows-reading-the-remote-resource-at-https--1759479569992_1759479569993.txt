@@ -1,0 +1,16 @@
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/TransactionCategory. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 204.
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/BankTransaction/uncategorized?confidenceThreshold=0.5. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 204.
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/TransactionCategory. (Reason: CORS request did not succeed). Status code: (null).
+
+Error loading categories: 
+Object { headers: {…}, status: 0, statusText: "Unknown Error", url: "https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/TransactionCategory", ok: false, type: undefined, name: "HttpErrorResponse", message: "Http failure response for https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/TransactionCategory: 0 Unknown Error", error: error }
+chunk-SFU7X5KE.js:1:4253
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/BankTransaction/uncategorized?confidenceThreshold=0.5. (Reason: CORS request did not succeed). Status code: (null).
+
+Error loading transactions: 
+Object { headers: {…}, status: 0, statusText: "Unknown Error", url: "https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/BankTransaction/uncategorized", ok: false, type: undefined, name: "HttpErrorResponse", message: "Http failure response for https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api/BankTransaction/uncategorized: 0 Unknown Error", error: error }
+chunk-SFU7X5KE.js:1:4792
+
+​

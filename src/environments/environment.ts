@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://4c78b2fc-0624-450f-87fa-d68904955935-00-13oubrciiekpk.worf.replit.dev:3001/api',
+  apiUrl: 'http://localhost:3001/api',
   appName: 'Flight Plan',
   database: {
     type: 'postgresql',
