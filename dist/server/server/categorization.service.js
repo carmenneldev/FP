@@ -46,17 +46,19 @@ class CategorizationService {
             { name: 'Business Income', directionConstraint: 'in', regexPatterns: ['business', 'client', 'invoice', 'freelance'], color: '#06b6d4', isSystem: true },
             { name: 'Government Benefits', directionConstraint: 'in', regexPatterns: ['pension', 'grant', 'social', 'government'], color: '#8b5cf6', isSystem: true },
             { name: 'Other Income', directionConstraint: 'in', regexPatterns: [], color: '#84cc16', isSystem: true },
-            // Expense categories
-            { name: 'Groceries', directionConstraint: 'out', regexPatterns: ['supermarket', 'grocery', 'food', 'checkers', 'woolworths', 'pick n pay', 'shoprite'], color: '#ef4444', isSystem: true },
+            // Expense categories  
+            { name: 'Airtime', directionConstraint: 'out', regexPatterns: ['airtime', 'prepaid', 'fnb app prepaid', 'vodacom', 'mtn', 'cell c', 'telkom', 'mobile', 'data', 'bundles'], color: '#10b981', isSystem: true },
+            { name: 'Groceries', directionConstraint: 'out', regexPatterns: ['supermarket', 'grocery', 'food', 'checkers', 'woolworths', 'pick n pay', 'shoprite', 'spar', 'game'], color: '#ef4444', isSystem: true },
             { name: 'Utilities', directionConstraint: 'out', regexPatterns: ['electricity', 'water', 'gas', 'municipal', 'eskom', 'city of'], color: '#f97316', isSystem: true },
             { name: 'Transport/Fuel', directionConstraint: 'out', regexPatterns: ['petrol', 'diesel', 'fuel', 'taxi', 'uber', 'bolt', 'transport'], color: '#eab308', isSystem: true },
+            { name: 'Vehicle/Car Payment', directionConstraint: 'out', regexPatterns: ['car payment', 'vehicle finance', 'auto loan', 'priceref', 'king priceref', 'magtape debit king priceref'], color: '#f59e0b', isSystem: true },
             { name: 'Medical/Healthcare', directionConstraint: 'out', regexPatterns: ['medical', 'hospital', 'pharmacy', 'doctor', 'clinic', 'health'], color: '#ec4899', isSystem: true },
-            { name: 'Insurance', directionConstraint: 'out', regexPatterns: ['insurance', 'life cover', 'medical aid', 'funeral', 'vehicle insurance'], color: '#6366f1', isSystem: true },
+            { name: 'Insurance', directionConstraint: 'out', regexPatterns: ['insurance', 'life cover', 'medical aid', 'funeral', 'vehicle insurance', 'king price', 'magtape debit king price'], color: '#6366f1', isSystem: true },
             { name: 'Education', directionConstraint: 'out', regexPatterns: ['school', 'university', 'education', 'tuition', 'books', 'stationery'], color: '#8b5cf6', isSystem: true },
             { name: 'Entertainment', directionConstraint: 'out', regexPatterns: ['restaurant', 'movie', 'entertainment', 'netflix', 'dstv', 'spotify'], color: '#f59e0b', isSystem: true },
             { name: 'Clothing', directionConstraint: 'out', regexPatterns: ['clothing', 'shoes', 'fashion', 'apparel', 'edgars', 'mr price'], color: '#d946ef', isSystem: true },
             { name: 'Banking/Fees', directionConstraint: 'out', regexPatterns: ['bank fee', 'service fee', 'atm', 'transaction fee', 'monthly fee'], color: '#64748b', isSystem: true },
-            { name: 'Debt/Loans', directionConstraint: 'out', regexPatterns: ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt'], color: '#dc2626', isSystem: true },
+            { name: 'Debt/Loans', directionConstraint: 'out', regexPatterns: ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt', 'debicheck', 'ploan', 'instlmt'], color: '#dc2626', isSystem: true },
             { name: 'Other Expenses', directionConstraint: 'out', regexPatterns: [], color: '#6b7280', isSystem: true },
         ];
         // Create each category in the database (only if they don't exist)
@@ -77,14 +79,28 @@ class CategorizationService {
     static async categorizeByRules(description, amount) {
         const direction = amount >= 0 ? 'in' : 'out';
         const cleanDescription = description.toLowerCase().trim();
+        // Debug logging for DebiCheck transactions
+        if (cleanDescription.includes('debicheck')) {
+            console.log(`🔍 DebiCheck transaction debug:`, {
+                description: cleanDescription,
+                direction,
+                amount
+            });
+        }
         for (const category of this.categories) {
             // Skip if direction constraint doesn't match
             if (category.directionConstraint && category.directionConstraint !== direction) {
+                if (cleanDescription.includes('debicheck')) {
+                    console.log(`⏭️  Skipped category ${category.name} - direction mismatch (${category.directionConstraint} !== ${direction})`);
+                }
                 continue;
             }
             const patterns = category.regexPatterns || [];
             for (const pattern of patterns) {
                 if (cleanDescription.includes(pattern.toLowerCase())) {
+                    if (cleanDescription.includes('debicheck')) {
+                        console.log(`✅ DebiCheck matched pattern "${pattern}" in category ${category.name}`);
+                    }
                     return {
                         categoryId: category.id,
                         categoryName: category.name,
@@ -92,6 +108,12 @@ class CategorizationService {
                     };
                 }
             }
+            if (cleanDescription.includes('debicheck') && category.name === 'Debt/Loans') {
+                console.log(`🔍 Debt/Loans category patterns:`, patterns);
+            }
+        }
+        if (cleanDescription.includes('debicheck')) {
+            console.log(`❌ No pattern matched for DebiCheck transaction`);
         }
         return null;
     }
@@ -149,16 +171,35 @@ Consider South African context (banks: FNB, Standard Bank, ABSA, Nedbank, Capite
             return null;
         }
     }
-    // Main categorization method - tries rules first, then ML
+    // Main categorization method - tries ML first, then rules
     static async categorizeTransaction(description, merchant, amount) {
-        // Try rule-based categorization first
-        let result = await this.categorizeByRules(description, amount);
-        // If no rule match, try ML categorization (only if not disabled)
-        if (!result && !this.mlDisabled) {
+        console.log(`🔄 Categorizing: "${description}" (Amount: R${amount})`);
+        // Try ML categorization first (if not disabled and OpenAI is configured)
+        let result = null;
+        if (!this.mlDisabled && openai) {
+            console.log(`🤖 Trying OpenAI categorization...`);
             result = await this.categorizeWithML(description, merchant, amount);
+            if (result) {
+                console.log(`✅ OpenAI categorized as: ${result.categoryName} (confidence: ${result.confidence})`);
+            }
+            else {
+                console.log(`⚠️ OpenAI categorization failed - falling back to rules`);
+            }
+        }
+        else {
+            console.log(`⏭️ Skipping OpenAI (disabled: ${this.mlDisabled}, configured: ${!!openai})`);
+        }
+        // If no ML match, try rule-based categorization
+        if (!result) {
+            console.log(`📋 Trying rule-based categorization...`);
+            result = await this.categorizeByRules(description, amount);
+            if (result) {
+                console.log(`✅ Rule-based categorized as: ${result.categoryName} (confidence: ${result.confidence})`);
+            }
         }
         // Fallback to default "Other" categories
         if (!result) {
+            console.log(`⚠️ No match found - using default category`);
             const direction = amount >= 0 ? 'in' : 'out';
             const defaultCategory = this.categories.find(cat => cat.name === (direction === 'in' ? 'Other Income' : 'Other Expenses'));
             if (defaultCategory && defaultCategory.id) {

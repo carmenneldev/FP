@@ -27,6 +27,12 @@ export class CategorizationService {
       }
       this.categories = await azureSqlAdapter!.getTransactionCategories();
       console.log(`✅ Loaded ${this.categories.length} transaction categories from Azure SQL`);
+      
+      // Fix NULL regex patterns in existing categories
+      await this.fixNullPatterns();
+      
+      // Reload categories after fixing patterns
+      this.categories = await azureSqlAdapter!.getTransactionCategories();
     } else {
       // PostgreSQL development mode - skip category loading for now
       console.log('⚠️  Transaction categories not yet implemented for PostgreSQL mode');
@@ -45,6 +51,46 @@ export class CategorizationService {
     }
   }
 
+  // Fix NULL regex patterns in database
+  private static async fixNullPatterns() {
+    const patternMap: Record<string, string[]> = {
+      'Airtime': ['airtime', 'prepaid', 'fnb app prepaid', 'vodacom', 'mtn', 'cell c', 'telkom', 'mobile', 'data', 'bundles'],
+      'Salary': ['salary', 'wage', 'payroll', 'income', 'fnb ob pmt'],
+      'Groceries': ['supermarket', 'grocery', 'food', 'checkers', 'woolworths', 'pick n pay', 'shoprite', 'spar', 'game'],
+      'Fuel': ['petrol', 'diesel', 'fuel', 'engen', 'shell', 'bp', 'caltex', 'sasol', 'taxi', 'uber', 'bolt'],
+      'Entertainment': ['restaurant', 'movie', 'entertainment', 'netflix', 'dstv', 'spotify', 'takealot', 'udemy'],
+      'Bills': ['bill', 'municipal', 'eskom', 'electricity', 'water', 'gas', 'city of'],
+      'Investment': ['investment', 'dividend', 'interest', 'capital gain', 'payment to investment', 'datareserve'],
+      'Transfer': ['transfer', 'payment', 'fnb app payment to', 'fnb app transfer from', 'fnb app transfer'],
+      'ATM Withdrawal': ['atm', 'withdrawal', 'cash'],
+      'Insurance': ['insurance', 'king price', 'magtape debit king price'],
+      'Banking/Fees': ['bank fee', 'service fee', 'monthly account fee', 'value added serv', 'transaction fee', 'declined purch', 'bank your change', 'email sending fee'],
+      'Vehicle/Car Payment': ['car payment', 'vehicle finance', 'auto loan', 'priceref', 'king priceref', 'magtape debit king priceref'],
+      'Debt/Loans': ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt', 'debicheck', 'ploan', 'instlmt', 'temp loan repay']
+    };
+
+    let fixed = 0;
+    for (const category of this.categories) {
+      const patterns = patternMap[category.name];
+      if (patterns && (!category.regexPatterns || category.regexPatterns.length === 0)) {
+        try {
+          await azureSqlAdapter!.pool!.request()
+            .input('id', category.id)
+            .input('patterns', JSON.stringify(patterns))
+            .query('UPDATE transactionCategories SET regexPatterns = @patterns WHERE id = @id');
+          console.log(`🔧 Fixed NULL patterns for category: ${category.name}`);
+          fixed++;
+        } catch (error: any) {
+          console.warn(`⚠️  Failed to fix patterns for ${category.name}:`, error.message);
+        }
+      }
+    }
+    
+    if (fixed > 0) {
+      console.log(`✅ Fixed ${fixed} categories with NULL regex patterns`);
+    }
+  }
+
   private static async createDefaultCategories() {
     if (!azureSqlAdapter) {
       throw new Error('Azure SQL adapter not initialized');
@@ -58,17 +104,19 @@ export class CategorizationService {
       { name: 'Government Benefits', directionConstraint: 'in', regexPatterns: ['pension', 'grant', 'social', 'government'], color: '#8b5cf6', isSystem: true },
       { name: 'Other Income', directionConstraint: 'in', regexPatterns: [], color: '#84cc16', isSystem: true },
       
-      // Expense categories
-      { name: 'Groceries', directionConstraint: 'out', regexPatterns: ['supermarket', 'grocery', 'food', 'checkers', 'woolworths', 'pick n pay', 'shoprite'], color: '#ef4444', isSystem: true },
+      // Expense categories  
+      { name: 'Airtime', directionConstraint: 'out', regexPatterns: ['airtime', 'prepaid', 'fnb app prepaid', 'vodacom', 'mtn', 'cell c', 'telkom', 'mobile', 'data', 'bundles'], color: '#10b981', isSystem: true },
+      { name: 'Groceries', directionConstraint: 'out', regexPatterns: ['supermarket', 'grocery', 'food', 'checkers', 'woolworths', 'pick n pay', 'shoprite', 'spar', 'game'], color: '#ef4444', isSystem: true },
       { name: 'Utilities', directionConstraint: 'out', regexPatterns: ['electricity', 'water', 'gas', 'municipal', 'eskom', 'city of'], color: '#f97316', isSystem: true },
       { name: 'Transport/Fuel', directionConstraint: 'out', regexPatterns: ['petrol', 'diesel', 'fuel', 'taxi', 'uber', 'bolt', 'transport'], color: '#eab308', isSystem: true },
+      { name: 'Vehicle/Car Payment', directionConstraint: 'out', regexPatterns: ['car payment', 'vehicle finance', 'auto loan', 'priceref', 'king priceref', 'magtape debit king priceref'], color: '#f59e0b', isSystem: true },
       { name: 'Medical/Healthcare', directionConstraint: 'out', regexPatterns: ['medical', 'hospital', 'pharmacy', 'doctor', 'clinic', 'health'], color: '#ec4899', isSystem: true },
-      { name: 'Insurance', directionConstraint: 'out', regexPatterns: ['insurance', 'life cover', 'medical aid', 'funeral', 'vehicle insurance'], color: '#6366f1', isSystem: true },
+      { name: 'Insurance', directionConstraint: 'out', regexPatterns: ['insurance', 'life cover', 'medical aid', 'funeral', 'vehicle insurance', 'king price', 'magtape debit king price'], color: '#6366f1', isSystem: true },
       { name: 'Education', directionConstraint: 'out', regexPatterns: ['school', 'university', 'education', 'tuition', 'books', 'stationery'], color: '#8b5cf6', isSystem: true },
       { name: 'Entertainment', directionConstraint: 'out', regexPatterns: ['restaurant', 'movie', 'entertainment', 'netflix', 'dstv', 'spotify'], color: '#f59e0b', isSystem: true },
       { name: 'Clothing', directionConstraint: 'out', regexPatterns: ['clothing', 'shoes', 'fashion', 'apparel', 'edgars', 'mr price'], color: '#d946ef', isSystem: true },
       { name: 'Banking/Fees', directionConstraint: 'out', regexPatterns: ['bank fee', 'service fee', 'atm', 'transaction fee', 'monthly fee'], color: '#64748b', isSystem: true },
-      { name: 'Debt/Loans', directionConstraint: 'out', regexPatterns: ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt'], color: '#dc2626', isSystem: true },
+      { name: 'Debt/Loans', directionConstraint: 'out', regexPatterns: ['loan', 'credit', 'installment', 'bond', 'mortgage', 'debt', 'debicheck', 'ploan', 'instlmt'], color: '#dc2626', isSystem: true },
       { name: 'Other Expenses', directionConstraint: 'out', regexPatterns: [], color: '#6b7280', isSystem: true },
     ];
 
@@ -91,15 +139,30 @@ export class CategorizationService {
     const direction = amount >= 0 ? 'in' : 'out';
     const cleanDescription = description.toLowerCase().trim();
 
+    // Debug logging for DebiCheck transactions
+    if (cleanDescription.includes('debicheck')) {
+      console.log(`🔍 DebiCheck transaction debug:`, {
+        description: cleanDescription,
+        direction,
+        amount
+      });
+    }
+
     for (const category of this.categories) {
       // Skip if direction constraint doesn't match
       if (category.directionConstraint && category.directionConstraint !== direction) {
+        if (cleanDescription.includes('debicheck')) {
+          console.log(`⏭️  Skipped category ${category.name} - direction mismatch (${category.directionConstraint} !== ${direction})`);
+        }
         continue;
       }
 
       const patterns = category.regexPatterns as string[] || [];
       for (const pattern of patterns) {
         if (cleanDescription.includes(pattern.toLowerCase())) {
+          if (cleanDescription.includes('debicheck')) {
+            console.log(`✅ DebiCheck matched pattern "${pattern}" in category ${category.name}`);
+          }
           return {
             categoryId: category.id!,
             categoryName: category.name,
@@ -107,8 +170,15 @@ export class CategorizationService {
           };
         }
       }
+      
+      if (cleanDescription.includes('debicheck') && category.name === 'Debt/Loans') {
+        console.log(`🔍 Debt/Loans category patterns:`, patterns);
+      }
     }
 
+    if (cleanDescription.includes('debicheck')) {
+      console.log(`❌ No pattern matched for DebiCheck transaction`);
+    }
     return null;
   }
 
@@ -175,18 +245,36 @@ Consider South African context (banks: FNB, Standard Bank, ABSA, Nedbank, Capite
     }
   }
 
-  // Main categorization method - tries rules first, then ML
+  // Main categorization method - tries ML first, then rules
   static async categorizeTransaction(description: string, merchant: string, amount: number): Promise<TransactionCategorization> {
-    // Try rule-based categorization first
-    let result = await this.categorizeByRules(description, amount);
+    console.log(`🔄 Categorizing: "${description}" (Amount: R${amount})`);
     
-    // If no rule match, try ML categorization (only if not disabled)
-    if (!result && !this.mlDisabled) {
+    // Try ML categorization first (if not disabled and OpenAI is configured)
+    let result = null;
+    if (!this.mlDisabled && openai) {
+      console.log(`🤖 Trying OpenAI categorization...`);
       result = await this.categorizeWithML(description, merchant, amount);
+      if (result) {
+        console.log(`✅ OpenAI categorized as: ${result.categoryName} (confidence: ${result.confidence})`);
+      } else {
+        console.log(`⚠️ OpenAI categorization failed - falling back to rules`);
+      }
+    } else {
+      console.log(`⏭️ Skipping OpenAI (disabled: ${this.mlDisabled}, configured: ${!!openai})`);
+    }
+    
+    // If no ML match, try rule-based categorization
+    if (!result) {
+      console.log(`📋 Trying rule-based categorization...`);
+      result = await this.categorizeByRules(description, amount);
+      if (result) {
+        console.log(`✅ Rule-based categorized as: ${result.categoryName} (confidence: ${result.confidence})`);
+      }
     }
 
     // Fallback to default "Other" categories
     if (!result) {
+      console.log(`⚠️ No match found - using default category`);
       const direction = amount >= 0 ? 'in' : 'out';
       const defaultCategory = this.categories.find(cat => 
         cat.name === (direction === 'in' ? 'Other Income' : 'Other Expenses')

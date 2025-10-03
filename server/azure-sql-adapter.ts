@@ -513,7 +513,7 @@ export class AzureSQLAdapter {
     
     for (const txn of transactions) {
       await this.query(`
-        INSERT INTO bank_transactions (statement_id, customer_id, txn_date, description, merchant, amount, direction, balance, category_id, confidence, raw_data)
+        INSERT INTO bankTransactions (statementId, customer_id, txnDate, description, merchant, amount, direction, balance, categoryId, confidence, rawData)
         VALUES (@statementID, @customer_id, @txnDate, @description, @merchant, @amount, @direction, @balance, @categoryID, @confidence, @rawData)
       `, txn);
     }
@@ -561,7 +561,7 @@ export class AzureSQLAdapter {
         SUM(CASE WHEN direction = 'in' THEN amount ELSE 0 END) as totalIn,
         SUM(CASE WHEN direction = 'out' THEN amount ELSE 0 END) as totalOut,
         COUNT(*) as totalTransactions
-      FROM bank_transactions 
+      FROM bankTransactions 
       ${whereClause}
     `, params);
 
@@ -583,14 +583,14 @@ export class AzureSQLAdapter {
 
     return await this.query(`
       SELECT 
-        bt.category_id,
+        bt.categoryId as category_id,
         tc.name as categoryName,
         SUM(bt.amount) as total,
         COUNT(*) as count
-      FROM bank_transactions bt
-      LEFT JOIN transaction_categories tc ON bt.category_id = tc.id
+      FROM bankTransactions bt
+      LEFT JOIN transactionCategories tc ON bt.categoryId = tc.id
       ${whereClause}
-      GROUP BY bt.category_id, tc.name
+      GROUP BY bt.categoryId, tc.name
       ORDER BY total DESC
     `, params);
   }
@@ -661,17 +661,22 @@ export class AzureSQLAdapter {
   // Transaction Categories
   async getTransactionCategories(): Promise<any[]> {
     const result = await this.query(`
-      SELECT id, name, direction_constraint as directionConstraint, regex_patterns as regexPatterns, 
-             color, is_system as isSystem, created_at as createdAt
-      FROM transaction_categories 
+      SELECT id, name, directionConstraint, regexPatterns, 
+             color, isSystem, createdAt
+      FROM transactionCategories 
       ORDER BY name ASC
     `);
-    return result;
+    
+    // Parse JSON strings to arrays for regexPatterns
+    return result.map((category: any) => ({
+      ...category,
+      regexPatterns: category.regexPatterns ? JSON.parse(category.regexPatterns) : []
+    }));
   }
 
   async createTransactionCategory(category: any): Promise<any> {
     const result = await this.query(`
-      INSERT INTO transaction_categories (name, direction_constraint, regex_patterns, color, is_system)
+      INSERT INTO transactionCategories (name, directionConstraint, regexPatterns, color, isSystem)
       OUTPUT INSERTED.id
       VALUES (@name, @directionConstraint, @regexPatterns, @color, @isSystem)
     `, {

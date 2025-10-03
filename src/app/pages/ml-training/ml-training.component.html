@@ -1,0 +1,162 @@
+<div class="ml-training-container p-4">
+  <p-toast></p-toast>
+  
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="flex justify-content-between align-items-center p-3">
+        <div>
+          <h2 class="m-0">ML Training - Transaction Categorization</h2>
+          <p class="text-sm text-600 mt-2 mb-0">Review and categorize transactions to improve the ML model</p>
+        </div>
+        <p-button 
+          icon="pi pi-refresh" 
+          (onClick)="refreshData()" 
+          [loading]="loading"
+          label="Refresh"
+          severity="secondary">
+        </p-button>
+      </div>
+    </ng-template>
+
+    <div class="grid mb-4">
+      <div class="col-12 md:col-6">
+        <label for="search" class="block text-900 font-medium mb-2">Search Transactions</label>
+        <input 
+          pInputText 
+          type="text" 
+          id="search"
+          [(ngModel)]="searchText" 
+          placeholder="Search by description or category..."
+          class="w-full" />
+      </div>
+      
+      <div class="col-12 md:col-3">
+        <label for="confidence" class="block text-900 font-medium mb-2">Confidence Threshold</label>
+        <input 
+          pInputText 
+          type="number" 
+          id="confidence"
+          [(ngModel)]="confidenceThreshold" 
+          (change)="loadTransactions()"
+          min="0" 
+          max="1" 
+          step="0.1"
+          class="w-full" />
+      </div>
+
+      <div class="col-12 md:col-3">
+        <label class="block text-900 font-medium mb-2">Stats</label>
+        <div class="text-900 font-semibold">
+          {{ filteredTransactions.length }} transactions
+          <span *ngIf="selectedCount > 0" class="text-primary"> ({{ selectedCount }} selected)</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="selectedCount > 0" class="bulk-update-panel p-3 mb-3 bg-primary-50 border-round">
+      <div class="flex gap-3 align-items-end">
+        <div class="flex-1">
+          <label for="bulkCategory" class="block text-900 font-medium mb-2">Bulk Categorize Selected</label>
+          <p-dropdown
+            [options]="categories"
+            [(ngModel)]="selectedCategory"
+            optionLabel="label"
+            placeholder="Select category"
+            [showClear]="true"
+            class="w-full"
+            inputId="bulkCategory">
+          </p-dropdown>
+        </div>
+        <div>
+          <p-button 
+            label="Apply to {{ selectedCount }} transactions" 
+            icon="pi pi-check"
+            (onClick)="bulkUpdateCategory()"
+            [disabled]="!selectedCategory">
+          </p-button>
+        </div>
+      </div>
+    </div>
+
+    <p-table 
+      [value]="filteredTransactions" 
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="25"
+      [rowsPerPageOptions]="[10, 25, 50, 100]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions"
+      styleClass="p-datatable-striped"
+      responsiveLayout="scroll">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Date</th>
+          <th>Description</th>
+          <th style="text-align: right">Amount</th>
+          <th>Current Category</th>
+          <th>Confidence</th>
+          <th style="width: 250px">Assign Category</th>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-transaction>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="transaction"></p-tableCheckbox>
+          </td>
+          <td>{{ transaction.date | date: 'MMM d, yyyy' }}</td>
+          <td>
+            <div class="font-medium">{{ transaction.description }}</div>
+          </td>
+          <td style="text-align: right">
+            <span [class]="transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'" class="font-semibold">
+              R{{ transaction.amount | number:'1.2-2' }}
+            </span>
+          </td>
+          <td>
+            <p-tag 
+              *ngIf="transaction.categoryName; else noCategory"
+              [value]="transaction.categoryName"
+              [severity]="getConfidenceColor(transaction.confidence)">
+            </p-tag>
+            <ng-template #noCategory>
+              <span class="text-500 italic">Uncategorized</span>
+            </ng-template>
+          </td>
+          <td>
+            <p-tag 
+              [value]="(transaction.confidence * 100).toFixed(0) + '%'"
+              [severity]="getConfidenceColor(transaction.confidence)">
+            </p-tag>
+          </td>
+          <td>
+            <p-dropdown
+              [options]="getCategoryOptions(transaction)"
+              [placeholder]="transaction.categoryName || 'Select category'"
+              optionLabel="label"
+              (onChange)="updateCategory(transaction, $event.value)"
+              [showClear]="false"
+              styleClass="w-full">
+            </p-dropdown>
+          </td>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center p-5">
+            <div class="text-600">
+              <i class="pi pi-check-circle text-4xl mb-3"></i>
+              <p class="text-xl">No transactions need categorization!</p>
+              <p class="text-sm">All transactions above {{ confidenceThreshold }} confidence threshold are categorized.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

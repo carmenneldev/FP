@@ -1,0 +1,86 @@
+412752*0100 09 Jul   235.90   2,782.36   Cr  Closing Balance   2,782.36Cr Turnover for Statement Period  No. Credit Transactions 8   27,622.36 Cr No. Debit Transactions 64   25,863.01 Dr  Please contact us within 30 days from your statement date, should you wish to query an entry on this statement (incl. card transactions done during this statement period, but not yet reflecting). Should we not hear from you, we will assume that you have received the statement and that it is correct.  For more information on your Pricing Option, please contact us or visit our website. **For the latest Credit Rates on product, please go to fnb.co.za',
+2025-09-29T17:04:21.9247523Z   'Branch Number   Account Number   Date   DDA 06/94/HX/KM/KM/PA/P6/B2/LE/Y   FN 8091   62768267653   2022/07/12   FNB ASPIRE CURRENT ACCOUNT  Page 3 of 3  Delivery Method F1 R04 NS/12/WV/DDA 06 8091 85636 *Debit Rate is subject to the maximum annual variable interest rate allowed by the NCA which is 17.50% First National Bank - a division of FirstRand Bank Limited. Registration Number 1929/001225/06. An Authorised Financial Services and Credit Provider (NCRCP20). On 20 May 2022, the Prime Lending Rate changed to 8.25%. This may impact the rate on any of your credit facilities.'
+2025-09-29T17:04:21.9247539Z ]
+2025-09-29T17:04:21.9247556Z Using alternative splitting, new line count: 139
+2025-09-29T17:04:21.9247571Z Alternative lines preview: [
+2025-09-29T17:04:21.9247627Z   'Branch Number   Account Number   Date   DDA 06/94/HX/KM/KM/PA/P6/B2/LE/Y   FN 8091   62768267653   2022/07/',
+2025-09-29T17:04:21.9247652Z   '12   FNB ASPIRE CURRENT ACCOUNT  Page 1 of',
+2025-09-29T17:04:21.9247667Z   '3  Delivery Method',
+2025-09-29T17:04:21.9247682Z   'F1 R04 NS/12/WV/DDA',
+2025-09-29T17:04:21.9247709Z   '06 8091 85634  XSTZFN0:62768267653  BBST48   037630 MR SEAN B MTHEMBU 130 FRANCES ST JOHANNESBURG 2001  Customer VAT Registration Number   Not Provided  Bank VAT Registration Number   4210102051  6   P O Box 61530 Johannesburg 2000  Street Address   Remote Accounting Opening 9th Floor,Sage Bldg,'
+2025-09-29T17:04:21.9247723Z ]
+2025-09-29T17:04:21.9247753Z Trying 6 different parsing patterns...
+2025-09-29T17:04:21.9247777Z ✓ Pattern 3 matched line: "9   fnb.co.za  Lost Cards   087-575-9406  Account Enquiries   087-575-9404  Fraud   087-575-9444  Re..."
+2025-09-29T17:04:21.9247795Z Match groups: [ '87-575-9406', 'Account Enquiries', undefined, undefined, '087' ]
+2025-09-29T17:04:21.9247814Z ✓ Pattern 2 matched line: "13 Jun   FNB App Transfer From Tech   1,500.00   Cr   2,523.01   Cr..."
+2025-09-29T17:04:21.9247829Z Match groups: [
+2025-09-29T17:04:21.9247843Z   '13 Jun',
+2025-09-29T17:04:21.9247858Z   'FNB App Transfer From Tech',
+2025-09-29T17:04:21.9247873Z   '1,500.00',
+2025-09-29T17:04:21.9247886Z   'Cr',
+2025-09-29T17:04:21.92479Z   '2,523.01'
+2025-09-29T17:04:21.9247914Z ]
+2025-09-29T17:04:21.9247955Z ✓ Pattern 2 matched line: "13 Jun   FNB App Prepaid Airtime 27682232699   100.00   2,423.01   Cr..."
+2025-09-29T17:04:21.924797Z Match groups: [
+2025-09-29T17:04:21.9247984Z   '13 Jun',
+2025-09-29T17:04:21.9248Z   'FNB App Prepaid Airtime 27682232699',
+2025-09-29T17:04:21.9248014Z   '100.00',
+2025-09-29T17:04:21.9248028Z   undefined,
+2025-09-29T17:04:21.9248041Z   '2,423.01'
+2025-09-29T17:04:21.9248055Z ]
+2025-09-29T17:04:21.9248073Z ✓ Pattern 2 matched line: "09 Jun   52.90   2,370.11   Cr..."
+2025-09-29T17:04:21.924809Z Match groups: [ '09 Jun', ' ', '52.90', undefined, '2,370.11' ]
+2025-09-29T17:04:21.9248107Z ✓ Pattern 2 matched line: "11 Jun   149.70   2,220.41   Cr..."
+2025-09-29T17:04:21.9248139Z Match groups: [ '11 Jun', ' ', '149.70', undefined, '2,220.41' ]
+2025-09-29T17:04:21.9248159Z ✓ Pattern 2 matched line: "15 Jun   FNB App Transfer From Momz   2,000.00   Cr   4,220.41   Cr..."
+2025-09-29T17:04:21.9248173Z Match groups: [
+2025-09-29T17:04:21.9248187Z   '15 Jun',
+2025-09-29T17:04:21.9248201Z   'FNB App Transfer From Momz',
+2025-09-29T17:04:21.9248216Z   '2,000.00',
+2025-09-29T17:04:21.9248229Z   'Cr',
+2025-09-29T17:04:21.9248243Z   '4,220.41'
+2025-09-29T17:04:21.9248262Z ]
+2025-09-29T17:04:21.9248282Z ✓ Pattern 2 matched line: "15 Jun   FNB App Rtc Pmt To Jim Nedbank   Bhekani   2,000.00   2,220.41   Cr   45.00..."
+2025-09-29T17:04:21.9248295Z Match groups: [
+2025-09-29T17:04:21.9248309Z   '15 Jun',
+2025-09-29T17:04:21.9248338Z   'FNB App Rtc Pmt To Jim Nedbank   Bhekani',
+2025-09-29T17:04:21.9248353Z   '2,000.00',
+2025-09-29T17:04:21.9248367Z   undefined,
+2025-09-29T17:04:21.924838Z   '2,220.41'
+2025-09-29T17:04:21.9248393Z ]
+2025-09-29T17:04:21.9248412Z ✓ Pattern 2 matched line: "15 Jun   FNB App Prepaid Airtime 27682232699   55.00   2,165.41   Cr..."
+2025-09-29T17:04:21.9248426Z Match groups: [
+2025-09-29T17:04:21.924844Z   '15 Jun',
+2025-09-29T17:04:21.9248455Z   'FNB App Prepaid Airtime 27682232699',
+2025-09-29T17:04:21.9248469Z   '55.00',
+2025-09-29T17:04:21.9248483Z   undefined,
+2025-09-29T17:04:21.9248496Z   '2,165.41'
+2025-09-29T17:04:21.9248524Z ]
+2025-09-29T17:04:21.9248542Z ✓ Pattern 2 matched line: "12 Jun   48.00   2,117.41   Cr..."
+2025-09-29T17:04:21.9248558Z Match groups: [ '12 Jun', ' ', '48.00', undefined, '2,117.41' ]
+2025-09-29T17:04:21.9248574Z ✓ Pattern 2 matched line: "13 Jun   157.58   1,959.83   Cr..."
+2025-09-29T17:04:21.924859Z Match groups: [ '13 Jun', ' ', '157.58', undefined, '1,959.83' ]
+2025-09-29T17:04:21.9248606Z ✓ Pattern 2 matched line: "12 Jun   300.00   1,659.83   Cr..."
+2025-09-29T17:04:21.9248623Z Match groups: [ '12 Jun', ' ', '300.00', undefined, '1,659.83' ]
+2025-09-29T17:04:21.9248639Z ✓ Pattern 2 matched line: "12 Jun   100.00   1,559.83   Cr..."
+2025-09-29T17:04:21.9248655Z Match groups: [ '12 Jun', ' ', '100.00', undefined, '1,559.83' ]
+2025-09-29T17:04:21.9248672Z ✓ Pattern 2 matched line: "15 Jun   113.97   1,445.86   Cr..."
+2025-09-29T17:04:21.9333055Z Could not parse date: 87-575-9406, using current date
+2025-09-29T17:04:21.9746019Z Match groups: [ '15 Jun', ' ', '113.97', undefined, '1,445.86' ]
+2025-09-29T17:04:21.9750556Z ✓ Pattern 2 matched line: "15 Jun   180.95   1,264.91   Cr..."
+2025-09-29T17:04:21.975435Z Match groups: [ '15 Jun', ' ', '180.95', undefined, '1,264.91' ]
+2025-09-29T17:04:21.9758813Z ✓ Pattern 2 matched line: "20 Jun   FNB App Transfer From Gas   400.00   Cr   864.01   Cr..."
+2025-09-29T17:04:21.9762149Z Match groups: [ '20 Jun', 'FNB App Transfer From Gas', '400.00', 'Cr', '864.01' ]
+2025-09-29T17:04:21.9765805Z ✓ Pattern 2 matched line: "22 Jun   FNB App Transfer From Gif   300.00   Cr   1,102.01   Cr..."
+2025-09-29T17:04:22.0138669Z Match groups: [ '22 Jun', 'FNB App Transfer From Gif', '300.00', 'Cr', '1,102.01' ]
+2025-09-29T17:04:22.0145234Z ✓ Pattern 2 matched line: "25 Jun   FNB App Transfer From Fg   800.00   Cr   907.06   Cr..."
+2025-09-29T17:04:22.0149292Z Match groups: [ '25 Jun', 'FNB App Transfer From Fg', '800.00', 'Cr', '907.06' ]
+2025-09-29T17:04:22.0154064Z ✓ Pattern 2 matched line: "29 Jun   FNB OB Pmt 0001 Salary   19,022.36   Cr   19,762.37   Cr..."
+2025-09-29T17:04:22.0160345Z Match groups: [ '29 Jun', 'FNB OB Pmt 0001 Salary', '19,022.36', 'Cr', '19,762.37' ]
+2025-09-29T17:04:22.0164213Z ✓ Pattern 2 matched line: "29 Jun   FNB App Prepaid Airtime 27682232699   300.00   19,462.37   Cr..."
+2025-09-29T17:04:22.0168072Z Match groups: [
+2025-09-29T17:04:22.0168208Z   '29 Jun',
+2025-09-29T17:04:22.0168229Z   'FNB App Prepaid Airtime 27682232699',
+2025-09-29T17:04:22.0168244Z   '300.00',
+2025-09-29T17:04:22.0168294Z   undefined,
+2025-09-29T17:04:22.0168309Z   '19,462.37'

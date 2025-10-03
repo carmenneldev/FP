@@ -55,6 +55,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'admin/ml-training',
+    loadComponent: () => import('./pages/ml-training/ml-training.component').then(m => m.MlTrainingComponent),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'client',
     component: ClientOverviewComponent
   },

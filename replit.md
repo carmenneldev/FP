@@ -4,12 +4,42 @@
 FlightPlan is a comprehensive Angular application for managing clients, policies, and related data in the financial advisory domain. This is a freshly imported GitHub project that has been configured to run in the Replit environment.
 
 ## Project Status
-- **Last Updated**: September 26, 2025
-- **Status**: Azure SQL-only conversion complete - ready for Azure deployment
+- **Last Updated**: October 3, 2025
+- **Status**: ML Training Page Complete - Transaction categorization system fully operational
 - **Frontend**: Angular 19.x with PrimeNG components
 - **Backend**: Express.js API with Azure SQL Database integration only
 
 ## Recent Changes
+### ML Training Page Implementation (Oct 3, 2025)
+- **HIDDEN ML TRAINING INTERFACE**: Created comprehensive ML training page for transaction categorization
+  - Route: `/admin/ml-training` (accessible only via direct URL, not in navigation menu)
+  - Transaction review table with search, filtering by confidence threshold
+  - Bulk category assignment with dropdown selection for multiple transactions
+  - Visual confidence indicators with colored tags (Low/Medium/High)
+  - Real-time updates via backend API integration
+- **BACKEND API ENDPOINTS**: Created complete API for ML training functionality
+  - GET `/api/TransactionCategory` - Fetch all available transaction categories
+  - GET `/api/BankTransaction/uncategorized` - Get low-confidence transactions for review
+  - PUT `/api/BankTransaction/:id/category` - Update transaction category assignment
+- **ENVIRONMENT CONFIGURATION**: Fixed production build compatibility
+  - Created base `environment.ts` file for Angular environment replacement system
+  - Proper TypeScript typing for Category interface with optional label/value fields
+  - Supports both development and production builds correctly
+
+### Transaction Categorization System Fix (Oct 3, 2025)
+- **RULE-BASED CATEGORIZATION FIXED**: Resolved NULL pattern issue preventing transaction matching
+  - Fixed NULL regex patterns in database - all 13 categories now have proper patterns
+  - Created missing "Airtime" category that was preventing FNB prepaid categorization
+  - Successfully categorizing South African bank transactions: Airtime (12), Salary (1), Transfer (3)
+- **PATTERN MATCHING IMPROVEMENTS**: Enhanced categorization accuracy for FNB statements
+  - Airtime: Matches "FNB App Prepaid" and "Prepaid Airtime" transactions
+  - Salary: Matches "FNB OB Pmt" (employer payments)
+  - Transfer: Matches "FNB App Payment To" and "Payment To" patterns
+  - Investment: Matches investment-related keywords in descriptions
+- **CATEGORIZATION PIPELINE**: Complete 3-tier categorization system operational
+  1. AI categorization (OpenAI) - disabled when quota exceeded
+  2. Rule-based categorization (regex patterns) - now fully functional
+  3. Default categories (0.1 confidence) - fallback for unmatched transactions
 ### Enhanced Loading Screen for Bank Statement Processing (Sept 29, 2025)
 - **PROFESSIONAL LOADING EXPERIENCE**: Added comprehensive loading screen during transaction processing
   - Visual progress indicator with 4-stage processing steps (Extract → Analyze → Categorize → Save)
